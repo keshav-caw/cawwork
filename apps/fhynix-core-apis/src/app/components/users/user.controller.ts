@@ -9,15 +9,15 @@ import {
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
-import { ServiceTypes } from '../../services/service.types'
-import { JWTService } from '../../services/jwt.service'
+import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
+import { CommonTypes } from '../../common/common.types'
 
 @controller('/user')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
-    @inject(ServiceTypes.jwt) private jwtService: JWTService,
+    @inject(CommonTypes.jwt) private jwtService: JWTService,
   ) {}
 
   @httpGet('/')

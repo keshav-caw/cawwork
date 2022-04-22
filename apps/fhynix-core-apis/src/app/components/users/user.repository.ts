@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
-import { UserRepositoryInterface } from './user-repository.interface'
+import { UserRepositoryInterface } from '../../common/interfaces/user-repository.interface'
 
 @injectable()
 export class UserRepository implements UserRepositoryInterface {

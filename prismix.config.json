@@ -5,7 +5,7 @@
         "./apps/fhynix-core-apis/src/app/components/users/user-schema.prisma",
         "./apps/fhynix-core-apis/src/app/repositories/prisma/db-schema.prisma"
       ],
-      "output": "./apps/fhynix-core-apis/src/app/repositories/prisma/schema.prisma"
+      "output": "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/schema.prisma"
     }
   ]
 }

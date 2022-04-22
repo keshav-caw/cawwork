@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
-import { AuthRepositoryInterface } from './auth-repository.interface'
+import { AuthRepositoryInterface } from '../../common/interfaces/auth-repository.interface'
 
 @injectable()
 export class AuthRepository implements AuthRepositoryInterface {

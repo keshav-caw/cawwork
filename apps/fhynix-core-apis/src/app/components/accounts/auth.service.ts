@@ -1,15 +1,15 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { JWTService } from '../../services/jwt.service'
-import { ServiceTypes } from '../../services/service.types'
-import { AuthServiceInterface } from './auth-service.interface'
+import { CommonTypes } from '../../common/common.types'
+import { JWTService } from '../../common/jwtservice/jwt.service'
+import { AuthServiceInterface } from '../../common/interfaces/auth-service.interface'
 import { AuthRepository } from './auth.repository'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
   constructor(
     @inject('AuthRepository') private authRepository: AuthRepository,
-    @inject(ServiceTypes.jwt) private jwtService: JWTService,
+    @inject(CommonTypes.jwt) private jwtService: JWTService,
   ) {}
   async login(userDetails) {
     const details = await this.authRepository.getLoginDetails(userDetails)

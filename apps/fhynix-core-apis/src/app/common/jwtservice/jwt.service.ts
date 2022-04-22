@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { JWTInterface } from './interfaces/jwt.interface'
 import jwt from 'jsonwebtoken'
-import { environment } from '../../environments/environment'
+import { environment } from '../../../environments/environment'
 
 @injectable()
 export class JWTService implements JWTInterface {
