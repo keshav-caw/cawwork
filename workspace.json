@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "projects": {
+    "fhynix-api": "apps/fhynix-api",
+    "api-interfaces": "libs/api-interfaces",
+    "fhynix-web-client": "apps/fhynix-web-client"
+  }
+}

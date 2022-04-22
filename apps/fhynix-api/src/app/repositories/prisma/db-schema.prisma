@@ -1,0 +1,9 @@
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:!SRakhiale321@127.0.0.1:3306/fhynix"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["filterJson"]
+}

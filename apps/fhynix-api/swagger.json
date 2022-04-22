@@ -1,0 +1,44 @@
+{
+  "basePath": "/",
+  "info": { "title": "Fhynix", "version": "1.0" },
+  "paths": {
+    "/user": {
+      "get": {
+        "operationId": "getUsers",
+        "tags": ["user"],
+        "description": "Get users objects list",
+        "summary": "Get users list",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/user" }
+          },
+          "400": { "description": "Client error and Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "apiKeyHeader": [] }],
+        "produces": ["application/json"],
+        "consumes": ["application/json"]
+      }
+    }
+  },
+  "tags": [{ "name": "user" }],
+  "schemes": ["http"],
+  "produces": ["application/json"],
+  "consumes": ["application/json"],
+  "definitions": {
+    "user": {
+      "required": ["name", "id"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "swagger": "2.0"
+}

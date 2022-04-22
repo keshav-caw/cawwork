@@ -1,0 +1,52 @@
+{
+  "root": "apps/fhynix-api",
+  "sourceRoot": "apps/fhynix-api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/fhynix-api",
+        "main": "apps/fhynix-api/src/main.ts",
+        "tsConfig": "apps/fhynix-api/tsconfig.app.json",
+        "assets": ["apps/fhynix-api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/fhynix-api/src/environments/environment.ts",
+              "with": "apps/fhynix-api/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "fhynix-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/fhynix-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/fhynix-api"],
+      "options": {
+        "jestConfig": "apps/fhynix-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

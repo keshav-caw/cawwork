@@ -1,0 +1,8 @@
+model Users {
+  id    Int     @id @default(autoincrement())
+  firstName String
+  lastName String
+  phonenumber String
+  emailId String
+  password String
+}
