@@ -12,7 +12,7 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async getLoginDetails(userDetails: any) {
-    const result = await this.client.user?.findMany({
+    const result = await this.client.users?.findMany({
       where: {
         emailId: userDetails.username,
         password: userDetails.password,
@@ -22,9 +22,11 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async createUserDetails(userDetails) {
-    const result = await this.client.user?.create({
+    console.log(userDetails)
+    const result = await this.client.users?.create({
       data: userDetails,
     })
+    console.log(result)
     return result
   }
 }

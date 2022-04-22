@@ -12,7 +12,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getUserDetails(userId: number) {
-    const result = await this.client.user?.findMany({
+    const result = await this.client.users?.findMany({
       select: {
         id: true,
         firstName: true,
