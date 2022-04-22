@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'fhynix-api',
+  displayName: 'fhynix-core-apis',
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/apps/fhynix-api',
+  coverageDirectory: '../../coverage/apps/fhynix-core-apis',
 }

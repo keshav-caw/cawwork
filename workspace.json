@@ -1,7 +1,7 @@
 {
   "version": 2,
   "projects": {
-    "fhynix-api": "apps/fhynix-api",
+    "fhynix-core-apis": "apps/fhynix-core-apis",
     "api-interfaces": "libs/api-interfaces"
   }
 }

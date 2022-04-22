@@ -1,7 +1,7 @@
 export const environment = {
-  production: false,
-  envName: 'qa',
-  envVersion: 1.1,
+  production: true,
+  envName: 'prod',
+  envVersion: 1.0,
   dbConnectionString: '',
   sentryIOUrl: '',
 }

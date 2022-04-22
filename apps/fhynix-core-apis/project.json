@@ -1,16 +1,16 @@
 {
-  "root": "apps/fhynix-api",
-  "sourceRoot": "apps/fhynix-api/src",
+  "root": "apps/fhynix-core-apis",
+  "sourceRoot": "apps/fhynix-core-apis/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/fhynix-api",
-        "main": "apps/fhynix-api/src/main.ts",
-        "tsConfig": "apps/fhynix-api/tsconfig.app.json",
-        "assets": ["apps/fhynix-api/src/assets"]
+        "outputPath": "dist/apps/fhynix-core-apis",
+        "main": "apps/fhynix-core-apis/src/main.ts",
+        "tsConfig": "apps/fhynix-core-apis/tsconfig.app.json",
+        "assets": ["apps/fhynix-core-apis/src/assets"]
       },
       "configurations": {
         "production": {
@@ -19,8 +19,8 @@
           "inspect": false,
           "fileReplacements": [
             {
-              "replace": "apps/fhynix-api/src/environments/environment.ts",
-              "with": "apps/fhynix-api/src/environments/environment.prod.ts"
+              "replace": "apps/fhynix-core-apis/src/environments/environment.ts",
+              "with": "apps/fhynix-core-apis/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -29,21 +29,21 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "fhynix-api:build"
+        "buildTarget": "fhynix-core-apis:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/fhynix-api/**/*.ts"]
+        "lintFilePatterns": ["apps/fhynix-core-apis/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/fhynix-api"],
+      "outputs": ["coverage/apps/fhynix-core-apis"],
       "options": {
-        "jestConfig": "apps/fhynix-api/jest.config.js",
+        "jestConfig": "apps/fhynix-core-apis/jest.config.js",
         "passWithNoTests": true
       }
     }

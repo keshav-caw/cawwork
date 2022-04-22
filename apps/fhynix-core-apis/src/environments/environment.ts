@@ -1,7 +1,8 @@
 export const environment = {
   production: false,
-  envName: 'dev',
-  envVersion: 1.1,
+  envName: 'local',
+  envVersion: 1.0,
   dbConnectionString: '',
+  jwtPrivateKey: 'fhynix',
   sentryIOUrl: '',
 }

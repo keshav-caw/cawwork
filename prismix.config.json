@@ -2,10 +2,10 @@
   "mixers": [
     {
       "input": [
-        "./apps/fhynix-api/src/app/components/users/user-schema.prisma",
-        "./apps/fhynix-api/src/app/repositories/prisma/db-schema.prisma"
+        "./apps/fhynix-core-apis/src/app/components/users/user-schema.prisma",
+        "./apps/fhynix-core-apis/src/app/repositories/prisma/db-schema.prisma"
       ],
-      "output": "./apps/fhynix-api/src/app/repositories/prisma/schema.prisma"
+      "output": "./apps/fhynix-core-apis/src/app/repositories/prisma/schema.prisma"
     }
   ]
 }
