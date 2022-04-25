@@ -34,4 +34,13 @@ export class UserController implements interfaces.Controller {
     const details = await this.userService.getUsers(req?.query?.id)
     return res.send(details)
   }
+
+  @httpGet('/test')
+  public async getTestUser(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ): Promise<any> {
+    return res.send('Hello World')
+  }
 }
