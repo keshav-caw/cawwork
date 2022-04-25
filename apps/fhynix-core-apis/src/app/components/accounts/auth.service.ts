@@ -25,7 +25,7 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
-  async createUserDetails(userDetails) {
-    return await this.authRepository.createUserDetails(userDetails)
+  async createUser(userDetails) {
+    return await this.authRepository.createUser(userDetails)
   }
 }

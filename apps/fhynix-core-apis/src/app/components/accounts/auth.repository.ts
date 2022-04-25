@@ -21,12 +21,10 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result
   }
 
-  async createUserDetails(userDetails) {
-    console.log(userDetails)
+  async createUser(userDetails) {
     const result = await this.client.users?.create({
       data: userDetails,
     })
-    console.log(result)
     return result
   }
 }

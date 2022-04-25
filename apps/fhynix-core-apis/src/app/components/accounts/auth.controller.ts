@@ -27,6 +27,6 @@ export class AuthController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.authService.createUserDetails(req.body))
+    res.send(await this.authService.createUser(req.body))
   }
 }

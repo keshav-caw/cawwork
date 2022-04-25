@@ -6,6 +6,7 @@ import {
   request,
   response,
   next,
+  httpPost,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
@@ -13,7 +14,7 @@ import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
 
-@controller('/user')
+@controller('/contact/me')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
@@ -33,5 +34,13 @@ export class UserController implements interfaces.Controller {
     }
     const details = await this.userService.getUsers(req?.query?.id)
     return res.send(details)
+  }
+
+  @httpPost('/')
+  private async createUser(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    res.send(await this.userService.createUser(req.body))
   }
 }

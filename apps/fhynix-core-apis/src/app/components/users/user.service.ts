@@ -11,4 +11,8 @@ export class UserService {
     const details = await this.userRepository.getUserDetails(userId)
     return details
   }
+
+  async createUser(userDetails) {
+    return await this.userRepository.createUser(userDetails)
+  }
 }
