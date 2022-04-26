@@ -7,6 +7,7 @@ import {
   response,
   next,
   httpPost,
+  httpPut,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
@@ -32,7 +33,8 @@ export class UserController implements interfaces.Controller {
     } catch (e) {
       return res.send({ status: 401, message: 'unauthorized' })
     }
-    const details = await this.userService.getUsers(req?.query?.id)
+    const tokenInfo = this.jwtService.decode(req.headers.authorization)
+    const details = await this.userService.getUsers(tokenInfo?.user_id)
     return res.send(details)
   }
 
@@ -42,6 +44,24 @@ export class UserController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     res.send(await this.userService.createUser(req.body))
+  }
+
+  @httpPut('/')
+  private async updateUser(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    try {
+      this.jwtService.validate(req.headers.authorization)
+    } catch (e) {
+      return res.send({ status: 401, message: 'unauthorized' })
+    }
+    const tokenInfo = this.jwtService.decode(req.headers.authorization)
+    const details = await this.userService.updateUserDetails(
+      req.body,
+      tokenInfo?.user_id,
+    )
+    res.send(details)
   }
 
   @httpGet('/test')

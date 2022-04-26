@@ -2,6 +2,7 @@
   "mixers": [
     {
       "input": [
+        "./apps/fhynix-core-apis/src/app/components/accounts/account-schema.prisma",
         "./apps/fhynix-core-apis/src/app/components/users/user-schema.prisma",
         "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/db-schema.prisma"
       ],

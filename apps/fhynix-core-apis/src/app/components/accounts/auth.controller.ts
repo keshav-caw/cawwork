@@ -5,6 +5,7 @@ import {
   httpPost,
   request,
   response,
+  httpGet,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { AuthService } from './auth.service'
@@ -19,14 +20,7 @@ export class AuthController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.authService.login(req.body))
-  }
-
-  @httpPost('/signup')
-  private async signup(
-    @request() req: express.Request,
-    @response() res: express.Response,
-  ) {
-    res.send(await this.authService.createUser(req.body))
+    const details = await this.authService.login(req.body)
+    res.send(details)
   }
 }

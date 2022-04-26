@@ -1,0 +1,13 @@
+model Accounts {
+  id    Int     @id @default(autoincrement())
+  created_at_utc DateTime?
+  created_by String?
+  updated_at_utc DateTime?
+  updated_by String?
+  is_deleted Boolean
+  login_method String
+  first_login_at_utc DateTime
+  last_login_at_utc DateTime
+  access_token String
+  refresh_token String
+}

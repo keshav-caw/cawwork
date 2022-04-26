@@ -12,7 +12,20 @@ export class UserService {
     return details
   }
 
+  async getUserByEmailId(userEmail) {
+    const details = await this.userRepository.getUserDetailsByEmailId(userEmail)
+    return details
+  }
+
   async createUser(userDetails) {
     return await this.userRepository.createUser(userDetails)
+  }
+
+  async createFamilyMembers(userDetails) {
+    return await this.userRepository.createFamilyMembers(userDetails)
+  }
+
+  async updateUserDetails(userDetails, userId) {
+    return await this.userRepository.updateUserDetails(userDetails, userId)
   }
 }
