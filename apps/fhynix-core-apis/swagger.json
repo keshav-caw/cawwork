@@ -2,8 +2,9 @@
   "basePath": "/",
   "info": { "title": "Fhynix", "version": "1.0" },
   "paths": {
-    "/user": {
+    "/contact/me": {
       "get": {
+        "security": [{ "Bearer": [] }],
         "operationId": "getUsers",
         "tags": ["user"],
         "description": "Get users objects list",
@@ -11,7 +12,36 @@
         "responses": {
           "200": {
             "description": "Success",
-            "schema": { "$ref": "#/definitions/user" }
+            "schema": { "$ref": "#/definitions/getUser" }
+          },
+          "400": { "description": "Client error and Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "login",
+        "tags": ["login"],
+        "description": "Login through auth code",
+        "summary": "Get access token",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login through auth code",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/LoginDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/login" }
           },
           "400": { "description": "Client error and Bad Request" },
           "500": { "description": "Internal Server Error" }
@@ -22,22 +52,58 @@
       }
     }
   },
-  "tags": [{ "name": "user" }],
+  "tags": [{ "name": "getUser" }],
   "schemes": ["http"],
   "produces": ["application/json"],
   "consumes": ["application/json"],
   "definitions": {
-    "user": {
-      "required": ["name", "id"],
+    "getUser": {
+      "required": ["access_token"],
       "properties": {
         "id": {
           "type": "integer",
           "uniqueItems": true
         },
-        "name": {
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "is_onboarding_completed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "login": {
+      "required": ["authCode", "provider"],
+      "properties": {
+        "authToken": {
           "type": "string"
         }
       }
+    },
+    "LoginDto": {
+      "type": "object",
+      "properties": {
+        "authCode": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "name": "Authorization",
+      "in": "header",
+      "type": "apiKey",
+      "description": "JWT Authorization header"
     }
   },
   "swagger": "2.0"

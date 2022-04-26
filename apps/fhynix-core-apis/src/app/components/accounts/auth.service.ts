@@ -17,7 +17,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(UserTypes.user) private userService: UserService,
   ) {}
   async login(userDetails) {
-    if (userDetails.provider === 'GOOLE_PROVIDER') {
+    if (userDetails.provider === 'GOOGLE_PROVIDER') {
       const profileDetails = await this.googleAuthorization(
         userDetails.authCode,
       )
@@ -45,6 +45,8 @@ export class AuthService implements AuthServiceInterface {
 
         return { authToken: authToken }
       }
+    } else {
+      return { status: 400, message: 'Please login through google provider' }
     }
   }
 
