@@ -16,6 +16,6 @@ export class HealthCheckController implements interfaces.Controller {
         @response() res: express.Response,
         @next() next: express.NextFunction,
         ): Promise<any> {
-        return res.send('Hello World')
+        return res.send('Working')
     }
 }
