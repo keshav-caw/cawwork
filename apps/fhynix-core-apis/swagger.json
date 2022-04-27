@@ -53,7 +53,7 @@
     }
   },
   "tags": [{ "name": "getUser" }],
-  "schemes": ["http"],
+  "schemes": ["https", "http"],
   "produces": ["application/json"],
   "consumes": ["application/json"],
   "definitions": {
