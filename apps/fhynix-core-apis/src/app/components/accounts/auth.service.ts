@@ -58,6 +58,7 @@ export class AuthService implements AuthServiceInterface {
       },
       accountId,
     )
+    console.log(accountDetails)
     return accountDetails
   }
 

@@ -41,9 +41,6 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async createUser(userDetails) {
-    userDetails['created_at_utc'] = new Date().toISOString()
-    userDetails['updated_at_utc'] = new Date().toISOString()
-    userDetails['is_deleted'] = false
     const result = await this.client.users?.create({
       data: userDetails,
     })
@@ -51,9 +48,6 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async createFamilyMembers(familyDetails) {
-    familyDetails['created_at_utc'] = new Date().toISOString()
-    familyDetails['updated_at_utc'] = new Date().toISOString()
-    familyDetails['is_deleted'] = false
     const result = await this.client.familyMembers?.create({
       data: familyDetails,
     })
@@ -61,8 +55,6 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async updateUserDetails(userDetails: any, userId: number) {
-    userDetails['updated_at_utc'] = new Date().toISOString()
-    userDetails['last_login_at_utc'] = new Date().toISOString()
     const result = await this.client.users?.update({
       data: userDetails,
       where: {

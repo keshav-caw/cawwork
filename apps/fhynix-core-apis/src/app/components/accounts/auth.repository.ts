@@ -22,11 +22,7 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async createAccounts(accountDetails: any) {
-    accountDetails['created_at_utc'] = new Date().toISOString()
-    accountDetails['updated_at_utc'] = new Date().toISOString()
-    accountDetails['first_login_at_utc'] = new Date().toISOString()
     accountDetails['last_login_at_utc'] = new Date().toISOString()
-    accountDetails['is_deleted'] = false
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
@@ -34,7 +30,6 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async updateAccounts(accountDetails: any, accountId: number) {
-    accountDetails['updated_at_utc'] = new Date().toISOString()
     accountDetails['last_login_at_utc'] = new Date().toISOString()
     const result = await this.client.accounts?.update({
       data: accountDetails,

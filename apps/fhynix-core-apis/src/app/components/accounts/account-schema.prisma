@@ -1,12 +1,12 @@
 model Accounts {
   id    Int     @id @default(autoincrement())
-  created_at_utc DateTime?
+  created_at_utc DateTime? @default(now())
   created_by String?
-  updated_at_utc DateTime?
+  updated_at_utc DateTime @updatedAt
   updated_by String?
-  is_deleted Boolean
+  is_deleted Boolean @default(false)
   login_method String
-  first_login_at_utc DateTime
+  first_login_at_utc DateTime @default(now())
   last_login_at_utc DateTime
   access_token String
   refresh_token String

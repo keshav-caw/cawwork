@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "prismix && nx serve",
+    "start": "prismix && npm run prisma-generate && nx serve",
     "build": "prismix && nx build",
     "build-dev": "prismix && nx build",
-    "prismix": "npx prismix && prisma format",
+    "prisma-generate": "prisma generate --schema=\"./apps/fhynix-core-apis/src/app/common/DataStore/prisma/schema.prisma\"",
     "test": "nx test"
   },
   "husky": {
