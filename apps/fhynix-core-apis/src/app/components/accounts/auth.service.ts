@@ -4,11 +4,12 @@ import { CommonTypes } from '../../common/common.types'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { AuthServiceInterface } from '../../common/interfaces/auth-service.interface'
 import { AuthRepository } from './auth.repository'
-import { google } from 'googleapis'
 import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import { UserService } from '../users/user.service'
 import { UserTypes } from '../users/user.types'
 import { LoginMethodEnum } from '../../common/enums/login-method.enum'
+import { GoogleAuthProvider } from './google-auth-provider.service'
+import { AccountTypes } from './account.types'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -16,6 +17,8 @@ export class AuthService implements AuthServiceInterface {
     @inject('AuthRepository') private authRepository: AuthRepository,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
     @inject(UserTypes.user) private userService: UserService,
+    @inject(AccountTypes.googleAuth)
+    private googleAuthProvider: GoogleAuthProvider,
   ) {}
   async login(userDetails) {
     if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
@@ -23,15 +26,15 @@ export class AuthService implements AuthServiceInterface {
         userDetails.authCode,
       )
       const user = await this.authRepository.getAccountDetails(
-        profileDetails.peopleDetails.emailAddresses[0].value,
+        profileDetails.email,
       )
 
       let userData
-      if (user.length > 0) {
+      if (user?.length > 0) {
         userData = await this.updateAccountDetails(
           profileDetails.access_token,
           profileDetails.refresh_token,
-          user?.id,
+          user[0]?.id,
         )
       } else {
         userData = await this.createAccountDetails(profileDetails)
@@ -67,29 +70,26 @@ export class AuthService implements AuthServiceInterface {
       access_token: profileDetails.access_token,
       refresh_token: profileDetails.refresh_token,
       login_method: LoginMethodEnum.GOOGLE_PROVIDER,
-      username: profileDetails.peopleDetails.emailAddresses[0].value,
+      username: profileDetails.email,
     })
     const userData = await this.userService.createUser({
-      email: profileDetails.peopleDetails.emailAddresses[0].value,
-      phone:
-        profileDetails.peopleDetails.phoneNumbers?.length > 0
-          ? profileDetails.peopleDetails.phoneNumbers[0].value
-          : null,
+      email: profileDetails.email,
+      phone: profileDetails.phone,
       is_onboarding_completed: false,
       account_id: accountDetails.id,
     })
 
     const relationship = await this.userService.getRelationshipsMaster('Self')
     await this.userService.createFamilyMembers({
-      first_name: profileDetails.peopleDetails.names[0].displayName,
-      relationship_id: relationship?.id,
+      first_name: profileDetails.name,
+      relationship_id: relationship[0]?.id,
       user_id: userData.id,
     })
     return userData
   }
 
   private async authorizeUsingGoogle(code: string) {
-    const oauth2Client = this.makeGoogleOAuth2Client({
+    const oauth2Client = this.googleAuthProvider.makeGoogleOAuth2Client({
       clientId: environment.googleClientId,
       clientSecret: environment.googleClientSecretKey,
     })
@@ -99,24 +99,18 @@ export class AuthService implements AuthServiceInterface {
       access_token: authToken.tokens.access_token,
       refresh_token: authToken.tokens.refresh_token,
     })
-    const googleApi = google.people('v1')
+    const googleApi = this.googleAuthProvider.makeGooglePeopleApi()
     const peopleDetails = await googleApi.people.get({
       auth: oauth2Client,
       resourceName: 'people/me',
       personFields: 'names,phoneNumbers,emailAddresses,locations,locales',
     })
     return {
-      peopleDetails: peopleDetails.data,
+      name: peopleDetails.data.names?.[0]?.displayName,
+      phone: peopleDetails.data.phoneNumbers?.[0]?.value,
+      email: peopleDetails.data.emailAddresses?.[0]?.value,
       access_token: authToken.tokens.access_token,
       refresh_token: authToken.tokens.refresh_token,
     }
-  }
-
-  private makeGoogleOAuth2Client({ clientId, clientSecret }) {
-    return new google.auth.OAuth2(
-      clientId,
-      clientSecret,
-      'https://localhost:4200',
-    )
   }
 }

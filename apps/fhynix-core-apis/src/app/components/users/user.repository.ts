@@ -43,7 +43,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getRelationshipsMaster(relation: string) {
-    const result = await this.client.relationshipsMaster?.find({
+    const result = await this.client.relationshipsMaster?.findMany({
       select: {
         id: true,
         relation: true,

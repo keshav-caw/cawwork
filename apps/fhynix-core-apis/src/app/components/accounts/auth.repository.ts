@@ -13,7 +13,7 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async getAccountDetails(username: string) {
-    const result = await this.client.accounts?.find({
+    const result = await this.client.accounts?.findMany({
       select: {
         id: true,
         username: true,
