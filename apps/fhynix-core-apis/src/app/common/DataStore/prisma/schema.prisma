@@ -8,7 +8,7 @@ generator client {
 	previewFeatures = ["filterJson"]
 }
 model Accounts {
-	id Int @id @default(autoincrement())
+	id String @id @default(uuid())
 	created_at_utc DateTime? @default(now())
 	created_by String? 
 	updated_at_utc DateTime @updatedAt
@@ -19,15 +19,16 @@ model Accounts {
 	last_login_at_utc DateTime 
 	access_token String 
 	refresh_token String 
+	username String 
 }
 model Users {
-	id Int @id @default(autoincrement())
+	id String @id @default(uuid())
 	created_at_utc DateTime? @default(now())
 	created_by String? 
 	updated_at_utc DateTime @updatedAt
 	updated_by String? 
 	is_deleted Boolean @default(false)
-	account_id Int 
+	account_id String 
 	email String 
 	phone String? 
 	address String? 
@@ -35,14 +36,14 @@ model Users {
 	is_onboarding_completed Boolean 
 }
 model FamilyMembers {
-	id Int @id @default(autoincrement())
+	id String @id @default(uuid())
 	created_at_utc DateTime? @default(now())
 	created_by String? 
 	updated_at_utc DateTime? @updatedAt
 	updated_by String? 
 	is_deleted Boolean @default(false)
-	user_id Int 
-	relationship_id Int 
+	user_id String 
+	relationship_id String 
 	first_name String 
 	last_name String? 
 	dob DateTime? 
@@ -54,7 +55,7 @@ model FamilyMembers {
 	interests String? 
 }
 model RelationshipsMaster {
-	id Int @id @default(autoincrement())
+	id String @id @default(uuid())
 	created_at_utc DateTime? @default(now())
 	created_by String 
 	updated_at_utc DateTime @updatedAt

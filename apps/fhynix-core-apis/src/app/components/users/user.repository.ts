@@ -40,6 +40,20 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
+  async getRelationshipsMaster(relation: string) {
+    const result = await this.client.relationshipsMaster?.find({
+      select: {
+        id: true,
+        relation: true,
+        relation_type: true,
+      },
+      where: {
+        relation: relation,
+      },
+    })
+    return result ? result : []
+  }
+
   async createUser(userDetails) {
     const result = await this.client.users?.create({
       data: userDetails,
