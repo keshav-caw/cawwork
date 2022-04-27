@@ -8,6 +8,7 @@ import { google } from 'googleapis'
 import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import { UserService } from '../users/user.service'
 import { UserTypes } from '../users/user.types'
+import { LoginMethodEnum } from '../../common/enums/login-method.enum'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -17,7 +18,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(UserTypes.user) private userService: UserService,
   ) {}
   async login(userDetails) {
-    if (userDetails.provider === 'GOOGLE_PROVIDER') {
+    if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
       const profileDetails = await this.googleAuthorization(
         userDetails.authCode,
       )
@@ -58,7 +59,6 @@ export class AuthService implements AuthServiceInterface {
       },
       accountId,
     )
-    console.log(accountDetails)
     return accountDetails
   }
 
@@ -66,7 +66,7 @@ export class AuthService implements AuthServiceInterface {
     const accountDetails = await this.authRepository.createAccounts({
       access_token: profileDetails.access_token,
       refresh_token: profileDetails.refresh_token,
-      login_method: 'GOOGLE_PROVIDER',
+      login_method: LoginMethodEnum.GOOGLE_PROVIDER,
     })
     const userData = await this.userService.createUser({
       email: profileDetails.peopleDetails.emailAddresses[0].value,
