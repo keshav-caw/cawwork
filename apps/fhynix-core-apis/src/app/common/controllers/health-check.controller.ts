@@ -8,7 +8,7 @@ import {
   next,
 } from 'inversify-express-utils'
 
-@controller('/heartbeat')
+@controller('/health')
 export class HealthCheckController implements interfaces.Controller {
   @httpGet('/')
   public async getTestUser(
