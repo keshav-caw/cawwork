@@ -28,4 +28,8 @@ export class UserService {
   async updateUserDetails(userDetails, userId) {
     return await this.userRepository.updateUserDetails(userDetails, userId)
   }
+
+  async getRelationshipsMaster(relation) {
+    return await this.userRepository.getRelationshipsMaster(relation)
+  }
 }

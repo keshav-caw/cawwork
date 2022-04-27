@@ -11,14 +11,17 @@ export class AuthRepository implements AuthRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getLoginDetails(userDetails: any) {
-    const result = await this.client.users?.findMany({
+  async getAccountDetails(username: string) {
+    const result = await this.client.accounts?.find({
+      select: {
+        id: true,
+        username: true,
+      },
       where: {
-        emailId: userDetails.username,
-        password: userDetails.password,
+        username: username,
       },
     })
-    return result
+    return result ? result : []
   }
 
   async createAccounts(accountDetails: any) {
@@ -29,12 +32,14 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result
   }
 
-  async updateAccounts(accountDetails: any, accountId: number) {
+  async updateAccounts(accountDetails: any, accountId: string) {
     accountDetails['last_login_at_utc'] = new Date().toISOString()
+    console.log(accountId)
+    console.log(accountDetails)
     const result = await this.client.accounts?.update({
       data: accountDetails,
       where: {
-        id: Number(accountId),
+        id: accountId,
       },
     })
     return result

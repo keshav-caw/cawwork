@@ -1,4 +1,4 @@
 export interface AuthRepositoryInterface {
-  getLoginDetails(userDetails)
+  getAccountDetails(userDetails)
   createAccounts(accountDetails)
 }

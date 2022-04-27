@@ -22,30 +22,26 @@ export class AuthService implements AuthServiceInterface {
       const profileDetails = await this.googleAuthorization(
         userDetails.authCode,
       )
-      const user = await this.userService.getUserByEmailId(
+      const user = await this.authRepository.getAccountDetails(
         profileDetails.peopleDetails.emailAddresses[0].value,
       )
+      console.log(user)
+      let userData
       if (user.length > 0) {
-        await this.updateAccountDetails(
+        userData = await this.updateAccountDetails(
           profileDetails.access_token,
           profileDetails.refresh_token,
-          user[0].account_id,
+          user?.id,
         )
-        const authToken = await this.jwtService.encode({
-          user_id: user[0]?.id,
-          email: user[0]?.email,
-        })
-
-        return { authToken: authToken }
       } else {
-        const userDetails = await this.createAccountDetails(profileDetails)
-        const authToken = await this.jwtService.encode({
-          user_id: userDetails?.id,
-          email: userDetails?.email,
-        })
-
-        return { authToken: authToken }
+        userData = await this.createAccountDetails(profileDetails)
       }
+      const authToken = await this.jwtService.encode({
+        user_id: userData?.id,
+        email: userData?.email,
+      })
+
+      return { authToken: authToken }
     } else {
       return { status: 400, message: 'Please login through google provider' }
     }
@@ -67,6 +63,7 @@ export class AuthService implements AuthServiceInterface {
       access_token: profileDetails.access_token,
       refresh_token: profileDetails.refresh_token,
       login_method: LoginMethodEnum.GOOGLE_PROVIDER,
+      username: profileDetails.peopleDetails.emailAddresses[0].value,
     })
     const userData = await this.userService.createUser({
       email: profileDetails.peopleDetails.emailAddresses[0].value,
@@ -77,9 +74,11 @@ export class AuthService implements AuthServiceInterface {
       is_onboarding_completed: false,
       account_id: accountDetails.id,
     })
+
+    const relationship = await this.userService.getRelationshipsMaster('Self')
     await this.userService.createFamilyMembers({
       first_name: profileDetails.peopleDetails.names[0].displayName,
-      relationship_id: 1,
+      relationship_id: relationship?.id,
       user_id: userData.id,
     })
     return userData
