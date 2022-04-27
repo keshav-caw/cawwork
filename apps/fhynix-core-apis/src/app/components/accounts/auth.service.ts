@@ -19,13 +19,13 @@ export class AuthService implements AuthServiceInterface {
   ) {}
   async login(userDetails) {
     if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
-      const profileDetails = await this.googleAuthorization(
+      const profileDetails = await this.authorizeUsingGoogle(
         userDetails.authCode,
       )
       const user = await this.authRepository.getAccountDetails(
         profileDetails.peopleDetails.emailAddresses[0].value,
       )
-      console.log(user)
+
       let userData
       if (user.length > 0) {
         userData = await this.updateAccountDetails(
@@ -47,7 +47,11 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
-  async updateAccountDetails(access_token, refresh_token, accountId) {
+  async updateAccountDetails(
+    access_token: string,
+    refresh_token: string,
+    accountId: string,
+  ) {
     const accountDetails = await this.authRepository.updateAccounts(
       {
         access_token: access_token,
@@ -84,7 +88,7 @@ export class AuthService implements AuthServiceInterface {
     return userData
   }
 
-  private async googleAuthorization(code: string) {
+  private async authorizeUsingGoogle(code: string) {
     const oauth2Client = this.makeGoogleOAuth2Client({
       clientId: environment.googleClientId,
       clientSecret: environment.googleClientSecretKey,

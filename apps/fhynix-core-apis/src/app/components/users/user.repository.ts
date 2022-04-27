@@ -2,6 +2,8 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { UserRepositoryInterface } from '../../common/interfaces/user-repository.interface'
+import { FamilyMembersModel } from '../../common/models/family-members-model'
+import { UserModel } from '../../common/models/user-model'
 
 @injectable()
 export class UserRepository implements UserRepositoryInterface {
@@ -11,7 +13,7 @@ export class UserRepository implements UserRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getUserDetails(userId: number) {
+  async getUserDetails(userId: string) {
     const result = await this.client.users?.findMany({
       select: {
         id: true,
@@ -19,7 +21,7 @@ export class UserRepository implements UserRepositoryInterface {
         email: true,
       },
       where: {
-        id: Number(userId),
+        id: userId,
       },
     })
     return result ? result : []
@@ -54,25 +56,25 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async createUser(userDetails) {
+  async createUser(userDetails: UserModel) {
     const result = await this.client.users?.create({
       data: userDetails,
     })
     return result
   }
 
-  async createFamilyMembers(familyDetails) {
+  async createFamilyMembers(familyDetails: FamilyMembersModel) {
     const result = await this.client.familyMembers?.create({
       data: familyDetails,
     })
     return result
   }
 
-  async updateUserDetails(userDetails: any, userId: number) {
+  async updateUserDetails(userDetails: UserModel, userId: string) {
     const result = await this.client.users?.update({
       data: userDetails,
       where: {
-        id: Number(userId),
+        id: userId,
       },
     })
     return result

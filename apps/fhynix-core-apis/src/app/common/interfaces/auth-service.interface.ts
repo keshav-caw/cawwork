@@ -3,6 +3,6 @@ export interface AuthServiceInterface {
   updateAccountDetails(
     access_token: string,
     refresh_token: string,
-    accountId: number,
+    accountId: string,
   )
 }

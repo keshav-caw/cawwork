@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { AuthRepositoryInterface } from '../../common/interfaces/auth-repository.interface'
+import { AccountModel } from '../../common/models/account-model'
 
 @injectable()
 export class AuthRepository implements AuthRepositoryInterface {
@@ -24,18 +25,16 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result ? result : []
   }
 
-  async createAccounts(accountDetails: any) {
-    accountDetails['last_login_at_utc'] = new Date().toISOString()
+  async createAccounts(accountDetails: AccountModel) {
+    accountDetails['last_login_at_utc'] = new Date()
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
     return result
   }
 
-  async updateAccounts(accountDetails: any, accountId: string) {
-    accountDetails['last_login_at_utc'] = new Date().toISOString()
-    console.log(accountId)
-    console.log(accountDetails)
+  async updateAccounts(accountDetails: AccountModel, accountId: string) {
+    accountDetails['last_login_at_utc'] = new Date()
     const result = await this.client.accounts?.update({
       data: accountDetails,
       where: {

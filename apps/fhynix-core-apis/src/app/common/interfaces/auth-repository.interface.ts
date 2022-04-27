@@ -1,4 +1,7 @@
+import { AccountModel } from '../models/account-model'
+
 export interface AuthRepositoryInterface {
-  getAccountDetails(userDetails)
-  createAccounts(accountDetails)
+  getAccountDetails(username: string)
+  createAccounts(accountDetails: AccountModel)
+  updateAccounts(accountDetails: AccountModel, accountId: string)
 }
