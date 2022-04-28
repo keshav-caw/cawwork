@@ -47,7 +47,7 @@ pipeline {
                 sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"
                 sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
                 
-                sh "aws ecs update-service --cluster fhynix-dev-cluster --service fhynix-api-dev --task-definition fhynix-dev-api:7 --desired-count 1 --force-new-deployment --region ap-south-1"
+                sh "aws ecs update-service --cluster dev-cluster --service dev-service --task-definition dev-td:1 --desired-count 1 --force-new-deployment --region ap-south-1"
         }
          }
         }
