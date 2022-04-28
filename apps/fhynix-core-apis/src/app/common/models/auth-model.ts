@@ -1,3 +1,4 @@
 export class AuthModel {
-  userId: string
+  user_id: string
+  email: string
 }
