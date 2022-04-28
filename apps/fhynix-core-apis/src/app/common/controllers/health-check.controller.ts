@@ -8,18 +8,9 @@ import {
   next,
 } from 'inversify-express-utils'
 
-@controller('/')
+@controller('/health')
 export class HealthCheckController implements interfaces.Controller {
-  @httpGet('/heartbeat')
-  public async getHeartBeat(
-    @request() req: express.Request,
-    @response() res: express.Response,
-    @next() next: express.NextFunction,
-  ): Promise<any> {
-    return res.send('App is healthy!')
-  }
-
-  @httpGet('/health')
+  @httpGet('/')
   public async getHealthStatus(
     @request() req: express.Request,
     @response() res: express.Response,
