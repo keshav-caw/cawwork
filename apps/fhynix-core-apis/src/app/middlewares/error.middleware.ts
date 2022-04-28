@@ -6,6 +6,7 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ApiErrorResponsePayload } from 'apps/shared/payloads/api-response-payload'
 import { DatabaseError } from '../common/errors/custom-errors/database.error'
 import { ThirdPartyAPIError } from '../common/errors/custom-errors/third-party.error'
+import { ApiError } from '../common/errors/custom-errors/apiError.error'
 
 const errorMiddleWare = (err, req, res, next) => {
   const logger = CommonContainer.get<Loggerservice>(CommonTypes.logger)
@@ -16,6 +17,9 @@ const errorMiddleWare = (err, req, res, next) => {
       return new ApiErrorResponsePayload(ApiErrorCode.E0001)
     case err instanceof ThirdPartyAPIError:
       return new ApiErrorResponsePayload(ApiErrorCode.E0001)
+    case err instanceof ApiError:
+      res.send({ error: err, status: 400 }, 400)
+      return
     default: {
       logger.error(
         'Exceptional Error',

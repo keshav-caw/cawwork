@@ -10,6 +10,8 @@ import { UserTypes } from '../users/user.types'
 import { LoginMethodEnum } from '../../common/enums/login-method.enum'
 import { GoogleAuthProvider } from './google-auth-provider.service'
 import { AccountTypes } from './account.types'
+import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
+import { ApiError } from '../../common/errors/custom-errors/apiError.error'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -46,7 +48,7 @@ export class AuthService implements AuthServiceInterface {
 
       return { authToken: authToken }
     } else {
-      return { status: 400, message: 'Please login through google provider' }
+      throw new ApiError(ApiErrorCode.E0004)
     }
   }
 

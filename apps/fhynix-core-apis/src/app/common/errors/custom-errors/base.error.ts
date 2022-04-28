@@ -1,5 +1,6 @@
 export abstract class BaseError extends Error {
   public readonly name: string
+  public errMessage: string
   public apiErrorCode = 'E0001'
 
   constructor(name, message) {
