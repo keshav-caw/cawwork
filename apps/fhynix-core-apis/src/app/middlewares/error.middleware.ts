@@ -12,13 +12,14 @@ const errorMiddleWare = (err, req, res, next) => {
   const logger = CommonContainer.get<Loggerservice>(CommonTypes.logger)
   switch (true) {
     case err instanceof ArgumentValidationError:
-      return new ApiErrorResponsePayload(ApiErrorCode.E0003)
+      return new ApiErrorResponsePayload(ApiErrorCode.E0001)
     case err instanceof DatabaseError:
-      return new ApiErrorResponsePayload(ApiErrorCode.E0001)
+      return new ApiErrorResponsePayload(ApiErrorCode.E0002)
     case err instanceof ThirdPartyAPIError:
-      return new ApiErrorResponsePayload(ApiErrorCode.E0001)
+      res.status(400).send({ error: err, status: 400 })
+      return
     case err instanceof ApiError:
-      res.send({ error: err, status: 400 }, 400)
+      res.status(400).send({ error: err, status: 400 })
       return
     default: {
       logger.error(

@@ -12,6 +12,7 @@ import { GoogleAuthProvider } from './google-auth-provider.service'
 import { AccountTypes } from './account.types'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ApiError } from '../../common/errors/custom-errors/apiError.error'
+import { ThirdPartyAPIError } from '../../common/errors/custom-errors/third-party.error'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -24,9 +25,12 @@ export class AuthService implements AuthServiceInterface {
   ) {}
   async login(userDetails) {
     if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
-      const profileDetails = await this.authorizeUsingGoogle(
-        userDetails.authCode,
-      )
+      let profileDetails
+      try {
+        profileDetails = await this.authorizeUsingGoogle(userDetails.authCode)
+      } catch (e) {
+        throw new ThirdPartyAPIError(ApiErrorCode.E0003)
+      }
       const user = await this.authRepository.getAccountDetails(
         profileDetails.email,
       )
