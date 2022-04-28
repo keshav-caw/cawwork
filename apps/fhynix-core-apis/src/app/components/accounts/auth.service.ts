@@ -13,6 +13,7 @@ import { AccountTypes } from './account.types'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ApiError } from '../../common/errors/custom-errors/apiError.error'
 import { ThirdPartyAPIError } from '../../common/errors/custom-errors/third-party.error'
+import { UserLoginModel } from '../../common/models/user-login-model'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -23,7 +24,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
   ) {}
-  async login(userDetails) {
+  async login(userDetails: UserLoginModel) {
     if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
       let profileDetails
       try {
