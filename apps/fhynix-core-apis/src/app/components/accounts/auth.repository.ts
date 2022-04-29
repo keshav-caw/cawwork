@@ -26,7 +26,7 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async createAccounts(accountDetails: AccountModel) {
-    accountDetails['last_login_at_utc'] = new Date()
+    accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
@@ -34,7 +34,7 @@ export class AuthRepository implements AuthRepositoryInterface {
   }
 
   async updateAccounts(accountDetails: AccountModel, accountId: string) {
-    accountDetails['last_login_at_utc'] = new Date()
+    accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.update({
       data: accountDetails,
       where: {

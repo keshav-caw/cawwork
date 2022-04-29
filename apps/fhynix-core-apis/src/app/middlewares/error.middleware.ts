@@ -10,6 +10,7 @@ import { ApiError } from '../common/errors/custom-errors/apiError.error'
 
 const errorMiddleWare = (err, req, res, next) => {
   const logger = CommonContainer.get<Loggerservice>(CommonTypes.logger)
+  console.log(err)
   switch (true) {
     case err instanceof ArgumentValidationError:
       return new ApiErrorResponsePayload(ApiErrorCode.E0001)

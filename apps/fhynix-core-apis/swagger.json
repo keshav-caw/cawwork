@@ -58,7 +58,7 @@
   "consumes": ["application/json"],
   "definitions": {
     "getUser": {
-      "required": ["access_token"],
+      "required": ["accessToken"],
       "properties": {
         "id": {
           "type": "integer",
@@ -70,10 +70,10 @@
         "phone": {
           "type": "string"
         },
-        "first_name": {
+        "firstName": {
           "type": "string"
         },
-        "is_onboarding_completed": {
+        "isOnboardingCompleted": {
           "type": "boolean"
         }
       }

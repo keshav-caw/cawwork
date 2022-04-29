@@ -35,19 +35,18 @@ export class AuthService implements AuthServiceInterface {
       const user = await this.authRepository.getAccountDetails(
         profileDetails.email,
       )
-
       let userData
       if (user?.length > 0) {
         userData = await this.updateAccountDetails(
-          profileDetails.access_token,
-          profileDetails.refresh_token,
+          profileDetails.accessToken,
+          profileDetails.refreshToken,
           user[0]?.id,
         )
       } else {
         userData = await this.createAccountDetails(profileDetails)
       }
       const authToken = await this.jwtService.encode({
-        user_id: userData?.id,
+        userId: userData?.id,
         email: userData?.email,
       })
 
@@ -58,14 +57,14 @@ export class AuthService implements AuthServiceInterface {
   }
 
   async updateAccountDetails(
-    access_token: string,
-    refresh_token: string,
+    accessToken: string,
+    refreshToken: string,
     accountId: string,
   ) {
     const accountDetails = await this.authRepository.updateAccounts(
       {
-        access_token: access_token,
-        refresh_token: refresh_token,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       },
       accountId,
     )
@@ -74,23 +73,25 @@ export class AuthService implements AuthServiceInterface {
 
   private async createAccountDetails(profileDetails) {
     const accountDetails = await this.authRepository.createAccounts({
-      access_token: profileDetails.access_token,
-      refresh_token: profileDetails.refresh_token,
-      login_method: LoginMethodEnum.GOOGLE_PROVIDER,
+      accessToken: profileDetails.accessToken,
+      refreshToken: profileDetails.refreshToken,
+      loginMethod: LoginMethodEnum.GOOGLE_PROVIDER,
       username: profileDetails.email,
     })
+
     const userData = await this.userService.createUser({
       email: profileDetails.email,
       phone: profileDetails.phone,
-      is_onboarding_completed: false,
-      account_id: accountDetails.id,
+      isOnboardingCompleted: false,
+      accountId: accountDetails.id,
     })
 
     const relationship = await this.userService.getRelationshipsMaster('Self')
+
     await this.userService.createFamilyMembers({
-      first_name: profileDetails.name,
-      relationship_id: relationship[0]?.id,
-      user_id: userData.id,
+      firstName: profileDetails.name,
+      relationshipId: relationship[0]?.id,
+      userId: userData.id,
     })
     return userData
   }
@@ -116,8 +117,8 @@ export class AuthService implements AuthServiceInterface {
       name: peopleDetails.data.names?.[0]?.displayName,
       phone: peopleDetails.data.phoneNumbers?.[0]?.value,
       email: peopleDetails.data.emailAddresses?.[0]?.value,
-      access_token: authToken.tokens.access_token,
-      refresh_token: authToken.tokens.refresh_token,
+      accessToken: authToken.tokens.access_token,
+      refreshToken: authToken.tokens.refresh_token,
     }
   }
 }

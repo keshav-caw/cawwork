@@ -32,7 +32,7 @@ export class UserController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ): Promise<any> {
     const authTokenInfo = this.authStoreService.getAuthTokenInfo()
-    const details = await this.userService.getUsers(authTokenInfo?.user_id)
+    const details = await this.userService.getUsers(authTokenInfo?.userId)
     return res.send(details)
   }
 
@@ -52,7 +52,7 @@ export class UserController implements interfaces.Controller {
     const authTokenInfo = this.authStoreService.getAuthTokenInfo()
     const details = await this.userService.updateUserDetails(
       req.body,
-      authTokenInfo?.user_id,
+      authTokenInfo?.userId,
     )
     res.send(details)
   }

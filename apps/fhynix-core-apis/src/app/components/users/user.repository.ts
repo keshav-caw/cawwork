@@ -19,6 +19,8 @@ export class UserRepository implements UserRepositoryInterface {
         id: true,
         phone: true,
         email: true,
+        accountId: true,
+        isOnboardingCompleted: true,
       },
       where: {
         id: userId,
@@ -33,7 +35,8 @@ export class UserRepository implements UserRepositoryInterface {
         id: true,
         phone: true,
         email: true,
-        account_id: true,
+        accountId: true,
+        isOnboardingCompleted: true,
       },
       where: {
         email: userEmail,
@@ -47,7 +50,7 @@ export class UserRepository implements UserRepositoryInterface {
       select: {
         id: true,
         relation: true,
-        relation_type: true,
+        relationType: true,
       },
       where: {
         relation: relation,
