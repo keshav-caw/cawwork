@@ -25,7 +25,9 @@ export class AuthService implements AuthServiceInterface {
     private googleAuthProvider: GoogleAuthProvider,
   ) {}
   async login(userDetails: UserLoginModel) {
-    if (userDetails.provider === LoginMethodEnum.GOOGLE_PROVIDER) {
+    if (userDetails.provider !== LoginMethodEnum.GOOGLE_PROVIDER) {
+      throw new ApiError(ApiErrorCode.E0004)
+    } else {
       let profileDetails
       try {
         profileDetails = await this.authorizeUsingGoogle(userDetails.authCode)
@@ -51,8 +53,6 @@ export class AuthService implements AuthServiceInterface {
       })
 
       return { authToken: authToken }
-    } else {
-      throw new ApiError(ApiErrorCode.E0004)
     }
   }
 
@@ -61,14 +61,16 @@ export class AuthService implements AuthServiceInterface {
     refreshToken: string,
     accountId: string,
   ) {
-    const accountDetails = await this.authRepository.updateAccounts(
+    await this.authRepository.updateAccounts(
       {
         accessToken: accessToken,
         refreshToken: refreshToken,
       },
       accountId,
     )
-    return accountDetails
+
+    const userDetails = await this.userService.getUserByAccountId(accountId)
+    return userDetails[0]
   }
 
   private async createAccountDetails(profileDetails) {
@@ -86,13 +88,6 @@ export class AuthService implements AuthServiceInterface {
       accountId: accountDetails.id,
     })
 
-    const relationship = await this.userService.getRelationshipsMaster('Self')
-
-    await this.userService.createFamilyMembers({
-      firstName: profileDetails.name,
-      relationshipId: relationship[0]?.id,
-      userId: userData.id,
-    })
     return userData
   }
 

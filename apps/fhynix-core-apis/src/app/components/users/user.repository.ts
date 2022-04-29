@@ -29,7 +29,7 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async getUserDetailsByEmailId(userEmail: string) {
+  async getUserDetailsByAccountId(accountId: string) {
     const result = await this.client.users?.findMany({
       select: {
         id: true,
@@ -39,7 +39,7 @@ export class UserRepository implements UserRepositoryInterface {
         isOnboardingCompleted: true,
       },
       where: {
-        email: userEmail,
+        accountId: accountId,
       },
     })
     return result ? result : []

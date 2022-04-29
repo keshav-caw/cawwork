@@ -14,13 +14,23 @@ export class UserService {
     return details
   }
 
-  async getUserByEmailId(userEmail: string) {
-    const details = await this.userRepository.getUserDetailsByEmailId(userEmail)
+  async getUserByAccountId(accountId: string) {
+    const details = await this.userRepository.getUserDetailsByAccountId(
+      accountId,
+    )
     return details
   }
 
   async createUser(userDetails: UserModel) {
-    return await this.userRepository.createUser(userDetails)
+    const userData = await this.userRepository.createUser(userDetails)
+    const relationship = await this.getRelationshipsMaster('Self')
+
+    await this.createFamilyMembers({
+      firstName: userDetails.email,
+      relationshipId: relationship[0]?.id,
+      userId: userData.id,
+    })
+    return userData
   }
 
   async createFamilyMembers(familyDetails: FamilyMembersModel) {

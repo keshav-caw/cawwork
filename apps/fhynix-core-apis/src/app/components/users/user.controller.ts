@@ -32,6 +32,7 @@ export class UserController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ): Promise<any> {
     const authTokenInfo = this.authStoreService.getAuthTokenInfo()
+    console.log(authTokenInfo)
     const details = await this.userService.getUsers(authTokenInfo?.userId)
     return res.send(details)
   }
