@@ -1,3 +1,4 @@
+import { RelationshipsMaster } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
@@ -13,7 +14,7 @@ export class UserRepository implements UserRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getUserDetails(userId: string) {
+  async getUserDetails(userId: string): Promise<UserModel[]> {
     const result = await this.client.users?.findMany({
       select: {
         id: true,
@@ -29,7 +30,7 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async getUserDetailsByAccountId(accountId: string) {
+  async getUserDetailsByAccountId(accountId: string): Promise<UserModel[]> {
     const result = await this.client.users?.findMany({
       select: {
         id: true,
@@ -45,7 +46,9 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async getRelationshipsMaster(relation: string) {
+  async getRelationshipsMaster(
+    relation: string,
+  ): Promise<RelationshipsMaster[]> {
     const result = await this.client.relationshipsMaster?.findMany({
       select: {
         id: true,
@@ -59,21 +62,26 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async createUser(userDetails: UserModel) {
+  async createUser(userDetails: UserModel): Promise<UserModel> {
     const result = await this.client.users?.create({
       data: userDetails,
     })
     return result
   }
 
-  async createFamilyMembers(familyDetails: FamilyMembersModel) {
+  async createFamilyMembers(
+    familyDetails: FamilyMembersModel,
+  ): Promise<FamilyMembersModel> {
     const result = await this.client.familyMembers?.create({
       data: familyDetails,
     })
     return result
   }
 
-  async updateUserDetails(userDetails: UserModel, userId: string) {
+  async updateUserDetails(
+    userDetails: UserModel,
+    userId: string,
+  ): Promise<UserModel> {
     const result = await this.client.users?.update({
       data: userDetails,
       where: {

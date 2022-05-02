@@ -14,6 +14,8 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ApiError } from '../../common/errors/custom-errors/apiError.error'
 import { ThirdPartyAPIError } from '../../common/errors/custom-errors/third-party.error'
 import { UserLoginModel } from '../../common/models/user-login-model'
+import { AccountModel } from '../../common/models/account-model'
+import { UserModel } from '../../common/models/user-model'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -39,11 +41,11 @@ export class AuthService implements AuthServiceInterface {
       )
       let userData
       if (user?.length > 0) {
-        userData = await this.updateAccountDetails(
-          profileDetails.accessToken,
-          profileDetails.refreshToken,
-          user[0]?.id,
-        )
+        userData = await this.updateAccountDetails({
+          accessToken: profileDetails.accessToken,
+          refreshToken: profileDetails.refreshToken,
+          accountId: user[0]?.id,
+        })
       } else {
         userData = await this.createAccountDetails(profileDetails)
       }
@@ -56,24 +58,22 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
-  async updateAccountDetails(
-    accessToken: string,
-    refreshToken: string,
-    accountId: string,
-  ) {
+  async updateAccountDetails(accountDetails: any): Promise<UserModel> {
     await this.authRepository.updateAccounts(
       {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        accessToken: accountDetails.accessToken,
+        refreshToken: accountDetails.refreshToken,
       },
-      accountId,
+      accountDetails.accountId,
     )
 
-    const userDetails = await this.userService.getUserByAccountId(accountId)
+    const userDetails = await this.userService.getUserByAccountId(
+      accountDetails.accountId,
+    )
     return userDetails[0]
   }
 
-  private async createAccountDetails(profileDetails) {
+  private async createAccountDetails(profileDetails): Promise<UserModel> {
     const accountDetails = await this.authRepository.createAccounts({
       accessToken: profileDetails.accessToken,
       refreshToken: profileDetails.refreshToken,

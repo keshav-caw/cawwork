@@ -9,7 +9,7 @@ import {
 } from 'inversify-express-utils'
 
 @controller('/heartbeat')
-export class HealthCheckController implements interfaces.Controller {
+export class HeartbeatController implements interfaces.Controller {
   @httpGet('/')
   public async getTestUser(
     @request() req: express.Request,

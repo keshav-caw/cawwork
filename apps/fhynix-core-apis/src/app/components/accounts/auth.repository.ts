@@ -12,7 +12,7 @@ export class AuthRepository implements AuthRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getAccountDetails(username: string) {
+  async getAccountDetails(username: string): Promise<AccountModel[]> {
     const result = await this.client.accounts?.findMany({
       select: {
         id: true,
@@ -25,7 +25,7 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result ? result : []
   }
 
-  async createAccounts(accountDetails: AccountModel) {
+  async createAccounts(accountDetails: AccountModel): Promise<AccountModel> {
     accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.create({
       data: accountDetails,
@@ -33,7 +33,10 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result
   }
 
-  async updateAccounts(accountDetails: AccountModel, accountId: string) {
+  async updateAccounts(
+    accountDetails: AccountModel,
+    accountId: string,
+  ): Promise<AccountModel> {
     accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.update({
       data: accountDetails,

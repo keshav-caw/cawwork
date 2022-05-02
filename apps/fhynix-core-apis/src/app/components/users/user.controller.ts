@@ -14,18 +14,18 @@ import { UserService } from './user.service'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
-import { AuthStoreService } from '../../common/jwtservice/auth-store.service'
+import { RequestContext } from '../../common/jwtservice/auth-store.service'
 
-@controller('/contact/me')
+@controller('/users')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
     @inject(CommonTypes.authStoreService)
-    private authStoreService: AuthStoreService,
+    private authStoreService: RequestContext,
   ) {}
 
-  @httpGet('/', CommonTypes.jwtAuthMiddleware)
+  @httpGet('/me', CommonTypes.jwtAuthMiddleware)
   public async getUsers(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -33,7 +33,7 @@ export class UserController implements interfaces.Controller {
   ): Promise<any> {
     const authTokenInfo = this.authStoreService.getAuthTokenInfo()
     console.log(authTokenInfo)
-    const details = await this.userService.getUsers(authTokenInfo?.userId)
+    const details = await this.userService.getUserDetail(authTokenInfo?.userId)
     return res.send(details)
   }
 
@@ -45,7 +45,7 @@ export class UserController implements interfaces.Controller {
     res.send(await this.userService.createUser(req.body))
   }
 
-  @httpPut('/', CommonTypes.jwtAuthMiddleware)
+  @httpPut('/me', CommonTypes.jwtAuthMiddleware)
   private async updateUser(
     @request() req: express.Request,
     @response() res: express.Response,
