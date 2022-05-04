@@ -28,7 +28,11 @@ export class AuthService implements AuthServiceInterface {
   ) {}
   async login(userDetails: UserLoginModel) {
     if (userDetails.provider !== LoginMethodEnum.GOOGLE_PROVIDER) {
-      throw new ArgumentValidationError('', '', ApiErrorCode.E0004)
+      throw new ArgumentValidationError(
+        'Login Provider',
+        userDetails.provider,
+        ApiErrorCode.E0004,
+      )
     } else {
       let profileDetails
       try {
