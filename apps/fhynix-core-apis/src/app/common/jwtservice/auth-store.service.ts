@@ -11,8 +11,10 @@ export class RequestContext implements IRequestContext {
     this.asyncLocalStorage = new AsyncLocalStorage()
   }
   async setAuthToken(authToken: AuthModel) {
-    this.asyncLocalStorage.enterWith({ userId: authToken.userId })
-    this.asyncLocalStorage.enterWith({ email: authToken.email })
+    this.asyncLocalStorage.enterWith({
+      userId: authToken.userId,
+      email: authToken.email,
+    })
   }
 
   getUserId() {

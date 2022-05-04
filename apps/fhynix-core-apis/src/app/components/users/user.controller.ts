@@ -32,7 +32,6 @@ export class UserController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ): Promise<any> {
     const userId = this.authStoreService.getUserId()
-    console.log(userId)
     const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
