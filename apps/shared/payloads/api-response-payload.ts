@@ -4,5 +4,6 @@ export class ApiErrorResponsePayload extends PayloadBase {
   apiErrorCode: string
   constructor(errorCode) {
     super()
+    this.apiErrorCode = errorCode
   }
 }

@@ -4,6 +4,7 @@ import { ApiErrorCode } from '../../../../shared/payloads/error-codes'
 import { ApiErrorResponsePayload } from '../../../../shared/payloads/api-response-payload'
 import { CommonTypes } from '../common/common.types'
 import { RequestContext } from '../common/jwtservice/auth-store.service'
+import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error'
 
 const jwtMiddleWare = (req, res, next) => {
   const jwtService = CommonContainer.get<JWTService>(CommonTypes.jwt)
@@ -11,12 +12,14 @@ const jwtMiddleWare = (req, res, next) => {
     CommonTypes.authStoreService,
   )
   if (req.headers.authorization) {
-    if (jwtService.validate(req.headers.authorization)) {
-      const authToken = jwtService.decode(req.headers.authorization)
-      authStoreService.setAuthToken(authToken)
-      next()
-    } else {
-      return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
+    try {
+      if (jwtService.validate(req.headers.authorization)) {
+        const authToken = jwtService.decode(req.headers.authorization)
+        authStoreService.setAuthToken(authToken)
+        next()
+      }
+    } catch (e) {
+      throw new UnauthorizedError()
     }
   } else {
     return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))

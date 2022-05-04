@@ -11,11 +11,11 @@ import { LoginMethodEnum } from '../../common/enums/login-method.enum'
 import { GoogleAuthProvider } from './google-auth-provider.service'
 import { AccountTypes } from './account.types'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
-import { ApiError } from '../../common/errors/custom-errors/apiError.error'
 import { ThirdPartyAPIError } from '../../common/errors/custom-errors/third-party.error'
 import { UserLoginModel } from '../../common/models/user-login-model'
 import { AccountModel } from '../../common/models/account-model'
 import { UserModel } from '../../common/models/user-model'
+import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -28,7 +28,7 @@ export class AuthService implements AuthServiceInterface {
   ) {}
   async login(userDetails: UserLoginModel) {
     if (userDetails.provider !== LoginMethodEnum.GOOGLE_PROVIDER) {
-      throw new ApiError(ApiErrorCode.E0004)
+      throw new ArgumentValidationError('', '', ApiErrorCode.E0004)
     } else {
       let profileDetails
       try {

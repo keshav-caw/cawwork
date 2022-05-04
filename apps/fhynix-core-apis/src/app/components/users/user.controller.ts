@@ -31,9 +31,9 @@ export class UserController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const authTokenInfo = this.authStoreService.getAuthTokenInfo()
-    console.log(authTokenInfo)
-    const details = await this.userService.getUserDetail(authTokenInfo?.userId)
+    const userId = this.authStoreService.getUserId()
+    console.log(userId)
+    const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
 
@@ -50,11 +50,8 @@ export class UserController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const authTokenInfo = this.authStoreService.getAuthTokenInfo()
-    const details = await this.userService.updateUserDetails(
-      req.body,
-      authTokenInfo?.userId,
-    )
+    const userId = this.authStoreService.getUserId()
+    const details = await this.userService.updateUserDetails(req.body, userId)
     res.send(details)
   }
 
