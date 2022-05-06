@@ -8,6 +8,7 @@ import {
   next,
   httpPost,
   httpPut,
+  requestParam,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
@@ -49,8 +50,10 @@ export class UserController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const userId = this.authStoreService.getUserId()
-    const details = await this.userService.updateUserDetails(req.body, userId)
+    const details = await this.userService.updateFamilyMembers(
+      req.body,
+      req.query.memberId.toString(),
+    )
     res.send(details)
   }
 

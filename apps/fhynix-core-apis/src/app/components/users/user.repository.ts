@@ -16,13 +16,6 @@ export class UserRepository implements UserRepositoryInterface {
 
   async getUserDetails(userId: string): Promise<UserModel[]> {
     const result = await this.client.users?.findMany({
-      select: {
-        id: true,
-        phone: true,
-        email: true,
-        accountId: true,
-        isOnboardingCompleted: true,
-      },
       where: {
         id: userId,
       },
@@ -86,6 +79,19 @@ export class UserRepository implements UserRepositoryInterface {
       data: userDetails,
       where: {
         id: userId,
+      },
+    })
+    return result
+  }
+
+  async updateFamilyMembers(
+    familyMembers: FamilyMembersModel,
+    familyMemberId: string,
+  ): Promise<FamilyMembersModel> {
+    const result = await this.client.familyMembers?.update({
+      data: familyMembers,
+      where: {
+        id: familyMemberId,
       },
     })
     return result

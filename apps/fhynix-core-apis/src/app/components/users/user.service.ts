@@ -47,6 +47,16 @@ export class UserService {
     return await this.userRepository.updateUserDetails(userDetails, userId)
   }
 
+  async updateFamilyMembers(
+    familyDetails: FamilyMembersModel,
+    familyMemberId: string,
+  ): Promise<FamilyMembersModel> {
+    return await this.userRepository.updateFamilyMembers(
+      familyDetails,
+      familyMemberId,
+    )
+  }
+
   async getRelationshipsMaster(
     relation: string,
   ): Promise<RelationshipsMaster[]> {
