@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { AuthRepositoryInterface } from '../../common/interfaces/auth-repository.interface'
+import { AccountModel } from '../../common/models/account-model'
 
 @injectable()
 export class AuthRepository implements AuthRepositoryInterface {
@@ -11,8 +12,8 @@ export class AuthRepository implements AuthRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getAccountDetails(username: string) {
-    const result = await this.client.accounts?.find({
+  async getAccountDetails(username: string): Promise<AccountModel[]> {
+    const result = await this.client.accounts?.findMany({
       select: {
         id: true,
         username: true,
@@ -24,18 +25,19 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result ? result : []
   }
 
-  async createAccounts(accountDetails: any) {
-    accountDetails['last_login_at_utc'] = new Date().toISOString()
+  async createAccounts(accountDetails: AccountModel): Promise<AccountModel> {
+    accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
     return result
   }
 
-  async updateAccounts(accountDetails: any, accountId: string) {
-    accountDetails['last_login_at_utc'] = new Date().toISOString()
-    console.log(accountId)
-    console.log(accountDetails)
+  async updateAccounts(
+    accountDetails: AccountModel,
+    accountId: string,
+  ): Promise<AccountModel> {
+    accountDetails['lastLoginAtUtc'] = new Date()
     const result = await this.client.accounts?.update({
       data: accountDetails,
       where: {

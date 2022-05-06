@@ -1,8 +1,11 @@
+import { UserLoginModel } from '../models/user-login-model'
+import { UserModel } from '../models/user-model'
+
 export interface AuthServiceInterface {
-  login(userDetails: any)
-  updateAccountDetails(
-    access_token: string,
-    refresh_token: string,
-    accountId: number,
-  )
+  login(userDetails: UserLoginModel)
+  updateAccountDetails({
+    accessToken,
+    refreshToken,
+    accountId,
+  }): Promise<UserModel>
 }
