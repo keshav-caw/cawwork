@@ -39,6 +39,27 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
+  async getFamilyMembersForUser(
+    userDetails: FamilyMembersModel,
+  ): Promise<FamilyMembersModel[]> {
+    const result = await this.client.familyMembers?.findMany({
+      where: {
+        userId: userDetails.userId,
+        relationshipId: userDetails.relationshipId,
+      },
+    })
+    return result ? result : []
+  }
+
+  async getFamilyMembers(userId: string): Promise<FamilyMembersModel[]> {
+    const result = await this.client.familyMembers?.findMany({
+      where: {
+        userId: userId,
+      },
+    })
+    return result ? result : []
+  }
+
   async getRelationshipsMaster(
     relation: string,
   ): Promise<RelationshipsMaster[]> {
