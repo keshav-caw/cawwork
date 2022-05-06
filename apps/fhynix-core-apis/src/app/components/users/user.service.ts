@@ -12,6 +12,12 @@ export class UserService {
   ) {}
   async getUserDetail(userId: string): Promise<UserModel[]> {
     const details = await this.userRepository.getUserDetails(userId)
+    const relationship = await this.getRelationshipsMaster('Self')
+    const familyDetails = await this.userRepository.getFamilyMembersForUser({
+      userId: userId,
+      relationshipId: relationship[0]?.id,
+    })
+    Object.assign(details?.[0], familyDetails?.[0])
     return details
   }
 
