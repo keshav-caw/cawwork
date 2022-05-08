@@ -1,46 +1,35 @@
 model Users {
   id  String  @id @default(uuid())
-  created_at_utc DateTime? @default(now())
-  created_by String?
-  updated_at_utc DateTime @updatedAt
-  updated_by String?
-  is_deleted Boolean @default(false)
-  account_id String
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  accountId String @map("account_id")
   email String
   phone String?
   address String?
-  timezone_offset_in_mins Int?
-  is_onboarding_completed Boolean
+  timezoneOffsetInMins Int? @map("timezone_offset_in_mins")
+  isOnboardingCompleted Boolean @map("is_onboarding_completed")
 }
 
 model FamilyMembers {
   id  String  @id @default(uuid())
-  created_at_utc DateTime? @default(now())
-  created_by String?
-  updated_at_utc DateTime? @updatedAt
-  updated_by String?
-  is_deleted Boolean @default(false)
-  user_id String
-  relationship_id String
-  first_name String
-  last_name String?
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime? @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean? @default(false) @map("is_deleted")
+  userId String? @map("user_id")
+  relationshipId String? @map("relationship_id")
+  firstName String? @map("first_name")
+  lastName String? @map("last_name")
   dob DateTime?
-  profile_image String?
+  profileImage String? @map("profile_image")
   gender String?
-  other_info String?
+  otherInfo String? @map("other_info")
   color String?
   personalities String?
   interests String?
 }
 
-model RelationshipsMaster {
-  id  String   @id @default(uuid())
-  created_at_utc DateTime? @default(now())
-  created_by String
-  updated_at_utc DateTime @updatedAt
-  updated_by String
-  is_deleted Boolean @default(false)
-  relation String
-  relation_type String
-  is_visible Boolean
-}

@@ -8,33 +8,32 @@ import {
   next,
   httpPost,
   httpPut,
+  requestParam,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
+import { RequestContext } from '../../common/jwtservice/auth-store.service'
 
-@controller('/contact/me')
+@controller('/users')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
+    @inject(CommonTypes.authStoreService)
+    private authStoreService: RequestContext,
   ) {}
 
-  @httpGet('/')
+  @httpGet('/me', CommonTypes.jwtAuthMiddleware)
   public async getUsers(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    try {
-      this.jwtService.validate(req.headers.authorization)
-    } catch (e) {
-      return res.send({ status: 401, message: 'unauthorized' })
-    }
-    const tokenInfo = this.jwtService.decode(req.headers.authorization)
-    const details = await this.userService.getUsers(tokenInfo?.user_id)
+    const userId = this.authStoreService.getUserId()
+    const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
 
@@ -46,20 +45,14 @@ export class UserController implements interfaces.Controller {
     res.send(await this.userService.createUser(req.body))
   }
 
-  @httpPut('/')
+  @httpPut('/me', CommonTypes.jwtAuthMiddleware)
   private async updateUser(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    try {
-      this.jwtService.validate(req.headers.authorization)
-    } catch (e) {
-      return res.send({ status: 401, message: 'unauthorized' })
-    }
-    const tokenInfo = this.jwtService.decode(req.headers.authorization)
-    const details = await this.userService.updateUserDetails(
+    const details = await this.userService.updateFamilyMembers(
       req.body,
-      tokenInfo?.user_id,
+      req.query.memberId.toString(),
     )
     res.send(details)
   }

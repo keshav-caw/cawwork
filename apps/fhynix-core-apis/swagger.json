@@ -2,7 +2,7 @@
   "basePath": "/",
   "info": { "title": "Fhynix", "version": "1.0" },
   "paths": {
-    "/contact/me": {
+    "/users/me": {
       "get": {
         "security": [{ "Bearer": [] }],
         "operationId": "getUsers",
@@ -13,6 +13,34 @@
           "200": {
             "description": "Success",
             "schema": { "$ref": "#/definitions/getUser" }
+          },
+          "400": { "description": "Client error and Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"]
+      },
+      "put": {
+        "security": [{ "Bearer": [] }],
+        "operationId": "user",
+        "tags": ["user"],
+        "description": "Update user details",
+        "summary": "Update user details",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update using family member id",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/user" }
           },
           "400": { "description": "Client error and Bad Request" },
           "500": { "description": "Internal Server Error" }
@@ -50,6 +78,35 @@
         "produces": ["application/json"],
         "consumes": ["application/json"]
       }
+    },
+    "/habits": {
+      "get": {
+        "security": [{ "Bearer": [] }],
+        "operationId": "getHabits",
+        "tags": ["habits"],
+        "description": "Get habits by relationship",
+        "summary": "Get habits list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "relationship",
+            "schema": {
+              "type": "string",
+              "enum": ["Self", "Parent", "Kid", "Other"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/habits" }
+          },
+          "400": { "description": "Client error and Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"]
+      }
     }
   },
   "tags": [{ "name": "getUser" }],
@@ -58,7 +115,7 @@
   "consumes": ["application/json"],
   "definitions": {
     "getUser": {
-      "required": ["access_token"],
+      "required": ["accessToken"],
       "properties": {
         "id": {
           "type": "integer",
@@ -70,11 +127,41 @@
         "phone": {
           "type": "string"
         },
-        "first_name": {
+        "firstName": {
           "type": "string"
         },
-        "is_onboarding_completed": {
+        "isOnboardingCompleted": {
           "type": "boolean"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "relationshipId": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "dob": {
+          "type": "date"
+        },
+        "profileImage": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "otherInfo": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "personalities": {
+          "type": "string"
+        },
+        "interests": {
+          "type": "string"
         }
       }
     },
@@ -86,6 +173,62 @@
         }
       }
     },
+    "user": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "relationshipId": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "dob": {
+          "type": "date"
+        },
+        "profileImage": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "otherInfo": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "personalities": {
+          "type": "string"
+        },
+        "interests": {
+          "type": "string"
+        }
+      }
+    },
+    "habits": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "appliesForRelation": {
+          "type": "string"
+        },
+        "isVisible": {
+          "type": "boolean"
+        }
+      }
+    },
     "LoginDto": {
       "type": "object",
       "properties": {
@@ -93,6 +236,41 @@
           "type": "string"
         },
         "provider": {
+          "type": "string"
+        }
+      }
+    },
+    "UserDto": {
+      "type": "object",
+      "properties": {
+        "relationshipId": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "dob": {
+          "type": "date"
+        },
+        "profileImage": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "otherInfo": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "personalities": {
+          "type": "string"
+        },
+        "interests": {
           "type": "string"
         }
       }
