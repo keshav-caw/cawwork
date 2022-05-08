@@ -6,11 +6,6 @@ WORKDIR /app
 # COPY package.json and package-lock.json files
 COPY package.json ./
 
-COPY prismix.config.json ./
-
-# generated prisma files
-COPY apps/fhynix-core-apis/src/app/common/DataStore/prisma/ ./prisma/
-
 # COPY ENV variable
 COPY .env ./
 
@@ -25,8 +20,6 @@ RUN npm install
 # COPY
 COPY . .
 
-# Generate Prisma client.
-RUN npx prisma generate --schema="./apps/fhynix-core-apis/src/app/common/DataStore/prisma/schema.prisma"
 # Run and expose the server on Docker.
 # Run and expose the server on port 3000
 EXPOSE 3000
@@ -34,3 +27,5 @@ EXPOSE 3000
 
 # A command to start the server
 CMD npm start
+
+# https://snyk.io/wp-content/uploads/10-best-practices-to-containerize-Node.js-web-applications-with-Docker.pdf
