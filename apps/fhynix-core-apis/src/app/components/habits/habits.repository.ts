@@ -15,7 +15,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
   async getHabitsByRelationship(relationship: string): Promise<HabitsModel> {
     const result = await this.client.habits?.findMany({
       where: {
-        appliesForRelation: relationship,
+        appliesForRelation: { hasSome: [relationship] },
       },
     })
     return result
