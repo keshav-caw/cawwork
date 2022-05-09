@@ -25,5 +25,5 @@ model FamilyMemberHabits {
   familyMemberId String @map("family_member_id")
   habitId String @map("habit_id")
   name String
-  appliesForRelation String[]  @map("applies_for_relations")
+  appliesForRelation String[] @map("applies_for_relations")
 }
