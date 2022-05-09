@@ -5,6 +5,7 @@ import UserBootstrapper from './components/users/user.bootstrapper'
 import AccountBootstrapper from './components/accounts/account.bootstrapper'
 import HealthCheckBootstrapper from './common/controllers/health-check.bootstrapper'
 import HabitsBootstrapper from './components/habits/habits.bootstrapper'
+import FamilyMemberBootstrapper from './components/family-member/family-member.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
@@ -12,6 +13,7 @@ export default class Bootstrapper {
     UserBootstrapper.initialize()
     AccountBootstrapper.initialize()
     HabitsBootstrapper.initialize()
+    FamilyMemberBootstrapper.initialize()
     MiddlewaresBootstrapper.initialize()
     DataStore.initialize()
     HealthCheckBootstrapper.initialize()

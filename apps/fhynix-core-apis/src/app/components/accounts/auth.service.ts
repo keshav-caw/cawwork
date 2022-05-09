@@ -26,6 +26,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
   ) {}
+
   async login(userDetails: UserLoginModel) {
     if (userDetails.provider !== LoginMethodEnum.GOOGLE_PROVIDER) {
       throw new ArgumentValidationError(
@@ -33,33 +34,33 @@ export class AuthService implements AuthServiceInterface {
         userDetails.provider,
         ApiErrorCode.E0004,
       )
-    } else {
-      let profileDetails
-      try {
-        profileDetails = await this.authorizeUsingGoogle(userDetails.authCode)
-      } catch (e) {
-        throw new ThirdPartyAPIError(ApiErrorCode.E0003)
-      }
-      const user = await this.authRepository.getAccountDetails(
-        profileDetails.email,
-      )
-      let userData
-      if (user?.length > 0) {
-        userData = await this.updateAccountDetails({
-          accessToken: profileDetails.accessToken,
-          refreshToken: profileDetails.refreshToken,
-          accountId: user[0]?.id,
-        })
-      } else {
-        userData = await this.createAccountDetails(profileDetails)
-      }
-      const authToken = await this.jwtService.encode({
-        userId: userData?.id,
-        email: userData?.email,
-      })
-
-      return { authToken: authToken }
     }
+
+    let profileDetails
+    try {
+      profileDetails = await this.authorizeUsingGoogle(userDetails.authCode)
+    } catch (e) {
+      throw new ThirdPartyAPIError(ApiErrorCode.E0003)
+    }
+    const user = await this.authRepository.getAccountDetails(
+      profileDetails.email,
+    )
+    let userData
+    if (user?.length > 0) {
+      userData = await this.updateAccountDetails({
+        accessToken: profileDetails.accessToken,
+        refreshToken: profileDetails.refreshToken,
+        accountId: user[0]?.id,
+      })
+    } else {
+      userData = await this.createAccountDetails(profileDetails)
+    }
+    const authToken = await this.jwtService.encode({
+      userId: userData?.id,
+      email: userData?.email,
+    })
+
+    return { authToken: authToken }
   }
 
   async updateAccountDetails(accountDetails: any): Promise<UserModel> {

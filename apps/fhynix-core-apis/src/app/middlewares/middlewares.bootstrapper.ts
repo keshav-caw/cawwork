@@ -9,7 +9,6 @@ import { RequestIdMiddleware } from './request-id.middleware'
 @injectable()
 export default class MiddlewaresBootstrapper {
   public static initialize() {
-    // initializer
     CommonContainer.bind<express.RequestHandler>(
       CommonTypes.jwtAuthMiddleware,
     ).toConstantValue(jwtMiddleWare)

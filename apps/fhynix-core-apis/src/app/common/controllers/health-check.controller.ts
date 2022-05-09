@@ -11,7 +11,7 @@ import {
 @controller('/')
 export class HeartbeatController implements interfaces.Controller {
   @httpGet('/')
-  public async getTestUser(
+  public async check(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,

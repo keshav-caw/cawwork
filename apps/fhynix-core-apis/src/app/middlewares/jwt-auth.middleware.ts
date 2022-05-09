@@ -8,21 +8,21 @@ import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error
 
 const jwtMiddleWare = (req, res, next) => {
   const jwtService = CommonContainer.get<JWTService>(CommonTypes.jwt)
-  const authStoreService = CommonContainer.get<RequestContext>(
-    CommonTypes.authStoreService,
+  const requestContext = CommonContainer.get<RequestContext>(
+    CommonTypes.requestContext,
   )
-  if (req.headers.authorization) {
+  if (!req.headers.authorization) {
+    return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
+  } else {
     try {
       if (jwtService.validate(req.headers.authorization)) {
         const authToken = jwtService.decode(req.headers.authorization)
-        authStoreService.setAuthToken(authToken)
+        requestContext.setUserId(authToken)
         next()
       }
     } catch (e) {
       throw new UnauthorizedError()
     }
-  } else {
-    return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
   }
 }
 
