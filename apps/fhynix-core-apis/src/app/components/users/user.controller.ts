@@ -21,8 +21,8 @@ export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
-    @inject(CommonTypes.authStoreService)
-    private authStoreService: RequestContext,
+    @inject(CommonTypes.requestContext)
+    private requestContext: RequestContext,
   ) {}
 
   @httpGet('/me', CommonTypes.jwtAuthMiddleware)
@@ -31,7 +31,7 @@ export class UserController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const userId = this.authStoreService.getUserId()
+    const userId = this.requestContext.getUserId()
     const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
@@ -49,7 +49,7 @@ export class UserController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const userId = this.authStoreService.getUserId()
+    const userId = this.requestContext.getUserId()
     const details = await this.userService.updateUserDetails(req.body, userId)
     res.send(details)
   }

@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { UserRepositoryInterface } from '../../common/interfaces/user-repository.interface'
-import { FamilyMembersModel } from '../../common/models/family-members-model'
+import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { UserModel } from '../../common/models/user-model'
 
 @injectable()
@@ -70,8 +70,8 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async createFamilyMembers(
-    familyDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel> {
+    familyDetails: FamilyMemberModel,
+  ): Promise<FamilyMemberModel> {
     const result = await this.client.familyMembers?.create({
       data: familyDetails,
     })

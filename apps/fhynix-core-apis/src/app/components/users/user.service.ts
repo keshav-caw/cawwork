@@ -1,7 +1,7 @@
 import { RelationshipsMaster } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { FamilyMembersModel } from '../../common/models/family-members-model'
+import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { UserModel } from '../../common/models/user-model'
 import { UserRepository } from './user.repository'
 
@@ -35,8 +35,8 @@ export class UserService {
   }
 
   async createFamilyMembers(
-    familyDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel> {
+    familyDetails: FamilyMemberModel,
+  ): Promise<FamilyMemberModel> {
     return await this.userRepository.createFamilyMembers(familyDetails)
   }
 

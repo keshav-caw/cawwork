@@ -1,4 +1,4 @@
-export class FamilyMembersModel {
+export class FamilyMemberModel {
   id?: string
   createdAtUtc?: Date
   createdBy?: string

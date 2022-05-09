@@ -1,4 +1,4 @@
-import { FamilyMembersModel } from '../models/family-members-model'
+import { FamilyMemberModel } from '../models/family-members-model'
 import { UserModel } from '../models/user-model'
 
 export interface UserServiceInterface {
@@ -6,7 +6,7 @@ export interface UserServiceInterface {
   getUserByAccountId(acoountId: string): Promise<UserModel[]>
   createUser(userDetails: UserModel): Promise<UserModel>
   createFamilyMembers(
-    familyDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel>
+    familyDetails: FamilyMemberModel,
+  ): Promise<FamilyMemberModel>
   updateUserDetails(userDetails: UserModel, userId: string): Promise<UserModel>
 }
