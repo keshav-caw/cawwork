@@ -1,15 +1,20 @@
 import { RelationshipsMaster } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { FamilyMembersModel } from '../../common/models/family-members-model'
+import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { UserModel } from '../../common/models/user-model'
+import { FamilyMemberService } from '../family-member/family-member.service'
+import { FamilyMemberTypes } from '../family-member/family-member.types'
 import { UserRepository } from './user.repository'
 
 @injectable()
 export class UserService {
   constructor(
     @inject('UserRepository') private userRepository: UserRepository,
+    @inject(FamilyMemberTypes.familyMember)
+    private familyMemberService: FamilyMemberService,
   ) {}
+
   async getUserDetail(userId: string): Promise<UserModel[]> {
     const details = await this.userRepository.getUserDetails(userId)
     const relationship = await this.getRelationshipsMaster('Self')
@@ -32,18 +37,12 @@ export class UserService {
     const userData = await this.userRepository.createUser(userDetails)
     const relationship = await this.getRelationshipsMaster('Self')
 
-    await this.createFamilyMembers({
+    await this.familyMemberService.createFamilyMember({
       firstName: userDetails.email,
       relationshipId: relationship[0]?.id,
       userId: userData.id,
     })
     return userData
-  }
-
-  async createFamilyMembers(
-    familyDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel> {
-    return await this.userRepository.createFamilyMembers(familyDetails)
   }
 
   async updateUserDetails(
@@ -54,9 +53,9 @@ export class UserService {
   }
 
   async updateFamilyMembers(
-    familyDetails: FamilyMembersModel,
+    familyDetails: FamilyMemberModel,
     familyMemberId: string,
-  ): Promise<FamilyMembersModel> {
+  ): Promise<FamilyMemberModel> {
     return await this.userRepository.updateFamilyMembers(
       familyDetails,
       familyMemberId,

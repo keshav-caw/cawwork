@@ -15,15 +15,15 @@ import { UserService } from './user.service'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
-import { RequestContext } from '../../common/jwtservice/auth-store.service'
+import { RequestContext } from '../../common/jwtservice/requets-context.service'
 
 @controller('/users')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
-    @inject(CommonTypes.authStoreService)
-    private authStoreService: RequestContext,
+    @inject(CommonTypes.requestContext)
+    private requestContext: RequestContext,
   ) {}
 
   @httpGet('/me', CommonTypes.jwtAuthMiddleware)
@@ -32,7 +32,7 @@ export class UserController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const userId = this.authStoreService.getUserId()
+    const userId = this.requestContext.getUserId()
     const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
@@ -55,14 +55,5 @@ export class UserController implements interfaces.Controller {
       req.query.memberId.toString(),
     )
     res.send(details)
-  }
-
-  @httpGet('/test')
-  public async getTestUser(
-    @request() req: express.Request,
-    @response() res: express.Response,
-    @next() next: express.NextFunction,
-  ): Promise<any> {
-    return res.send('Hello World')
   }
 }

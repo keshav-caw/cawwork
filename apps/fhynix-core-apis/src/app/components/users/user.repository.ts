@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { UserRepositoryInterface } from '../../common/interfaces/user-repository.interface'
-import { FamilyMembersModel } from '../../common/models/family-members-model'
+import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { UserModel } from '../../common/models/user-model'
 
 @injectable()
@@ -40,8 +40,8 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getFamilyMembersForUser(
-    userDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel[]> {
+    userDetails: FamilyMemberModel,
+  ): Promise<FamilyMemberModel[]> {
     const result = await this.client.familyMembers?.findMany({
       where: {
         userId: userDetails.userId,
@@ -51,7 +51,7 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async getFamilyMembers(userId: string): Promise<FamilyMembersModel[]> {
+  async getFamilyMembers(userId: string): Promise<FamilyMemberModel[]> {
     const result = await this.client.familyMembers?.findMany({
       where: {
         userId: userId,
@@ -83,15 +83,6 @@ export class UserRepository implements UserRepositoryInterface {
     return result
   }
 
-  async createFamilyMembers(
-    familyDetails: FamilyMembersModel,
-  ): Promise<FamilyMembersModel> {
-    const result = await this.client.familyMembers?.create({
-      data: familyDetails,
-    })
-    return result
-  }
-
   async updateUserDetails(
     userDetails: UserModel,
     userId: string,
@@ -106,9 +97,9 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async updateFamilyMembers(
-    familyMembers: FamilyMembersModel,
+    familyMembers: FamilyMemberModel,
     familyMemberId: string,
-  ): Promise<FamilyMembersModel> {
+  ): Promise<FamilyMemberModel> {
     const result = await this.client.familyMembers?.update({
       data: familyMembers,
       where: {

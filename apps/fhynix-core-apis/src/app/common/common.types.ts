@@ -1,7 +1,7 @@
 const CommonTypes = {
   logger: Symbol.for('LoggerInterface'),
   jwt: Symbol.for('JWTInterface'),
-  authStoreService: Symbol.for('AuthStoreService'),
+  requestContext: Symbol.for('RequestContext'),
   jwtAuthMiddleware: Symbol.for('JWTAuthMiddleWare'),
   requestIdMiddleware: Symbol.for('RequestIdMiddleware'),
 }

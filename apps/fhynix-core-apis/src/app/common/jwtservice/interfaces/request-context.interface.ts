@@ -1,6 +1,6 @@
 import { AuthModel } from '../../models/auth-model'
 
-export interface AuthStoreInterface {
+export interface IRequestContext {
   getUserId(authToken: AuthModel)
   getUserId()
 }
