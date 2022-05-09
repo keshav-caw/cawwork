@@ -13,6 +13,7 @@ export class UserService {
     @inject(FamilyMemberTypes.familyMember)
     private familyMemberService: FamilyMemberService,
   ) {}
+
   async getUserDetail(userId: string): Promise<UserModel[]> {
     const details = await this.userRepository.getUserDetails(userId)
     return details

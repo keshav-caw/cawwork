@@ -11,7 +11,9 @@ const jwtMiddleWare = (req, res, next) => {
   const requestContext = CommonContainer.get<RequestContext>(
     CommonTypes.requestContext,
   )
-  if (req.headers.authorization) {
+  if (!req.headers.authorization) {
+    return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
+  } else {
     try {
       if (jwtService.validate(req.headers.authorization)) {
         const authToken = jwtService.decode(req.headers.authorization)
@@ -21,8 +23,6 @@ const jwtMiddleWare = (req, res, next) => {
     } catch (e) {
       throw new UnauthorizedError()
     }
-  } else {
-    return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
   }
 }
 
