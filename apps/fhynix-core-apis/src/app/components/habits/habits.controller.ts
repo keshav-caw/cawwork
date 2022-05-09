@@ -11,7 +11,7 @@ import {
 import { inject } from 'inversify'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { CommonTypes } from '../../common/common.types'
-import { RequestContext } from '../../common/jwtservice/auth-store.service'
+import { RequestContext } from '../../common/jwtservice/requets-context.service'
 import { HabitsService } from './habits.service'
 import { HabitsTypes } from './habits.types'
 
@@ -20,7 +20,7 @@ export class HabitsController implements interfaces.Controller {
   constructor(
     @inject(HabitsTypes.habits) private habitsService: HabitsService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
-    @inject(CommonTypes.authStoreService)
+    @inject(CommonTypes.requestContext)
     private authStoreService: RequestContext,
   ) {}
 

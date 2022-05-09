@@ -73,7 +73,7 @@ model Habits {
 	updatedBy String? @map("updated_by")
 	isDeleted Boolean @default(false) @map("is_deleted")
 	name String 
-	appliesForRelation String[] @map("applies_for_relations")
+	appliesForRelation String @map("applies_for_relations")
 	isVisible Boolean @map("is_visible")
 }
 model FamilyMemberHabits {
@@ -86,5 +86,5 @@ model FamilyMemberHabits {
 	familyMemberId String @map("family_member_id")
 	habitId String @map("habit_id")
 	name String 
-	appliesForRelation String[] @map("applies_for_relations")
+	appliesForRelation String @map("applies_for_relations")
 }
