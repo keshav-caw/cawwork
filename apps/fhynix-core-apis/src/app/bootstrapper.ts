@@ -4,12 +4,14 @@ import { DataStore } from './common/data/datastore'
 import UserBootstrapper from './components/users/user.bootstrapper'
 import AccountBootstrapper from './components/accounts/account.bootstrapper'
 import HealthCheckBootstrapper from './common/controllers/health-check.bootstrapper'
+import FamilyMemberBootstrapper from './components/family-member/family-member.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
     CommonBootstrapper.initialize()
     UserBootstrapper.initialize()
     AccountBootstrapper.initialize()
+    FamilyMemberBootstrapper.initialize()
     MiddlewaresBootstrapper.initialize()
     DataStore.initialize()
     HealthCheckBootstrapper.initialize()

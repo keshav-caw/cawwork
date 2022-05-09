@@ -69,15 +69,6 @@ export class UserRepository implements UserRepositoryInterface {
     return result
   }
 
-  async createFamilyMembers(
-    familyDetails: FamilyMemberModel,
-  ): Promise<FamilyMemberModel> {
-    const result = await this.client.familyMembers?.create({
-      data: familyDetails,
-    })
-    return result
-  }
-
   async updateUserDetails(
     userDetails: UserModel,
     userId: string,

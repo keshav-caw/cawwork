@@ -15,7 +15,7 @@ const jwtMiddleWare = (req, res, next) => {
     try {
       if (jwtService.validate(req.headers.authorization)) {
         const authToken = jwtService.decode(req.headers.authorization)
-        requestContext.setAuthToken(authToken)
+        requestContext.setUserId(authToken)
         next()
       }
     } catch (e) {
