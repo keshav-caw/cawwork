@@ -14,7 +14,7 @@ import { UserService } from './user.service'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
-import { RequestContext } from '../../common/jwtservice/auth-store.service'
+import { RequestContext } from '../../common/jwtservice/requets-context.service'
 
 @controller('/users')
 export class UserController implements interfaces.Controller {
