@@ -17,7 +17,7 @@ export class UserService {
 
   async getUserDetail(userId: string): Promise<UserModel[]> {
     const details = await this.userRepository.getUserDetails(userId)
-    const relationship = await this.getRelationshipsMaster('Self')
+    const relationship = await this.getRelationshipsMaster('self')
     const familyDetails =
       await this.familyMemberService.getFamilyMembersForUser({
         userId: userId,
@@ -36,7 +36,7 @@ export class UserService {
 
   async createUser(userDetails: UserModel): Promise<UserModel> {
     const userData = await this.userRepository.createUser(userDetails)
-    const relationship = await this.getRelationshipsMaster('Self')
+    const relationship = await this.getRelationshipsMaster('self')
 
     await this.familyMemberService.createFamilyMember({
       firstName: userDetails.email,

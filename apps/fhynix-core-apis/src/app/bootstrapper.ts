@@ -4,8 +4,9 @@ import { DataStore } from './common/data/datastore'
 import UserBootstrapper from './components/users/user.bootstrapper'
 import AccountBootstrapper from './components/accounts/account.bootstrapper'
 import HealthCheckBootstrapper from './common/controllers/health-check.bootstrapper'
-import HabitsBootstrapper from './components/habits/habits.bootstrapper'
 import FamilyMemberBootstrapper from './components/family-member/family-member.bootstrapper'
+import RelationshipBootstrapper from './components/relationship/relationship.bootstrapper'
+import HabitsBootstrapper from './components/habits/habits.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
@@ -14,6 +15,7 @@ export default class Bootstrapper {
     AccountBootstrapper.initialize()
     HabitsBootstrapper.initialize()
     FamilyMemberBootstrapper.initialize()
+    RelationshipBootstrapper.initialize()
     MiddlewaresBootstrapper.initialize()
     DataStore.initialize()
     HealthCheckBootstrapper.initialize()
