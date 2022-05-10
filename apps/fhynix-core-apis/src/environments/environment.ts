@@ -6,6 +6,6 @@ export const environment = {
   jwtPrivateKey: 'fhynix',
   sentryIOUrl: '',
   googleClientId:
-    '17327438378-ee3vt8gu1gfcbvhffgtdpk2h5358j76b.apps.googleusercontent.com',
-  googleClientSecretKey: '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',
+    '553006032387-q79jgs5els5cnv9s6laop9hp6sgc5m2b.apps.googleusercontent.com',
+  googleClientSecretKey: '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',
 }
