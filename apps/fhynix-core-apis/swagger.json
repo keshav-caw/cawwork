@@ -92,7 +92,7 @@
             "name": "relationship",
             "schema": {
               "type": "string",
-              "enum": ["Self", "Parent", "Kid", "Other"]
+              "enum": ["self", "parent", "kid", "other"]
             }
           }
         ],
