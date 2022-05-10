@@ -16,6 +16,7 @@ const errorMiddleWare = (err, req, res, next) => {
   let statusCode: number
   let errorResponse
   let isLogNeeded = false
+  console.log(err)
   switch (true) {
     case err instanceof ArgumentValidationError:
       errorResponse = new APIErrorResponsePayload(
@@ -27,8 +28,11 @@ const errorMiddleWare = (err, req, res, next) => {
       errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0002)
       statusCode = 401
       break
-    case err instanceof DatabaseError:
     case err instanceof ThirdPartyAPIError:
+      errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0003)
+      statusCode = 401
+      break
+    case err instanceof DatabaseError:
     default:
       isLogNeeded = true
       errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0001)

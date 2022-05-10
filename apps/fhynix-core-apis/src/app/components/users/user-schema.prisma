@@ -29,7 +29,7 @@ model FamilyMembers {
   gender String?
   otherInfo String? @map("other_info")
   color String?
-  personalities String?
-  interests String?
+  personalities String[]
+  interests String[]
 }
 

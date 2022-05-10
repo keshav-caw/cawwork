@@ -11,6 +11,24 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private familyMemberRepository: FamilyMemberRepository,
   ) {}
 
+  async getFamilyMembersForUser(
+    familyMemberDetails: FamilyMemberModel,
+  ): Promise<FamilyMemberModel[]> {
+    return await this.familyMemberRepository.getFamilyMembersForUser(
+      familyMemberDetails,
+    )
+  }
+
+  async updateFamilyMembers(
+    familyDetails: FamilyMemberModel,
+    familyMemberId: string,
+  ): Promise<FamilyMemberModel> {
+    return await this.familyMemberRepository.updateFamilyMembers(
+      familyDetails,
+      familyMemberId,
+    )
+  }
+
   async createFamilyMember(
     familyDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel> {

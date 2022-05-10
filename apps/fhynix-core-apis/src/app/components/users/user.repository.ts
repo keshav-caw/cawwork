@@ -39,27 +39,6 @@ export class UserRepository implements UserRepositoryInterface {
     return result ? result : []
   }
 
-  async getFamilyMembersForUser(
-    userDetails: FamilyMemberModel,
-  ): Promise<FamilyMemberModel[]> {
-    const result = await this.client.familyMembers?.findMany({
-      where: {
-        userId: userDetails.userId,
-        relationshipId: userDetails.relationshipId,
-      },
-    })
-    return result ? result : []
-  }
-
-  async getFamilyMembers(userId: string): Promise<FamilyMemberModel[]> {
-    const result = await this.client.familyMembers?.findMany({
-      where: {
-        userId: userId,
-      },
-    })
-    return result ? result : []
-  }
-
   async getRelationshipsMaster(
     relation: string,
   ): Promise<RelationshipsMaster[]> {
@@ -91,19 +70,6 @@ export class UserRepository implements UserRepositoryInterface {
       data: userDetails,
       where: {
         id: userId,
-      },
-    })
-    return result
-  }
-
-  async updateFamilyMembers(
-    familyMembers: FamilyMemberModel,
-    familyMemberId: string,
-  ): Promise<FamilyMemberModel> {
-    const result = await this.client.familyMembers?.update({
-      data: familyMembers,
-      where: {
-        id: familyMemberId,
       },
     })
     return result
