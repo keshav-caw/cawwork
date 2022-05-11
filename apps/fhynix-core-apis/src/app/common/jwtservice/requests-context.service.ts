@@ -16,7 +16,7 @@ export class RequestContext implements IRequestContext {
     })
   }
 
-  async setEmailId(email: string) {
+  async setEmail(email: string) {
     this.asyncLocalStorage.enterWith({
       email: email,
     })

@@ -9,7 +9,7 @@ import { DataStore } from './data/datastore'
 import { DataStoreInterface } from './data/datastore.interface'
 import { JWTInterface } from './jwtservice/interfaces/jwt.interface'
 import { JWTService } from './jwtservice/jwt.service'
-import { RequestContext } from './jwtservice/requets-context.service'
+import { RequestContext } from './jwtservice/requests-context.service'
 import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
 
 @injectable()
