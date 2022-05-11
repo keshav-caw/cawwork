@@ -1,7 +1,8 @@
+import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { BaseError } from './base.error'
 
 export class ThirdPartyAPIError extends BaseError {
-  constructor(message) {
-    super('ThirdPartyAPIError', message)
+  constructor(apiErrorCode) {
+    super('ThirdPartyAPIError', apiErrorCode)
   }
 }

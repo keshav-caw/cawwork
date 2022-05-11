@@ -1,0 +1,4 @@
+ docker build -t fhynix:v1.0.1 .
+ docker tag fhynix:v1.0.0 276422486208.dkr.ecr.ap-south-1.amazonaws.com/fhynix-api:v1.0.1  
+ docker push 276422486208.dkr.ecr.ap-south-1.amazonaws.com/fhynix-api:v1.0.1
+ aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 276422486208.dkr.ecr.ap-south-1.amazonaws.com

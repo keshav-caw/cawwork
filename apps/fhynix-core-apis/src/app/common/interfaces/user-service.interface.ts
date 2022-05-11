@@ -1,4 +1,8 @@
+import { UserModel } from '../models/user-model'
+
 export interface UserServiceInterface {
-  getUsers(userId)
-  createUser(userDetails: any)
+  getUserDetail(userId: string): Promise<UserModel[]>
+  getUserByAccountId(acoountId: string): Promise<UserModel[]>
+  createUser(userDetails: UserModel): Promise<UserModel>
+  updateUserDetails(userDetails: UserModel, userId: string): Promise<UserModel>
 }

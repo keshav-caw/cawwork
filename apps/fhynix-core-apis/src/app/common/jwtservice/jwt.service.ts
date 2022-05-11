@@ -19,6 +19,7 @@ export class JWTService implements JWTInterface {
     return jwtToken
   }
   public decode(token: string) {
+    token = token.replace('Bearer ', '')
     if (token) {
       const jsonPayload = jwt.decode(token)
       return jsonPayload

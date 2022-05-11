@@ -9,6 +9,8 @@ import { DataStore } from './data/datastore'
 import { DataStoreInterface } from './data/datastore.interface'
 import { JWTInterface } from './jwtservice/interfaces/jwt.interface'
 import { JWTService } from './jwtservice/jwt.service'
+import { RequestContext } from './jwtservice/requests-context.service'
+import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
 
 @injectable()
 export default class CommonBootstrapper {
@@ -23,5 +25,8 @@ export default class CommonBootstrapper {
       DataStoreRepository,
     )
     CommonContainer.bind<JWTInterface>(CommonTypes.jwt).to(JWTService)
+    CommonContainer.bind<IRequestContext>(CommonTypes.requestContext)
+      .to(RequestContext)
+      .inSingletonScope()
   }
 }

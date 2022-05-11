@@ -7,32 +7,32 @@ import {
   response,
   next,
   httpPost,
+  httpPut,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
+import { RequestContext } from '../../common/jwtservice/requests-context.service'
 
-@controller('/contact/me')
+@controller('/users')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
+    @inject(CommonTypes.requestContext)
+    private requestContext: RequestContext,
   ) {}
 
-  @httpGet('/')
+  @httpGet('/me', CommonTypes.jwtAuthMiddleware)
   public async getUsers(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    try {
-      this.jwtService.validate(req.headers.authorization)
-    } catch (e) {
-      return res.send({ status: 401, message: 'unauthorized' })
-    }
-    const details = await this.userService.getUsers(req?.query?.id)
+    const userId = this.requestContext.getUserId()
+    const details = await this.userService.getUserDetail(userId)
     return res.send(details)
   }
 
@@ -44,12 +44,13 @@ export class UserController implements interfaces.Controller {
     res.send(await this.userService.createUser(req.body))
   }
 
-  @httpGet('/test')
-  public async getTestUser(
+  @httpPut('/me', CommonTypes.jwtAuthMiddleware)
+  private async updateUser(
     @request() req: express.Request,
     @response() res: express.Response,
-    @next() next: express.NextFunction,
-  ): Promise<any> {
-    return res.send('Hello World')
+  ) {
+    const userId = this.requestContext.getUserId()
+    const details = await this.userService.updateUserDetails(req.body, userId)
+    res.send(details)
   }
 }

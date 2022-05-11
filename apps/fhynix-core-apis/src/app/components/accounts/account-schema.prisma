@@ -1,0 +1,14 @@
+model Accounts {
+  id  String @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  loginMethod String @map("login_method")
+  firstLoginAtUtc DateTime @default(now()) @map("first_login_at_utc")
+  lastLoginAtUtc DateTime @map("last_login_at_utc")
+  accessToken String @map("access_token")
+  refreshToken String @map("refresh_token")
+  username String
+}

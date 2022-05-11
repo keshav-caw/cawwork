@@ -1,8 +1,46 @@
 model Users {
-  id    Int     @id @default(autoincrement())
-  firstName String
-  lastName String
-  phonenumber String
-  emailId String
-  password String
+  id  String  @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  accountId String @map("account_id")
+  email String
+  phone String?
+  address String?
+  timezoneOffsetInMins Int? @map("timezone_offset_in_mins")
+  isOnboardingCompleted Boolean @map("is_onboarding_completed")
+}
+
+model FamilyMembers {
+  id  String  @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime? @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  userId String @map("user_id")
+  relationshipId String @map("relationship_id")
+  firstName String @map("first_name")
+  lastName String? @map("last_name")
+  dob DateTime?
+  profileImage String? @map("profile_image")
+  gender String?
+  otherInfo String? @map("other_info")
+  color String?
+  personalities String?
+  interests String?
+}
+
+model RelationshipsMaster {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  relation String
+  relationType String @map("relation_type")
+  isVisible Boolean @map("is_visible")
 }
