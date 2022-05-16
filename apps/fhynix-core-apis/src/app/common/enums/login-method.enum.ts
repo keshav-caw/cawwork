@@ -1,3 +1,4 @@
 export enum LoginMethodEnum {
   GOOGLE_PROVIDER = 'GOOGLE_PROVIDER',
+  EMAIL_PASSWORD = 'EMAIL_PASSWORD'
 }
