@@ -3,4 +3,6 @@ export enum ApiErrorCode {
   'E0002' = 'User not authorised',
   'E0003' = 'Request is not valid',
   'E0004' = 'Invalid Login Provider',
+  'E0005' = 'Password and confirmPassword not matching',
+  'E0006' = 'Email already exists',
 }

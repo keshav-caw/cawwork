@@ -8,7 +8,7 @@ import { AuthController } from './auth.controller'
 import { AuthRepository } from './auth.repository'
 import { AuthService } from './auth.service'
 import { GoogleAuthProvider } from './google-auth-provider.service'
-import { SignupServiceInterface } from '../../common/interfaces/signup-service.interface'
+import { SignupServiceInterface } from '../../common/interfaces/auth-service.interface'
 import { SignupService } from './signup.service'
 
 @injectable()
