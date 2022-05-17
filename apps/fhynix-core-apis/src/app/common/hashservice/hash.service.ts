@@ -5,9 +5,6 @@ const bcrypt = require("bcrypt");
 
 @injectable()
 export class HashService implements HashServiceInterface{
-    constructor() {
-        //
-    }
 
     async hashPassword(password: string) {
         const salt = await bcrypt.genSalt(10);

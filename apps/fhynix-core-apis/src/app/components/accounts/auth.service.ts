@@ -16,6 +16,7 @@ import { UserLoginModel } from '../../common/models/user-login-model'
 import { AccountModel } from '../../common/models/account-model'
 import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
+import { HashService } from '../../common/hashservice/hash.service'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -25,6 +26,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(UserTypes.user) private userService: UserService,
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
+    @inject(CommonTypes.hash) private hashService: HashService,
   ) {}
 
   async login(userDetails: UserLoginModel) {
@@ -120,5 +122,52 @@ export class AuthService implements AuthServiceInterface {
       accessToken: authToken.tokens.access_token,
       refreshToken: authToken.tokens.refresh_token,
     }
+  }
+
+
+  async signup(userDetails) {
+    if(userDetails.password!==userDetails.confirmPassword){
+      throw new ArgumentValidationError(
+          'Password',
+          userDetails.password,
+          ApiErrorCode.E0005,
+      )
+    }
+
+    const user = await this.authRepository.getAccountDetails(userDetails.email);
+    if(user?.length>0){
+      throw new ArgumentValidationError(
+          'Email',
+          userDetails.email,
+          ApiErrorCode.E0006,
+      )
+    }
+
+    const encryptedPassword = await this.hashService.hashPassword(userDetails.password);
+
+    const account:AccountModel = {
+        username:userDetails.email,
+        password:encryptedPassword,
+        loginMethod:LoginMethodEnum.EMAIL_PASSWORD,
+    };
+
+    const accountDetails = await this.authRepository.createAccounts(account);
+
+    const newUser: UserModel = {
+      firstName:userDetails.firstName,
+      lastName:userDetails.lastName,
+      email: userDetails.email,
+      isOnboardingCompleted: false,
+      accountId: accountDetails.id,
+    }
+
+    const userData = await this.userService.createUser(newUser);
+
+    const authToken = await this.jwtService.encode({
+      userId: userData?.id,
+      email: userData?.email,
+    })
+
+    return { authToken: authToken }
   }
 }

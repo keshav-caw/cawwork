@@ -8,8 +8,6 @@ import { AuthController } from './auth.controller'
 import { AuthRepository } from './auth.repository'
 import { AuthService } from './auth.service'
 import { GoogleAuthProvider } from './google-auth-provider.service'
-import { SignupServiceInterface } from '../../common/interfaces/auth-service.interface'
-import { SignupService } from './signup.service'
 
 @injectable()
 export default class AccountBootstrapper {
@@ -24,6 +22,5 @@ export default class AccountBootstrapper {
       GoogleAuthProvider,
     )
     CommonContainer.bind<AuthController>('AuthController').to(AuthController)
-    CommonContainer.bind<SignupServiceInterface>(AccountTypes.signup).to(SignupService)
   }
 }
