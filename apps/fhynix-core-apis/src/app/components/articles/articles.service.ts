@@ -4,6 +4,7 @@ import { ArticleServiceInterface } from '../../common/interfaces/article-service
 import { ArticleRepository } from './article.repository'
 import { ArticleModel } from '../../common/models/article-model'
 import { ArticlePaginationModel } from '../../common/models/article-pagination-model'
+import { ArticlePayload } from '../../../../../shared/payloads/article-payload';
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -11,7 +12,17 @@ export class ArticleService implements ArticleServiceInterface {
     @inject('ArticleRepository') private articleRepository: ArticleRepository,
   ) {}
 
-  async getArticles(details:ArticlePaginationModel): Promise<ArticleModel[]> {
-      return await this.articleRepository.getArticles(details);
+  async getArticles(details:ArticlePaginationModel) {
+      const articles = await this.articleRepository.getArticles(details);
+      const allArticles = [];
+      for(const article of articles){
+          const newArticle = new ArticlePayload(
+              article.title,
+              article.imageUrl,
+              article.url
+          )
+          allArticles.push(newArticle);
+      }
+      return allArticles;
   }
 }
