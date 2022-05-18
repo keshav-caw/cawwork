@@ -4,7 +4,8 @@ import { ArticleServiceInterface } from '../../common/interfaces/article-service
 import { ArticleRepository } from './article.repository'
 import { ArticleModel } from '../../common/models/article-model'
 import { ArticlePaginationModel } from '../../common/models/article-pagination-model'
-import { ArticlePayload } from '../../../../../shared/payloads/article-payload';
+import { CollectionResponsePayload } from '../../../../../shared/payloads/api-collection-response-payload';
+import { ArticlePayload } from 'apps/shared/payloads/article-payload'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -14,15 +15,11 @@ export class ArticleService implements ArticleServiceInterface {
 
   async getArticles(details:ArticlePaginationModel) {
       const articles = await this.articleRepository.getArticles(details);
-      const allArticles = [];
+      const result = new CollectionResponsePayload();
       for(const article of articles){
-          const newArticle = new ArticlePayload(
-              article.title,
-              article.imageUrl,
-              article.url
-          )
-          allArticles.push(newArticle);
+          const newArticle = new ArticlePayload(article.title,article.imageUrl,article.url);
+          result.add(newArticle);
       }
-      return allArticles;
+      return result;
   }
 }
