@@ -1,6 +1,6 @@
-import { PayloadBase } from './base-payload'
+import { ResponsePayloadBase } from './base-response-payload'
 
-export class ApiErrorResponsePayload extends PayloadBase {
+export class ApiErrorResponsePayload extends ResponsePayloadBase {
   apiErrorCode: string
   constructor(errorCode) {
     super()

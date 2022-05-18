@@ -1,7 +1,6 @@
-import { PayloadBase } from "./base-payload";
-import { ArticlePayload } from "./article-payload";
+import { ResponsePayloadBase } from "./base-response-payload";
 
-export class CollectionResponsePayload<T> extends PayloadBase { 
+export class CollectionResponsePayload<T extends ResponsePayloadBase> extends ResponsePayloadBase { 
     data:T[]
     constructor(){
         super()

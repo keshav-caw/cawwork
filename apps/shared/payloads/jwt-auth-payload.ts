@@ -1,5 +1,5 @@
-import { PayloadBase } from './base-payload';
+import { ResponsePayloadBase } from './base-response-payload';
 
-export class JWTAuthPayload extends PayloadBase {
+export class JWTAuthPayload extends ResponsePayloadBase {
   userId: string
 }

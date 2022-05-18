@@ -1,6 +1,6 @@
-import { PayloadBase } from "./base-payload";
+import { ResponsePayloadBase } from "./base-response-payload";
 
-export class ArticlePayload extends PayloadBase {
+export class ArticleResponsePayload extends ResponsePayloadBase {
     title: string
     imageUrl:string
     url:string
