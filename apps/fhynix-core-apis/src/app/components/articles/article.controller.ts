@@ -25,8 +25,8 @@ export class ArticleController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const {pageNumber,articlePerPages} = req.body;
-    const articles = await this.articleService.getArticles({pageNumber,articlePerPages});
+    const {pageNumber,pageSize} = req.body;
+    const articles = await this.articleService.getArticles({pageNumber,pageSize});
     const details = new CollectionResponsePayload<ArticlePayload>();
     for(const article of articles){
         const newArticle = new ArticlePayload(article.title,article.imageUrl,article.url);

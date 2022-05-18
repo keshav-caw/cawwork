@@ -1,4 +1,4 @@
 export class ArticlePaginationModel{
-    articlePerPages:number
+    pageSize:number
     pageNumber:number
 }
