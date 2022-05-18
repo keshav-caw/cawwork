@@ -11,6 +11,8 @@ import { inject } from 'inversify'
 import { ArticleTypes } from './article.types'
 import { ArticleService } from './articles.service'
 import { CommonTypes } from '../../common/common.types'
+import { CollectionResponsePayload } from 'apps/shared/payloads/api-collection-response-payload'
+import { ArticlePayload } from 'apps/shared/payloads/article-payload'
 
 @controller('/articles')
 export class ArticleController implements interfaces.Controller {
@@ -24,7 +26,12 @@ export class ArticleController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const {pageNumber,articlePerPages} = req.body;
-    const details = await this.articleService.getArticles({pageNumber,articlePerPages});
+    const articles = await this.articleService.getArticles({pageNumber,articlePerPages});
+    const details = new CollectionResponsePayload<ArticlePayload>();
+    for(const article of articles){
+        const newArticle = new ArticlePayload(article.title,article.imageUrl,article.url);
+        details.add(newArticle);
+    }
     res.send(details)
   }
 

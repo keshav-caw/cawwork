@@ -1,13 +1,13 @@
 import { PayloadBase } from "./base-payload";
 import { ArticlePayload } from "./article-payload";
 
-export class CollectionResponsePayload extends PayloadBase { 
-    data:ArticlePayload[]
+export class CollectionResponsePayload<T> extends PayloadBase { 
+    data:T[]
     constructor(){
         super()
         this.data = []
     }
-    public add(article:ArticlePayload){
-        this.data.push(article)
+    public add(dataPoint:T){
+        this.data.push(dataPoint)
     }
 }
