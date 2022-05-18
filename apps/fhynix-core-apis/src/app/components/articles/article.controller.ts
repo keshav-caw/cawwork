@@ -23,7 +23,8 @@ export class ArticleController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const details = await this.articleService.getArticles();
+    const {pageNumber,articlePerPages} = req.body;
+    const details = await this.articleService.getArticles({pageNumber,articlePerPages});
     res.send(details)
   }
 
