@@ -2,5 +2,5 @@ model Articles {
   id  String @id @default(uuid())
   title String @map("title")
   imageUrl String @map("image_url")
-  articleUrl String @map("article_url")
+  url String @map("article_url")
 }
