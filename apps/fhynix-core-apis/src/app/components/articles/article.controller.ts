@@ -18,7 +18,7 @@ export class ArticleController implements interfaces.Controller {
     @inject(ArticleTypes.articles) private articleService: ArticleService,
   ) {}
 
-  @httpGet('/getAll',CommonTypes.jwtAuthMiddleware)
+  @httpGet('/list',CommonTypes.jwtAuthMiddleware)
   private async getArticles(
     @request() req: express.Request,
     @response() res: express.Response,
