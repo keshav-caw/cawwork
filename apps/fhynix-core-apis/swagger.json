@@ -113,6 +113,34 @@
         },
         "produces": ["application/json"],
         "consumes": ["application/json"]
+      },
+      "post": {
+        "security": [{ "Bearer": [] }],
+        "operationId": "family-member-habits",
+        "tags": ["family-member-habits"],
+        "description": "add family member habits",
+        "summary": "add family member habits",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "add habit at member level",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/FamilyMemberHabitsDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/FamilyMemberHabits" }
+          },
+          "400": { "description": "Client error and Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"]
       }
     },
     "/family-members": {
@@ -299,6 +327,43 @@
         },
         "isVisible": {
           "type": "boolean"
+        }
+      }
+    },
+    "FamilyMemberHabits": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "familyMemberId": {
+          "type": "string"
+        },
+        "habitId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "appliesForRelation": {
+          "type": "string"
+        }
+      }
+    },
+    "FamilyMemberHabitsDto": {
+      "type": "object",
+      "properties": {
+        "familyMemberId": {
+          "type": "string"
+        },
+        "habitId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "appliesForRelation": {
+          "type": "string"
         }
       }
     },

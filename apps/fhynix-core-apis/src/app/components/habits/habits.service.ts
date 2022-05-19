@@ -15,9 +15,20 @@ export class HabitsService implements HabitsServiceInterface {
     return await this.habitsRepository.getHabitsByRelationship(relationship)
   }
 
-  async createRelationshipHabits(
-    relationshipHabits: FamilyMemberHabitsModel,
-  ): Promise<FamilyMemberHabitsModel> {
+  async createHabitsForRelationship(
+    relationshipHabits: FamilyMemberHabitsModel[],
+  ): Promise<FamilyMemberHabitsModel[]> {
+    const calls = []
+    relationshipHabits.forEach((relationshipHabit) => {
+      calls.push(this.createRelationshipHabits(relationshipHabit))
+    })
+
+    const response = await Promise.all(calls)
+
+    return response
+  }
+
+  async createRelationshipHabits(relationshipHabits) {
     return await this.habitsRepository.createRelationshipHabits(
       relationshipHabits,
     )
