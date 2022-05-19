@@ -41,6 +41,6 @@ export class HabitsController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.habitsService.createRelationshipHabits(req.body))
+    res.send(await this.habitsService.createHabitsForRelationship(req.body))
   }
 }
