@@ -16,13 +16,6 @@ export class UserRepository implements UserRepositoryInterface {
 
   async getUserDetails(userId: string): Promise<UserModel[]> {
     const result = await this.client.users?.findMany({
-      select: {
-        id: true,
-        phone: true,
-        email: true,
-        accountId: true,
-        isOnboardingCompleted: true,
-      },
       where: {
         id: userId,
       },

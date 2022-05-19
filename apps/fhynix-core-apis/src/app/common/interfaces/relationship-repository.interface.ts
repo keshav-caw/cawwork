@@ -1,5 +1,6 @@
 import { RelationshipsMaster } from '@prisma/client'
 
 export interface RelationshipRepositoryInterface {
-  getRelationshipsMaster(userId: string): Promise<RelationshipsMaster[]>
+  getRelationshipsMaster(): Promise<RelationshipsMaster[]>
+  getRelationshipsMasterByRelation(relation: string)
 }

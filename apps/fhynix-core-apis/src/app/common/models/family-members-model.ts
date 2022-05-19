@@ -5,9 +5,9 @@ export class FamilyMemberModel {
   updatedAtUtc?: Date
   updatedBy?: string
   isDeleted?: boolean
-  userId: string
-  relationshipId: string
-  firstName: string
+  userId?: string
+  relationshipId?: string
+  firstName?: string
   lastName?: string
   dob?: Date
   profileImage?: boolean
