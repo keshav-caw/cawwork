@@ -2,7 +2,6 @@ import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { AsyncLocalStorage } from 'async_hooks'
 import { IRequestContext } from './interfaces/request-context.interface'
-import { AuthModel } from '../models/auth-model'
 
 @injectable()
 export class RequestContext implements IRequestContext {
@@ -17,7 +16,7 @@ export class RequestContext implements IRequestContext {
     })
   }
 
-  async setEmailId(email: AuthModel) {
+  async setEmail(email: string) {
     this.asyncLocalStorage.enterWith({
       email: email,
     })

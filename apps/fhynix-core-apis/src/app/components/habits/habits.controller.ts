@@ -11,9 +11,9 @@ import {
 import { inject } from 'inversify'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { CommonTypes } from '../../common/common.types'
-import { RequestContext } from '../../common/jwtservice/requets-context.service'
 import { HabitsService } from './habits.service'
 import { HabitsTypes } from './habits.types'
+import { RequestContext } from '../../common/jwtservice/requests-context.service'
 
 @controller('/habits')
 export class HabitsController implements interfaces.Controller {

@@ -3,7 +3,7 @@ import { JWTService } from '../common/jwtservice/jwt.service'
 import { ApiErrorCode } from '../../../../shared/payloads/error-codes'
 import { ApiErrorResponsePayload } from '../../../../shared/payloads/api-response-payload'
 import { CommonTypes } from '../common/common.types'
-import { RequestContext } from '../common/jwtservice/requets-context.service'
+import { RequestContext } from '../common/jwtservice/requests-context.service'
 import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error'
 
 const jwtMiddleWare = (req, res, next) => {
