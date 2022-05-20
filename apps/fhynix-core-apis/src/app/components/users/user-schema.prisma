@@ -22,8 +22,8 @@ model FamilyMembers {
   isDeleted Boolean? @default(false) @map("is_deleted")
   userId String? @map("user_id")
   relationshipId String? @map("relationship_id")
-  firstName String? @map("first_name")
-  lastName String? @map("last_name")
+  firstName String @map("first_name")
+  lastName String @map("last_name")
   dob DateTime?
   profileImage String? @map("profile_image")
   gender String?
