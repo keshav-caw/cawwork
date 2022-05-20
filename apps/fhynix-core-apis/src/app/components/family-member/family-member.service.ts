@@ -22,9 +22,15 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   async getFamilyMembersForUser(
     familyMemberDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]> {
-    return await this.familyMemberRepository.getFamilyMembersForUser(
-      familyMemberDetails,
+    const userDetails =
+      await this.familyMemberRepository.getFamilyMembersForUser(
+        familyMemberDetails,
+      )
+    const habitsForFamily = await this.habitsService.getHabitsById(
+      userDetails?.[0]?.id,
     )
+    userDetails[0]['habits'] = habitsForFamily
+    return userDetails
   }
 
   async getFamilyMembers(userId: string): Promise<FamilyMemberModel[]> {
@@ -32,12 +38,12 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       userId,
     )
     const calls = []
-    familyMembers.forEach((familyMember) => {
+    familyMembers?.forEach((familyMember) => {
       calls.push(this.habitsService.getHabitsById(familyMember.id))
     })
     const habitsForFamily = await Promise.all(calls)
     familyMembers.map((familyMember, index) => {
-      familyMember['habits'] = habitsForFamily.find(
+      familyMember['habits'] = habitsForFamily?.find(
         (habit, ind) => index === ind,
       )
     })
