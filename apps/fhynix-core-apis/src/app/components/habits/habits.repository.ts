@@ -21,6 +21,15 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
+  async getHabitsById(familyMemberId: string): Promise<HabitsModel> {
+    const result = await this.client.familyMemberHabits?.findMany({
+      where: {
+        familyMemberId: familyMemberId,
+      },
+    })
+    return result
+  }
+
   async createRelationshipHabits(
     relationshipHabits: FamilyMemberHabitsModel,
   ): Promise<FamilyMemberHabitsModel> {

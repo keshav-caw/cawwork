@@ -3,6 +3,8 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
+import { HabitsService } from '../habits/habits.service'
+import { HabitsTypes } from '../habits/habits.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { FamilyMemberRepository } from './family-members.repository'
 
@@ -13,6 +15,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private familyMemberRepository: FamilyMemberRepository,
     @inject('RelationshipRepository')
     private relationshipRepository: RelationshipRepository,
+    @inject(HabitsTypes.habits)
+    private habitsService: HabitsService,
   ) {}
 
   async getFamilyMembersForUser(
@@ -24,7 +28,20 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   }
 
   async getFamilyMembers(userId: string): Promise<FamilyMemberModel[]> {
-    return await this.familyMemberRepository.getFamilyMembers(userId)
+    const familyMembers = await this.familyMemberRepository.getFamilyMembers(
+      userId,
+    )
+    const calls = []
+    familyMembers.forEach((familyMember) => {
+      calls.push(this.habitsService.getHabitsById(familyMember.id))
+    })
+    const habitsForFamily = await Promise.all(calls)
+    familyMembers.map((familyMember, index) => {
+      familyMember['habits'] = habitsForFamily.find(
+        (habit, ind) => index === ind,
+      )
+    })
+    return familyMembers
   }
 
   async updateFamilyMembers(
