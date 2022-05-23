@@ -13,6 +13,7 @@ import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
+import dayjs from 'dayjs'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -113,7 +114,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Invalid Relationship',
           familyMembers,
-          ApiErrorCode.E0006,
+          ApiErrorCode.E0010,
         )
       }
       calls.push(
@@ -137,7 +138,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0006,
+          ApiErrorCode.E0008,
         )
       } else if (
         selectedRelation?.[0].relation === 'kid' &&
@@ -146,7 +147,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0005,
+          ApiErrorCode.E0007,
         )
       } else if (
         selectedRelation?.[0].relation === 'self' &&
@@ -155,8 +156,25 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0007,
+          ApiErrorCode.E0009,
         )
+      }
+
+      if (selectedRelation?.[0].relation === 'kid') {
+        const kids = familyMembers.filter(
+          (family) => family.relationshipId === relationshipId,
+        )
+
+        kids.forEach((kid) => {
+          const kidsAge = dayjs().diff(dayjs(kid.dob), 'years')
+          if (kidsAge < 3) {
+            throw new ArgumentValidationError(
+              'Kids Dob Invalid',
+              familyMembers,
+              ApiErrorCode.E0011,
+            )
+          }
+        })
       }
     })
   }
