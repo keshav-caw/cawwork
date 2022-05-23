@@ -38,4 +38,16 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     })
     return result
   }
+
+  async deleteRelationshipHabits(
+    familyMemberId: string,
+  ): Promise<FamilyMemberHabitsModel> {
+    const result = await this.client.familyMemberHabits?.update({
+      data: { isDeleted: true },
+      where: {
+        familyMemberId: familyMemberId,
+      },
+    })
+    return result
+  }
 }
