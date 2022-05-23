@@ -16,6 +16,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     const result = await this.client.habits?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
+        isDeleted: false,
       },
     })
     return result
@@ -25,6 +26,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     const result = await this.client.familyMemberHabits?.findMany({
       where: {
         familyMemberId: familyMemberId,
+        isDeleted: false,
       },
     })
     return result

@@ -4,7 +4,7 @@ export interface FamilyMemberRepositoryInterface {
   createFamilyMember(
     familyDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel>
-  getFamilyMembersForUser(
+  getFamilyMembersByRelationshipId(
     userDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]>
   getFamilyMembers(userId: string): Promise<FamilyMemberModel[]>
