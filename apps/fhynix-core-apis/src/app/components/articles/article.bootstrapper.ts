@@ -11,8 +11,8 @@ import { ArticleService } from './articles.service'
 @injectable()
 export default class ArticleBootstrapper {
   public static initialize() {
-      CommonContainer.bind<ArticleServiceInterface>(ArticleTypes.articles).to(ArticleService)
       CommonContainer.bind<ArticleRepositoryInterface>('ArticleRepository').to(ArticleRepository)
+      CommonContainer.bind<ArticleServiceInterface>(ArticleTypes.articles).to(ArticleService)
       CommonContainer.bind<ArticleController>('ArticleController').to(ArticleController)
   }
 }
