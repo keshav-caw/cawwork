@@ -71,6 +71,10 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     return response
   }
 
+  async deleteFamilyMember(familyMemberId: string) {
+    return await this.familyMemberRepository.deleteFamilyMember(familyMemberId)
+  }
+
   async getRelationshipsMaster(
     relation: string,
   ): Promise<RelationshipsMaster[]> {

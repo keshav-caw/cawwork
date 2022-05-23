@@ -28,6 +28,7 @@ export class FamilyMemberRepository implements FamilyMemberRepositoryInterface {
     const result = await this.client.familyMembers?.findMany({
       where: {
         userId: userId,
+        isDeleted: false,
       },
     })
     return result ? result : []
@@ -48,6 +49,16 @@ export class FamilyMemberRepository implements FamilyMemberRepositoryInterface {
   ): Promise<FamilyMemberModel> {
     const result = await this.client.familyMembers?.update({
       data: familyMembers,
+      where: {
+        id: familyMemberId,
+      },
+    })
+    return result
+  }
+
+  async deleteFamilyMember(familyMemberId: string): Promise<FamilyMemberModel> {
+    const result = await this.client.familyMembers?.update({
+      data: { isDeleted: true },
       where: {
         id: familyMemberId,
       },

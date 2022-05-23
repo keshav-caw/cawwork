@@ -22,7 +22,7 @@ model FamilyMemberHabits {
   updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
   updatedBy String? @map("updated_by")
   isDeleted Boolean @default(false) @map("is_deleted")
-  familyMemberId String @map("family_member_id")
+  familyMemberId String @unique @map("family_member_id")
   habitId String @map("habit_id")
   name String
   appliesForRelation String[] @map("applies_for_relations")
