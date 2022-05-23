@@ -59,7 +59,6 @@ export class UserRepository implements UserRepositoryInterface {
     const result = await this.client.users?.create({
       data: userDetails,
     })
-    console.log(result)
     return result
   }
 
