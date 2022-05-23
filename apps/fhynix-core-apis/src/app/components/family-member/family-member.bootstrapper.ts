@@ -2,6 +2,7 @@ import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { CommonContainer } from '../../common/container'
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
+import { FamilyMemberController } from './family-member.controller'
 import { FamilyMemberService } from './family-member.service'
 import { FamilyMemberTypes } from './family-member.types'
 import { FamilyMemberRepository } from './family-members.repository'
@@ -15,5 +16,8 @@ export default class FamilyMemberBootstrapper {
     CommonContainer.bind<FamilyMemberServiceInterface>(
       FamilyMemberTypes.familyMember,
     ).to(FamilyMemberService)
+    CommonContainer.bind<FamilyMemberController>('FamilyMemberController').to(
+      FamilyMemberController,
+    )
   }
 }

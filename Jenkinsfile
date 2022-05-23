@@ -21,7 +21,7 @@ pipeline {
         
         stage('Cloning Git') {
             steps {
-              checkout([$class: 'GitSCM', branches: [[name: '*/feature/deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'alekhya_gopu', url: 'https://github.com/cawstudios/Fhynix.CoreAPIs.git']]])          }
+              checkout([$class: 'GitSCM', branches: [[name: '*/deployment']], extensions: [], userRemoteConfigs: [[credentialsId: 'alekhya_gopu', url: 'https://github.com/cawstudios/Fhynix.CoreAPIs.git']]])          }
         }
   
     // Building Docker images
@@ -35,10 +35,20 @@ pipeline {
    
     // Uploading Docker images into AWS ECR
     stage('Pushing to ECR') {
+    // some block
+
      steps{  
          script {
+            withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'fhynix-aws', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                sh "aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}"
+                sh "aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}"
+                sh "aws configure set region ap-south-1"
+                sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 276422486208.dkr.ecr.ap-south-1.amazonaws.com"
                 sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"
                 sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                
+                sh "aws ecs update-service --cluster dev-cluster --service dev-service --task-definition dev-td:1 --desired-count 1 --force-new-deployment --region ap-south-1"
+        }
          }
         }
       }

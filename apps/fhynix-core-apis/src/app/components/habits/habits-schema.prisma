@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Habits {
+  id  String  @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  name String
+  appliesForRelation String[]  @map("applies_for_relations")
+  isVisible Boolean @map("is_visible")
+}
+
+model FamilyMemberHabits {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  familyMemberId String @map("family_member_id")
+  habitId String @map("habit_id")
+  name String
+  appliesForRelation String[] @map("applies_for_relations")
+}

@@ -3,7 +3,7 @@ import { Loggerservice } from '../common/logger/logger.service'
 import { CommonTypes } from '../common/common.types'
 import { ArgumentValidationError } from '../common/errors/custom-errors/argument-validation.error'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
-import { ApiErrorResponsePayload as APIErrorResponsePayload } from 'apps/shared/payloads/api-response-payload'
+import { ApiErrorResponsePayload as APIErrorResponsePayload } from 'apps/shared/payloads/api-error-response-payload'
 import { DatabaseError } from '../common/errors/custom-errors/database.error'
 import { ThirdPartyAPIError } from '../common/errors/custom-errors/third-party.error'
 import { BaseError } from '../common/errors/custom-errors/base.error'
@@ -16,7 +16,8 @@ const errorMiddleWare = (err, req, res, next) => {
   let statusCode: number
   let errorResponse
   let isLogNeeded = false
-
+  console.log(err);
+  
   switch (true) {
     case err instanceof ArgumentValidationError:
       errorResponse = new APIErrorResponsePayload(
@@ -28,8 +29,11 @@ const errorMiddleWare = (err, req, res, next) => {
       errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0002)
       statusCode = 401
       break
-    case err instanceof DatabaseError:
     case err instanceof ThirdPartyAPIError:
+      errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0003)
+      statusCode = 401
+      break
+    case err instanceof DatabaseError:
     default:
       isLogNeeded = true
       errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0001)

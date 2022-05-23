@@ -144,6 +144,7 @@ export class AuthService implements AuthServiceInterface {
     }
 
     const encryptedPassword = await this.hashService.hashPassword(userDetails.password);
+    
 
     const account:AccountModel = {
         username:userDetails.email,
@@ -161,12 +162,15 @@ export class AuthService implements AuthServiceInterface {
       accountId: accountDetails.id,
     }
 
+    
+
     const userData = await this.userService.createUser(newUser);
 
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
     })
+    
 
     return { authToken: authToken }
   }

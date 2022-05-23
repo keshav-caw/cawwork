@@ -14,18 +14,19 @@ export class ArticleRepository implements ArticleRepositoryInterface {
   }
 
   async getArticles(details:ArticlePaginationModel): Promise<ArticleModel[]> {
+      
     const result = await this.client.articles?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
         take:details.pageSize
     },
     {
       select: {
-        id: false,
         title: true,
         imageUrl:true,
         url:true
-      },
+      }
     })
+    
     return result ? result : []
   }
 }
