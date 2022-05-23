@@ -12,13 +12,14 @@ export class FamilyMemberRepository implements FamilyMemberRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getFamilyMembersForUser(
+  async getFamilyMembersByRelationshipId(
     userDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]> {
     const result = await this.client.familyMembers?.findMany({
       where: {
         userId: userDetails.userId,
         relationshipId: userDetails.relationshipId,
+        isDeleted: false,
       },
     })
     return result ? result : []

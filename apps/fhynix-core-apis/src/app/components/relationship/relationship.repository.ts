@@ -34,6 +34,7 @@ export class RelationshipRepository implements RelationshipRepositoryInterface {
       },
       where: {
         relation: relation,
+        isDeleted: false,
       },
     })
     return result ? result : []

@@ -18,6 +18,7 @@ export class UserRepository implements UserRepositoryInterface {
     const result = await this.client.users?.findMany({
       where: {
         id: userId,
+        isDeleted: false,
       },
     })
     return result ? result : []
@@ -34,6 +35,7 @@ export class UserRepository implements UserRepositoryInterface {
       },
       where: {
         accountId: accountId,
+        isDeleted: false,
       },
     })
     return result ? result : []
@@ -50,6 +52,7 @@ export class UserRepository implements UserRepositoryInterface {
       },
       where: {
         relation: relation,
+        isDeleted: false,
       },
     })
     return result ? result : []
