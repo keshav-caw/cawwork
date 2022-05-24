@@ -30,6 +30,8 @@ export class AuthRepository implements AuthRepositoryInterface {
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
+    
+    
     return result
   }
 

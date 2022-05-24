@@ -11,6 +11,8 @@ model Users {
   address String?
   timezoneOffsetInMins Int? @map("timezone_offset_in_mins")
   isOnboardingCompleted Boolean @map("is_onboarding_completed")
+  firstName String @map("first_name")
+  lastName String @map("last_name")
 }
 
 model FamilyMembers {

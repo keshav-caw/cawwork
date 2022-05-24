@@ -11,6 +11,8 @@ import { JWTInterface } from './jwtservice/interfaces/jwt.interface'
 import { JWTService } from './jwtservice/jwt.service'
 import { RequestContext } from './jwtservice/requests-context.service'
 import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
+import { HashServiceInterface } from './hashservice/hash-service.interface'
+import { HashService } from './hashservice/hash.service'
 
 @injectable()
 export default class CommonBootstrapper {
@@ -28,5 +30,6 @@ export default class CommonBootstrapper {
     CommonContainer.bind<IRequestContext>(CommonTypes.requestContext)
       .to(RequestContext)
       .inSingletonScope()
+    CommonContainer.bind<HashServiceInterface>(CommonTypes.hash).to(HashService)
   }
 }
