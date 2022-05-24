@@ -4,7 +4,7 @@ export interface FamilyMemberServiceInterface {
   createFamilyMember(
     familyDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel>
-  getFamilyMembersForUser(
+  getFamilyMembersByRelationshipId(
     familyMemberDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]>
   updateFamilyMembers(

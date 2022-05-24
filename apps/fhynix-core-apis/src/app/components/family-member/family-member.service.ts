@@ -30,7 +30,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private requestContext: RequestContext,
   ) {}
 
-  async getFamilyMembersForUser(
+  async getFamilyMembersByRelationshipId(
     familyMemberDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]> {
     const userDetails =
@@ -43,6 +43,12 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         userDetails?.[0]?.id,
       )
       userDetails[0]['habits'] = habitsForFamily
+    } else {
+      throw new ArgumentValidationError(
+        "Family member doesn't exist",
+        familyMemberDetails,
+        ApiErrorCode.E0014,
+      )
     }
     return userDetails
   }
@@ -106,8 +112,11 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   }
 
   validateFamilyMemberOtherInfo(familyMember: FamilyMemberModel) {
-    if (familyMember?.otherInfo?.sleep && familyMember?.otherInfo?.workHours) {
-      const sleepTime = familyMember?.otherInfo?.sleep
+    if (
+      familyMember?.otherInfo?.sleepHours &&
+      familyMember?.otherInfo?.workHours
+    ) {
+      const sleepTime = familyMember?.otherInfo?.sleepHours
       const workHoursTime = familyMember?.otherInfo?.workHours
       const today = dayjs().format('YYYY-MM-DD')
 
@@ -116,7 +125,6 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
 
       workHoursTime.startTime = today + ' ' + workHoursTime.startTime
       workHoursTime.endTime = today + ' ' + workHoursTime.endTime
-
       if (
         dayjs(sleepTime.startTime).diff(
           dayjs(workHoursTime.startTime),
