@@ -12,7 +12,7 @@ export class FamilyMemberModel {
   dob?: Date
   profileImage?: boolean
   gender?: string
-  otherInfo?: string
+  otherInfo?: any
   color?: string
   personalities?: string
   interests?: string

@@ -8,4 +8,5 @@ export enum ApiErrorCode {
   'E0009' = 'More than one user is not allowed to add',
   'E0010' = 'Relationship is invalid',
   'E0011' = "Kid's age must be minimum 3 years",
+  'E0012' = 'Working Hours and Sleep time cannot be overlapped',
 }

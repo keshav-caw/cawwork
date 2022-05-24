@@ -37,10 +37,13 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       await this.familyMemberRepository.getFamilyMembersByRelationshipId(
         familyMemberDetails,
       )
-    const habitsForFamily = await this.habitsService.getHabitsById(
-      userDetails?.[0]?.id,
-    )
-    userDetails[0]['habits'] = habitsForFamily
+
+    if (userDetails?.length > 0) {
+      const habitsForFamily = await this.habitsService.getHabitsById(
+        userDetails?.[0]?.id,
+      )
+      userDetails[0]['habits'] = habitsForFamily
+    }
     return userDetails
   }
 
@@ -65,6 +68,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     familyDetails: FamilyMemberModel,
     familyMemberId: string,
   ): Promise<FamilyMemberModel> {
+    this.validateFamilyMemberOtherInfo(familyDetails)
     return await this.familyMemberRepository.updateFamilyMembers(
       familyDetails,
       familyMemberId,
@@ -99,6 +103,52 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     familyDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel> {
     return await this.familyMemberRepository.createFamilyMember(familyDetails)
+  }
+
+  validateFamilyMemberOtherInfo(familyMember: FamilyMemberModel) {
+    if (familyMember?.otherInfo?.sleep && familyMember?.otherInfo?.workHours) {
+      const sleepTime = familyMember?.otherInfo?.sleep
+      const workHoursTime = familyMember?.otherInfo?.workHours
+      const today = dayjs().format('YYYY-MM-DD')
+
+      sleepTime.startTime = today + ' ' + sleepTime.startTime
+      sleepTime.endTime = today + ' ' + sleepTime.endTime
+
+      workHoursTime.startTime = today + ' ' + workHoursTime.startTime
+      workHoursTime.endTime = today + ' ' + workHoursTime.endTime
+
+      if (
+        dayjs(sleepTime.startTime).diff(
+          dayjs(workHoursTime.startTime),
+          'minutes',
+        ) >= 0 &&
+        dayjs(workHoursTime.endTime).diff(
+          dayjs(sleepTime.startTime),
+          'minutes',
+        ) >= 0
+      ) {
+        throw new ArgumentValidationError(
+          'Working Hour and Sleep time overlapping',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        dayjs(sleepTime.endTime).diff(
+          dayjs(workHoursTime.startTime),
+          'minutes',
+        ) >= 0 &&
+        dayjs(workHoursTime.endTime).diff(
+          dayjs(sleepTime.endTime),
+          'minutes',
+        ) >= 0
+      ) {
+        throw new ArgumentValidationError(
+          'Working Hour and Sleep time overlapping',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      }
+    }
   }
 
   async validateFamilyMembers(familyMembers: FamilyMemberModel[]) {
