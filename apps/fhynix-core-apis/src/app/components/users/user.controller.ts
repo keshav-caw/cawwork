@@ -54,6 +54,13 @@ export class UserController implements interfaces.Controller {
       req.body,
       req.query.memberId.toString(),
     )
+    if (req.query.isOnboardingCompleted) {
+      const userId = this.requestContext.getUserId()
+      await this.userService.updateUserDetails(
+        { isOnboardingCompleted: true },
+        userId,
+      )
+    }
     res.send(details)
   }
 }

@@ -30,7 +30,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private requestContext: RequestContext,
   ) {}
 
-  async getFamilyMembersForUser(
+  async getFamilyMembersByRelationshipId(
     familyMemberDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel[]> {
     const userDetails =

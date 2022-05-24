@@ -40,7 +40,6 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const userId = this.requestContext.getUserId()
     res.send(await this.familyMemberService.createFamilyMemberForUser(req.body))
   }
 
