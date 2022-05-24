@@ -11,4 +11,5 @@ export enum ApiErrorCode {
   'E0010' = 'Relationship is invalid',
   'E0011' = "Kid's age must be minimum 3 years",
   'E0012' = 'Working Hours and Sleep time cannot be overlapped',
+  'E0013' = 'Access Token is missing',
 }
