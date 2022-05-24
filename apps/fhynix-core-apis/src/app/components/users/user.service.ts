@@ -19,10 +19,11 @@ export class UserService {
     const details = await this.userRepository.getUserDetails(userId)
     const relationship = await this.getRelationshipsMaster('self')
     const familyDetails =
-      await this.familyMemberService.getFamilyMembersForUser({
+      await this.familyMemberService.getFamilyMembersByRelationshipId({
         userId: userId,
         relationshipId: relationship[0]?.id,
       })
+
     Object.assign(details?.[0], familyDetails?.[0])
     return details
   }

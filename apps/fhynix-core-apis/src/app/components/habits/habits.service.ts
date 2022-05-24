@@ -15,9 +15,26 @@ export class HabitsService implements HabitsServiceInterface {
     return await this.habitsRepository.getHabitsByRelationship(relationship)
   }
 
+  async getHabitsById(relationship: string): Promise<HabitsModel> {
+    return await this.habitsRepository.getHabitsById(relationship)
+  }
+
   async createHabitsForRelationship(
     relationshipHabits: FamilyMemberHabitsModel[],
   ): Promise<FamilyMemberHabitsModel[]> {
+    let familyMemberIds = relationshipHabits.map(
+      (relationshipHabit) => relationshipHabit.familyMemberId,
+    )
+    familyMemberIds = [...new Set(familyMemberIds)]
+    const familyMemberCalls = []
+
+    familyMemberIds.forEach((familyMemberId) => {
+      familyMemberCalls.push(
+        this.habitsRepository.deleteRelationshipHabits(familyMemberId),
+      )
+    })
+
+    await Promise.all(familyMemberCalls)
     const calls = []
     relationshipHabits.forEach((relationshipHabit) => {
       calls.push(this.createRelationshipHabits(relationshipHabit))
