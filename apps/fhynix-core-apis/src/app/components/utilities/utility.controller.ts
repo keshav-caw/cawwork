@@ -11,12 +11,13 @@ import {
 import { inject } from 'inversify'
 import { CommonTypes } from '../../common/common.types'
 import { UtilityTypes } from './utility.types'
-import { UtilityService } from './utilities.service'
+import { GoogleLocationService } from './utilities.service'
+import { CollectionResponsePayload } from 'apps/shared/payloads/api-collection-response-payload'
 
 @controller('/utilities')
 export class UtilityController implements interfaces.Controller {
   constructor(
-    @inject(UtilityTypes.utlities) private utilityService: UtilityService,
+    @inject(UtilityTypes.googleLocations) private googleLocationService: GoogleLocationService,
   ) {}
 
   @httpGet('/location/search',CommonTypes.jwtAuthMiddleware)
@@ -25,9 +26,12 @@ export class UtilityController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ) { 
-    const {latitude,longitude,placeText} = req.body;
-    const nearbyPlaces = await this.utilityService.getNearbyPlaces({latitude,longitude,placeText});
-    const nearbyPlaceNames = nearbyPlaces.data.results.map(result=>result.name);
+    const {fromLatitude,fromLongitude,locationQuery} = req.body;
+    const nearbyPlaces = await this.googleLocationService.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
+    const nearbyPlaceNames = new CollectionResponsePayload<String>();
+    nearbyPlaces.data.results.forEach(result => {
+      nearbyPlaceNames.add(result.name);
+    });
     
     res.send(nearbyPlaceNames);
   }

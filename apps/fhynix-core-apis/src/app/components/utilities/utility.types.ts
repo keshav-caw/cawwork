@@ -1,5 +1,5 @@
 const UtilityTypes = {
-    utlities: Symbol.for('LocationService'),
+    googleLocations: Symbol.for('GoogleLocationService'),
 }
   
 export { UtilityTypes }
