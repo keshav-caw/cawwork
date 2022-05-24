@@ -23,6 +23,7 @@
   },
   "private": true,
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "core-js": "~3.6.5",
     "dayjs": "^1.11.2",
     "express": "4.17.2",

@@ -7,8 +7,10 @@ export class UserModel {
   isDeleted?: boolean
   accountId: string
   email: string
-  phone: string
+  phone?: string
   address?: string
   timezoneOffsetInMins?: number
   isOnboardingCompleted: boolean
+  firstName?:string
+  lastName?:string
 }
