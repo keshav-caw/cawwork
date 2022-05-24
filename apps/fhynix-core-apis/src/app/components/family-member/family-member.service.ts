@@ -136,7 +136,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         ) >= 0
       ) {
         throw new ArgumentValidationError(
-          'Working Hour and Sleep time overlapping',
+          'Work and sleep hours cannot overlap',
           familyMember,
           ApiErrorCode.E0012,
         )
@@ -151,7 +151,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         ) >= 0
       ) {
         throw new ArgumentValidationError(
-          'Working Hour and Sleep time overlapping',
+          'Work and sleep hours cannot overlap',
           familyMember,
           ApiErrorCode.E0012,
         )
