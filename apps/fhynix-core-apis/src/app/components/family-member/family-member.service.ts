@@ -13,6 +13,7 @@ import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
+import dayjs from 'dayjs'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -36,10 +37,13 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       await this.familyMemberRepository.getFamilyMembersByRelationshipId(
         familyMemberDetails,
       )
-    const habitsForFamily = await this.habitsService.getHabitsById(
-      userDetails?.[0]?.id,
-    )
-    userDetails[0]['habits'] = habitsForFamily
+
+    if (userDetails?.length > 0) {
+      const habitsForFamily = await this.habitsService.getHabitsById(
+        userDetails?.[0]?.id,
+      )
+      userDetails[0]['habits'] = habitsForFamily
+    }
     return userDetails
   }
 
@@ -64,6 +68,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     familyDetails: FamilyMemberModel,
     familyMemberId: string,
   ): Promise<FamilyMemberModel> {
+    this.validateFamilyMemberOtherInfo(familyDetails)
     return await this.familyMemberRepository.updateFamilyMembers(
       familyDetails,
       familyMemberId,
@@ -100,6 +105,52 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     return await this.familyMemberRepository.createFamilyMember(familyDetails)
   }
 
+  validateFamilyMemberOtherInfo(familyMember: FamilyMemberModel) {
+    if (familyMember?.otherInfo?.sleep && familyMember?.otherInfo?.workHours) {
+      const sleepTime = familyMember?.otherInfo?.sleep
+      const workHoursTime = familyMember?.otherInfo?.workHours
+      const today = dayjs().format('YYYY-MM-DD')
+
+      sleepTime.startTime = today + ' ' + sleepTime.startTime
+      sleepTime.endTime = today + ' ' + sleepTime.endTime
+
+      workHoursTime.startTime = today + ' ' + workHoursTime.startTime
+      workHoursTime.endTime = today + ' ' + workHoursTime.endTime
+
+      if (
+        dayjs(sleepTime.startTime).diff(
+          dayjs(workHoursTime.startTime),
+          'minutes',
+        ) >= 0 &&
+        dayjs(workHoursTime.endTime).diff(
+          dayjs(sleepTime.startTime),
+          'minutes',
+        ) >= 0
+      ) {
+        throw new ArgumentValidationError(
+          'Working Hour and Sleep time overlapping',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        dayjs(sleepTime.endTime).diff(
+          dayjs(workHoursTime.startTime),
+          'minutes',
+        ) >= 0 &&
+        dayjs(workHoursTime.endTime).diff(
+          dayjs(sleepTime.endTime),
+          'minutes',
+        ) >= 0
+      ) {
+        throw new ArgumentValidationError(
+          'Working Hour and Sleep time overlapping',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      }
+    }
+  }
+
   async validateFamilyMembers(familyMembers: FamilyMemberModel[]) {
     const relations = await this.relationshipRepository.getRelationshipsMaster()
     let relationshipIds = familyMembers.map((family) => family.relationshipId)
@@ -113,7 +164,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Invalid Relationship',
           familyMembers,
-          ApiErrorCode.E0006,
+          ApiErrorCode.E0010,
         )
       }
       calls.push(
@@ -137,7 +188,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0006,
+          ApiErrorCode.E0008,
         )
       } else if (
         selectedRelation?.[0].relation === 'kid' &&
@@ -146,7 +197,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0005,
+          ApiErrorCode.E0007,
         )
       } else if (
         selectedRelation?.[0].relation === 'self' &&
@@ -155,8 +206,25 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         throw new ArgumentValidationError(
           'Add Family Member',
           familyMembers,
-          ApiErrorCode.E0007,
+          ApiErrorCode.E0009,
         )
+      }
+
+      if (selectedRelation?.[0].relation === 'kid') {
+        const kids = familyMembers.filter(
+          (family) => family.relationshipId === relationshipId,
+        )
+
+        kids.forEach((kid) => {
+          const kidsAge = dayjs().diff(dayjs(kid.dob), 'years')
+          if (kidsAge < 3) {
+            throw new ArgumentValidationError(
+              'Kids Dob Invalid',
+              familyMembers,
+              ApiErrorCode.E0011,
+            )
+          }
+        })
       }
     })
   }

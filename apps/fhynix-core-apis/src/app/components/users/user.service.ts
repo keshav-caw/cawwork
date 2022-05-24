@@ -23,6 +23,7 @@ export class UserService {
         userId: userId,
         relationshipId: relationship[0]?.id,
       })
+
     Object.assign(details?.[0], familyDetails?.[0])
     return details
   }
