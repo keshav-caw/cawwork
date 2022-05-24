@@ -4,7 +4,8 @@
     "./apps/fhynix-core-apis/src/app/components/users/user-schema.prisma",
     "./apps/fhynix-core-apis/src/app/components/relationship/relationship-schema.prisma",
     "./apps/fhynix-core-apis/src/app/components/habits/habits-schema.prisma",
-    "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/db-schema.prisma"
+    "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/db-schema.prisma",
+    "./apps/fhynix-core-apis/src/app/components/articles/article-schema.prisma"
   ],
   "output": "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/schema.prisma"
 }

@@ -8,7 +8,8 @@ export class AccountModel {
   loginMethod?: string
   firstLoginAtUtc?: Date
   lastLoginAtUtc?: Date
-  accessToken: string
-  refreshToken: string
+  accessToken?: string
+  refreshToken?: string
   username?: string
+  password?: string
 }

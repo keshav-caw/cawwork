@@ -12,8 +12,22 @@ export class FamilyMemberModel {
   dob?: Date
   profileImage?: boolean
   gender?: string
-  otherInfo?: any
+  otherInfo?: OtherInfoModel
   color?: string
   personalities?: string
   interests?: string
+}
+
+export class OtherInfoModel {
+  school?: string
+  company?: string
+  aniverary?: Date
+  sleep?: ScheduleModel
+  workHours?: ScheduleModel
+  lunch?: ScheduleModel
+}
+
+export class ScheduleModel {
+  startTime?: string
+  endTime?: string
 }

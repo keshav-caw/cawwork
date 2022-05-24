@@ -4,6 +4,7 @@ const CommonTypes = {
   requestContext: Symbol.for('RequestContext'),
   jwtAuthMiddleware: Symbol.for('JWTAuthMiddleWare'),
   requestIdMiddleware: Symbol.for('RequestIdMiddleware'),
+  hash: Symbol.for('HashInterface')
 }
 
 export { CommonTypes }

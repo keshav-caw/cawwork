@@ -8,7 +8,8 @@ model Accounts {
   loginMethod String @map("login_method")
   firstLoginAtUtc DateTime @default(now()) @map("first_login_at_utc")
   lastLoginAtUtc DateTime @map("last_login_at_utc")
-  accessToken String @map("access_token")
-  refreshToken String @map("refresh_token")
-  username String
+  accessToken String? @map("access_token")
+  refreshToken String? @map("refresh_token")
+  username String @map("username")
+  password String @map("password")
 }
