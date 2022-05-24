@@ -15,7 +15,7 @@ const jwtMiddleWare = (req, res, next) => {
     throw new ArgumentValidationError(
       'Access token is missing',
       '',
-      ApiErrorCode.E0013,
+      ApiErrorCode.E0002,
     )
   } else {
     try {
