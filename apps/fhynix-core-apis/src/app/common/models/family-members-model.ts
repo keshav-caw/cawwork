@@ -22,9 +22,9 @@ export class OtherInfoModel {
   school?: string
   company?: string
   aniverary?: Date
-  sleep?: ScheduleModel
+  sleepHours?: ScheduleModel
   workHours?: ScheduleModel
-  lunch?: ScheduleModel
+  lunchHours?: ScheduleModel
 }
 
 export class ScheduleModel {

@@ -12,4 +12,5 @@ export enum ApiErrorCode {
   'E0011' = "Kid's age must be minimum 3 years",
   'E0012' = 'Working Hours and Sleep time cannot be overlapped',
   'E0013' = 'Access Token is missing',
+  'E0014' = "Family member doesn't exist",
 }

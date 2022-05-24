@@ -27,7 +27,7 @@ export class UserController implements interfaces.Controller {
   ) {}
 
   @httpGet('/me', CommonTypes.jwtAuthMiddleware)
-  public async getUsers(
+  public async getFamilYMembers(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,

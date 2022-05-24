@@ -25,7 +25,7 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
-  public async getUsers(
+  public async getFamilyMembers(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
@@ -36,7 +36,7 @@ export class FamilyMemberController implements interfaces.Controller {
   }
 
   @httpPost('/', CommonTypes.jwtAuthMiddleware)
-  private async createUser(
+  private async createFamilyMember(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
@@ -45,7 +45,7 @@ export class FamilyMemberController implements interfaces.Controller {
   }
 
   @httpDelete('/', CommonTypes.jwtAuthMiddleware)
-  private async deleteUser(
+  private async deleteFamilyMember(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
