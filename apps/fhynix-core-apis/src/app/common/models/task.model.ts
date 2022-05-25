@@ -17,6 +17,6 @@ export class TaskModel {
   type: string
   invites: string[]
   latitudesAndLongitudes: string
-  status: boolean
+  status: string
   recurringTaskId: string
 }
