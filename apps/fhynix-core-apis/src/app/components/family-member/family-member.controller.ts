@@ -6,6 +6,7 @@ import {
   response,
   httpPost,
   httpGet,
+  httpDelete,
   next,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
@@ -24,7 +25,7 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
-  public async getUsers(
+  public async getFamilyMembers(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
@@ -35,11 +36,19 @@ export class FamilyMemberController implements interfaces.Controller {
   }
 
   @httpPost('/', CommonTypes.jwtAuthMiddleware)
-  private async createUser(
+  private async createFamilyMember(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const userId = this.requestContext.getUserId()
     res.send(await this.familyMemberService.createFamilyMemberForUser(req.body))
+  }
+
+  @httpDelete('/', CommonTypes.jwtAuthMiddleware)
+  private async deleteFamilyMember(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const familyMemberId = req.query.familyMemberId.toString()
+    res.send(await this.familyMemberService.deleteFamilyMember(familyMemberId))
   }
 }

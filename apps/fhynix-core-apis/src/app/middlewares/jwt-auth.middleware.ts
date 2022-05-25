@@ -1,10 +1,10 @@
 import { CommonContainer } from '../common/container'
 import { JWTService } from '../common/jwtservice/jwt.service'
 import { ApiErrorCode } from '../../../../shared/payloads/error-codes'
-import { ApiErrorResponsePayload } from '../../../../shared/payloads/api-error-response.payload'
 import { CommonTypes } from '../common/common.types'
 import { RequestContext } from '../common/jwtservice/requests-context.service'
 import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error'
+import { ArgumentValidationError } from '../common/errors/custom-errors/argument-validation.error'
 
 const jwtMiddleWare = (req, res, next) => {
   const jwtService = CommonContainer.get<JWTService>(CommonTypes.jwt)
@@ -12,7 +12,11 @@ const jwtMiddleWare = (req, res, next) => {
     CommonTypes.requestContext,
   )
   if (!req.headers.authorization) {
-    return next(new ApiErrorResponsePayload(ApiErrorCode.E0003))
+    throw new ArgumentValidationError(
+      'Access token is missing',
+      '',
+      ApiErrorCode.E0002,
+    )
   } else {
     try {
       if (jwtService.validate(req.headers.authorization)) {

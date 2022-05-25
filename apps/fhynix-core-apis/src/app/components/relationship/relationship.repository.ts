@@ -19,6 +19,9 @@ export class RelationshipRepository implements RelationshipRepositoryInterface {
         relation: true,
         relationType: true,
       },
+      where: {
+        isDeleted: false,
+      },
     })
     return result ? result : []
   }
@@ -34,6 +37,7 @@ export class RelationshipRepository implements RelationshipRepositoryInterface {
       },
       where: {
         relation: relation,
+        isDeleted: false,
       },
     })
     return result ? result : []

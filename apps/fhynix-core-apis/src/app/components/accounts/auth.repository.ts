@@ -20,6 +20,7 @@ export class AuthRepository implements AuthRepositoryInterface {
       },
       where: {
         username: username,
+        isDeleted: false,
       },
     })
     return result ? result : []
