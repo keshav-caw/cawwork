@@ -25,8 +25,8 @@ model FamilyMembers {
   userId String? @map("user_id")
   relationshipId String? @map("relationship_id")
   firstName String @map("first_name")
-  lastName String @map("last_name")
-  dob DateTime
+  lastName String? @map("last_name")
+  dob DateTime?
   profileImage String? @map("profile_image")
   gender String?
   otherInfo Json[] @map("other_info")
