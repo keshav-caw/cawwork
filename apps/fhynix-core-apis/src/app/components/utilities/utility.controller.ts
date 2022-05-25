@@ -14,6 +14,7 @@ import { UtilityTypes } from './utility.types'
 import { GoogleLocationService } from './utilities.service'
 import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
 import { SearchLocationPayload } from 'apps/shared/payloads/search-location.payload'
+import { icalGenerator } from './ical.helper'
 
 @controller('/utilities')
 export class UtilityController implements interfaces.Controller {
@@ -36,6 +37,18 @@ export class UtilityController implements interfaces.Controller {
     });
     
     res.send(nearbyPlaceNames);
+  }
+
+  @httpGet('/icalFile')
+  private async getIcalFile(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ) { 
+    const {title,description,location,startTime,endTime} = req.body;
+    const calender = icalGenerator(title,description,location,startTime,endTime);
+    
+    calender.serve(res);
   }
 
 }

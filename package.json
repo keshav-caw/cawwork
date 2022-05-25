@@ -29,6 +29,7 @@
     "dayjs": "^1.11.2",
     "express": "4.17.2",
     "googleapis": "^100.0.0",
+    "ical-generator": "^3.4.3",
     "node-fetch": "^3.2.4",
     "prismix": "^1.0.21",
     "react": "17.0.2",
