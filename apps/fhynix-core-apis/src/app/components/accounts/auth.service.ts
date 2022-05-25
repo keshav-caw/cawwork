@@ -90,6 +90,8 @@ export class AuthService implements AuthServiceInterface {
 
     const userData = await this.userService.createUser({
       email: profileDetails.email,
+      firstName: profileDetails.firstName,
+      lastName: profileDetails.lastName,
       phone: profileDetails.phone,
       isOnboardingCompleted: false,
       accountId: accountDetails.id,
@@ -113,10 +115,14 @@ export class AuthService implements AuthServiceInterface {
     const peopleDetails = await googleApi.people.get({
       auth: oauth2Client,
       resourceName: 'people/me',
-      personFields: 'names,phoneNumbers,emailAddresses,locations,locales',
+      personFields:
+        'names,phoneNumbers,emailAddresses,locations,locales,birthdays',
     })
+
     return {
       name: peopleDetails.data.names?.[0]?.displayName,
+      firstName: peopleDetails.data.names?.[0]?.givenName,
+      lastName: peopleDetails.data.names?.[0]?.familyName,
       phone: peopleDetails.data.phoneNumbers?.[0]?.value,
       email: peopleDetails.data.emailAddresses?.[0]?.value,
       accessToken: authToken.tokens.access_token,
@@ -124,53 +130,50 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
-
   async signup(userDetails) {
-    if(userDetails.password!==userDetails.confirmPassword){
+    if (userDetails.password !== userDetails.confirmPassword) {
       throw new ArgumentValidationError(
-          'Password',
-          userDetails.password,
-          ApiErrorCode.E0005,
+        'Password',
+        userDetails.password,
+        ApiErrorCode.E0005,
       )
     }
 
-    const user = await this.authRepository.getAccountDetails(userDetails.email);
-    if(user?.length>0){
+    const user = await this.authRepository.getAccountDetails(userDetails.email)
+    if (user?.length > 0) {
       throw new ArgumentValidationError(
-          'Email',
-          userDetails.email,
-          ApiErrorCode.E0006,
+        'Email',
+        userDetails.email,
+        ApiErrorCode.E0006,
       )
     }
 
-    const encryptedPassword = await this.hashService.hashPassword(userDetails.password);
-    
+    const encryptedPassword = await this.hashService.hashPassword(
+      userDetails.password,
+    )
 
-    const account:AccountModel = {
-        username:userDetails.email,
-        password:encryptedPassword,
-        loginMethod:LoginMethodEnum.EMAIL_PASSWORD,
-    };
+    const account: AccountModel = {
+      username: userDetails.email,
+      password: encryptedPassword,
+      loginMethod: LoginMethodEnum.EMAIL_PASSWORD,
+    }
 
-    const accountDetails = await this.authRepository.createAccounts(account);
+    const accountDetails = await this.authRepository.createAccounts(account)
 
     const newUser: UserModel = {
-      firstName:userDetails.firstName,
-      lastName:userDetails.lastName,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
       email: userDetails.email,
       isOnboardingCompleted: false,
       accountId: accountDetails.id,
     }
 
-    
-
-    const userData = await this.userService.createUser(newUser);
+    const userData = await this.userService.createUser(newUser)
 
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
     })
-    
 
     return { authToken: authToken }
   }
