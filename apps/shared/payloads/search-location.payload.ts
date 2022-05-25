@@ -1,9 +1,11 @@
 import { ResponsePayloadBase } from "./base-response.payload";
 
 export class SearchLocationPayload extends ResponsePayloadBase {
-    name:string
-    constructor(name){
+    name:string;
+    location:Object;
+    constructor(name,location){
         super()
         this.name = name;
+        this.location = location;
     }
 }

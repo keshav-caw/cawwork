@@ -1,6 +1,6 @@
 import { ResponsePayloadBase } from "./base-response.payload";
 
-export class CollectionResponsePayload<T extends ResponsePayloadBase> extends ResponsePayloadBase { 
+export class PaginatedResponsePayload<T extends ResponsePayloadBase> extends ResponsePayloadBase { 
     data:T[]
     constructor(){
         super()
