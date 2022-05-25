@@ -2,8 +2,8 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { ArticleRepositoryInterface } from '../../common/interfaces/article-repository.interface'
-import { ArticleModel } from '../../common/models/article-model'
-import { ArticlePaginationModel } from '../../common/models/article-pagination-model'
+import { ArticleModel } from '../../common/models/article.model'
+import { ArticlePaginationModel } from '../../common/models/article-pagination.model'
 
 @injectable()
 export class ArticleRepository implements ArticleRepositoryInterface {

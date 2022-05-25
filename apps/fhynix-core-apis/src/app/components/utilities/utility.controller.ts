@@ -12,7 +12,8 @@ import { inject } from 'inversify'
 import { CommonTypes } from '../../common/common.types'
 import { UtilityTypes } from './utility.types'
 import { GoogleLocationService } from './utilities.service'
-import { CollectionResponsePayload } from 'apps/shared/payloads/api-collection-response-payload'
+import { CollectionResponsePayload } from 'apps/shared/payloads/api-collection-response.payload'
+import { SearchLocationPayload } from 'apps/shared/payloads/search-location.payload'
 
 @controller('/utilities')
 export class UtilityController implements interfaces.Controller {
@@ -28,9 +29,10 @@ export class UtilityController implements interfaces.Controller {
   ) { 
     const {fromLatitude,fromLongitude,locationQuery} = req.body;
     const nearbyPlaces = await this.googleLocationService.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
-    const nearbyPlaceNames = new CollectionResponsePayload<String>();
+    const nearbyPlaceNames = new CollectionResponsePayload<SearchLocationPayload>();
     nearbyPlaces.data.results.forEach(result => {
-      nearbyPlaceNames.add(result.name);
+      const searchLocation = new SearchLocationPayload(result.name);
+      nearbyPlaceNames.add(searchLocation);
     });
     
     res.send(nearbyPlaceNames);
