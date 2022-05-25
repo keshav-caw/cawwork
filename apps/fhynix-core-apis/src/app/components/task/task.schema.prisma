@@ -1,0 +1,22 @@
+model Task {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  familyMemberId String @map("family_member_id")
+  userId String @map("user_id")
+  userTemplateId String? @map("user_template_id")
+  title String
+  startAtUtc DateTime @map("start_at_utc")
+  endAtUtc DateTime @map("end_at_utc")
+  notifyAtUtc DateTime @map("notify_at_utc")
+  notes String
+  repeatDuration String @map("repeat_duration")
+  type String
+  invites String[]
+  latitudesAndLongitudes String @map("latitudes_and_longitudes")
+  status Boolean
+  recurringTaskId String @map("recurring_task_id")
+}

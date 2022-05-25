@@ -10,6 +10,6 @@ model Accounts {
   lastLoginAtUtc DateTime @map("last_login_at_utc")
   accessToken String? @map("access_token")
   refreshToken String? @map("refresh_token")
-  username String @map("username")
-  password String @map("password")
+  username String? @map("username")
+  password String? @map("password")
 }
