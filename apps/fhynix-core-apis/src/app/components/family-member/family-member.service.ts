@@ -148,6 +148,27 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   }
 
   async validateFamilyMembers(familyMembers: FamilyMemberModel[]) {
+    familyMembers.forEach((familyMember) => {
+      if (!familyMember.firstName) {
+        throw new ArgumentValidationError(
+          'First Name is missing',
+          familyMember,
+          ApiErrorCode.E0019,
+        )
+      } else if (!familyMember.lastName) {
+        throw new ArgumentValidationError(
+          'Last Name is missing',
+          familyMember,
+          ApiErrorCode.E0020,
+        )
+      } else if (!familyMember.dob) {
+        throw new ArgumentValidationError(
+          'Date Of Birth is missing',
+          familyMember,
+          ApiErrorCode.E0018,
+        )
+      }
+    })
     const relations = await this.relationshipRepository.getRelationshipsMaster()
     let relationshipIds = familyMembers.map((family) => family.relationshipId)
     relationshipIds = [...new Set(relationshipIds)]

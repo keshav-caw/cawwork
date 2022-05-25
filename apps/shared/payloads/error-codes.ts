@@ -15,5 +15,9 @@ export enum ApiErrorCode {
   'E0014' = "Family member doesn't exist",
   'E0015' = 'Start Date must be less than End Date',
   'E0016' = "Start Date and End Date should not be less than today's date",
-  'E0017' = 'notify Date must not be greater than start date',
+  'E0017' = 'Notify Date must not be greater than start date',
+  'E0018' = 'Date Of Birth is missing',
+  'E0019' = 'First Name is missing',
+  'E0020' = 'Last Name is missing',
+  'E0021' = 'Atleast 2 habits must be added',
 }
