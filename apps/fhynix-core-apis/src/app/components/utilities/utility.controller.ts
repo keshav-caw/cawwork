@@ -14,7 +14,6 @@ import { UtilityTypes } from './utility.types'
 import { GoogleLocationService } from './utilities.service'
 import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
 import { SearchLocationPayload } from 'apps/shared/payloads/search-location.payload'
-import { icalGenerator } from './ical.helper'
 
 @controller('/utilities')
 export class UtilityController implements interfaces.Controller {
