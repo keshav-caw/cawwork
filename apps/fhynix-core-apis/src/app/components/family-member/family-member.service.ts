@@ -120,20 +120,14 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       const workHoursTime = familyMember?.otherInfo?.workHours
       const today = dayjs().format('YYYY-MM-DD')
 
-      sleepTime.startTime = today + ' ' + sleepTime.startTime
-      sleepTime.endTime = today + ' ' + sleepTime.endTime
+      const sleepStartTime = today + ' ' + sleepTime.startTime
+      const sleepEndTime = today + ' ' + sleepTime.endTime
 
-      workHoursTime.startTime = today + ' ' + workHoursTime.startTime
-      workHoursTime.endTime = today + ' ' + workHoursTime.endTime
+      const workHoursStartTime = today + ' ' + workHoursTime.startTime
+      const workHoursEndTime = today + ' ' + workHoursTime.endTime
       if (
-        dayjs(sleepTime.startTime).diff(
-          dayjs(workHoursTime.startTime),
-          'minutes',
-        ) >= 0 &&
-        dayjs(workHoursTime.endTime).diff(
-          dayjs(sleepTime.startTime),
-          'minutes',
-        ) >= 0
+        dayjs(sleepStartTime).diff(dayjs(workHoursStartTime), 'minutes') >= 0 &&
+        dayjs(workHoursEndTime).diff(dayjs(sleepStartTime), 'minutes') >= 0
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
@@ -141,14 +135,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           ApiErrorCode.E0012,
         )
       } else if (
-        dayjs(sleepTime.endTime).diff(
-          dayjs(workHoursTime.startTime),
-          'minutes',
-        ) >= 0 &&
-        dayjs(workHoursTime.endTime).diff(
-          dayjs(sleepTime.endTime),
-          'minutes',
-        ) >= 0
+        dayjs(sleepEndTime).diff(dayjs(workHoursStartTime), 'minutes') >= 0 &&
+        dayjs(workHoursEndTime).diff(dayjs(sleepEndTime), 'minutes') >= 0
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
