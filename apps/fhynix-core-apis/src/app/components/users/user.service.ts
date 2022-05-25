@@ -40,7 +40,8 @@ export class UserService {
     const relationship = await this.getRelationshipsMaster('self')
 
     await this.familyMemberService.createFamilyMember({
-      firstName: userDetails.email,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
       relationshipId: relationship[0]?.id,
       userId: userData.id,
     })
