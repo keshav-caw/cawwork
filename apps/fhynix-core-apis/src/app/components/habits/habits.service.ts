@@ -11,11 +11,11 @@ export class HabitsService implements HabitsServiceInterface {
     @inject('HabitsRepository') private habitsRepository: HabitsRepository,
   ) {}
 
-  async getHabitsByRelationship(relationship: string): Promise<HabitsModel> {
+  async getHabitsByRelationship(relationship: string): Promise<HabitsModel[]> {
     return await this.habitsRepository.getHabitsByRelationship(relationship)
   }
 
-  async getHabitsById(relationship: string): Promise<HabitsModel> {
+  async getHabitsById(relationship: string): Promise<HabitsModel[]> {
     return await this.habitsRepository.getHabitsById(relationship)
   }
 

@@ -13,5 +13,7 @@ export enum ApiErrorCode {
   'E0012' = 'Work and sleep hours cannot overlap.',
   'E0013' = 'Access Token is missing',
   'E0014' = "Family member doesn't exist",
-  'E0015' = 'StartDate must be less than EndDate',
+  'E0015' = 'Start Date must be less than End Date',
+  'E0016' = "Start Date and End Date should not be less than today's date",
+  'E0017' = 'notify Date must not be greater than start date',
 }

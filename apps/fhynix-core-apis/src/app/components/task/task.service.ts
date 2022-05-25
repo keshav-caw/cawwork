@@ -19,11 +19,15 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.getTasksByUserId(userId)
   }
 
-  async getTaskDetailsByTaskId(userId: string): Promise<TaskModel[]> {
-    return await this.taskRepository.getTaskDetailsByTaskId(userId)
+  async getTaskDetailsByTaskId(
+    taskId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    return await this.taskRepository.getTaskDetailsByTaskId(taskId, userId)
   }
 
   async createTasks(tasks: TaskModel[]): Promise<TaskModel[]> {
+    this.validateTaskInfo(tasks)
     const calls = []
     tasks.forEach((task) => {
       calls.push(this.taskRepository.createTasks(task))
@@ -42,6 +46,24 @@ export class TaskService implements TaskServiceInterface {
           'StartDate must be less than EndDate',
           task,
           ApiErrorCode.E0015,
+        )
+      } else if (
+        dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
+        dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0
+      ) {
+        throw new ArgumentValidationError(
+          "Start Date and End Date should not be less than today's date",
+          task,
+          ApiErrorCode.E0016,
+        )
+      } else if (
+        task.notifyAtUtc &&
+        dayjs(task.notifyAtUtc).diff(dayjs(task.startAtUtc), 'minutes') > 0
+      ) {
+        throw new ArgumentValidationError(
+          'Notify Date must not be less than start date',
+          task,
+          ApiErrorCode.E0017,
         )
       }
     })

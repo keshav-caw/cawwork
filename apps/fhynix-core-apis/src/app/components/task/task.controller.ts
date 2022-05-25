@@ -43,7 +43,11 @@ export class TasksController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const details = await this.taskService.getTaskDetailsByTaskId(taskId)
+    const userId = this.requestContext.getUserId()
+    const details = await this.taskService.getTaskDetailsByTaskId(
+      userId,
+      taskId,
+    )
     return res.send(details)
   }
 
@@ -57,10 +61,9 @@ export class TasksController implements interfaces.Controller {
 
   @httpDelete('/:taskId', CommonTypes.jwtAuthMiddleware)
   private async deleteFamilyMember(
-    @queryParam('taskId') taskId: string,
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.deleteTask(taskId))
+    res.send(await this.taskService.deleteTask(req.params.taskId))
   }
 }

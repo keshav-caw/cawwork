@@ -12,7 +12,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getHabitsByRelationship(relationship: string): Promise<HabitsModel> {
+  async getHabitsByRelationship(relationship: string): Promise<HabitsModel[]> {
     const result = await this.client.habits?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
@@ -22,7 +22,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async getHabitsById(familyMemberId: string): Promise<HabitsModel> {
+  async getHabitsById(familyMemberId: string): Promise<HabitsModel[]> {
     const result = await this.client.familyMemberHabits?.findMany({
       where: {
         familyMemberId: familyMemberId,
@@ -43,13 +43,18 @@ export class HabitsRepository implements HabitsRepositoryInterface {
 
   async deleteRelationshipHabits(
     familyMemberId: string,
-  ): Promise<FamilyMemberHabitsModel> {
-    const result = await this.client.familyMemberHabits?.update({
-      data: { isDeleted: true },
-      where: {
-        familyMemberId: familyMemberId,
-      },
-    })
-    return result
+  ): Promise<FamilyMemberHabitsModel[]> {
+    const habitByFamilyId = await this.getHabitsById(familyMemberId)
+    if (habitByFamilyId?.length > 0) {
+      const result = await this.client.familyMemberHabits?.update({
+        data: { isDeleted: true },
+        where: {
+          familyMemberId: familyMemberId,
+        },
+      })
+      return result
+    }
+
+    return []
   }
 }

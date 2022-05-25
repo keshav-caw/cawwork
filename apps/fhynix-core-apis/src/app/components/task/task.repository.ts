@@ -22,10 +22,14 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
-  async getTaskDetailsByTaskId(taskId: string): Promise<TaskModel[]> {
+  async getTaskDetailsByTaskId(
+    taskId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
     const result = await this.client.tasks?.findMany({
       where: {
         id: taskId,
+        userId: userId,
         isDeleted: false,
       },
     })
@@ -40,6 +44,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async deleteTask(taskId: string): Promise<TaskModel> {
+    console.log(taskId)
     const result = await this.client.tasks?.update({
       data: { isDeleted: true },
       where: {
