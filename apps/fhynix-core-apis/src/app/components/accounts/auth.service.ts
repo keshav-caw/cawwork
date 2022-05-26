@@ -17,6 +17,7 @@ import { AccountModel } from '../../common/models/account-model'
 import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HashService } from '../../common/hashservice/hash.service'
+import dayjs from 'dayjs'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -95,6 +96,7 @@ export class AuthService implements AuthServiceInterface {
       phone: profileDetails.phone,
       isOnboardingCompleted: false,
       accountId: accountDetails.id,
+      dob: profileDetails.dob,
     })
 
     return userData
@@ -116,9 +118,10 @@ export class AuthService implements AuthServiceInterface {
       auth: oauth2Client,
       resourceName: 'people/me',
       personFields:
-        'names,phoneNumbers,emailAddresses,locations,locales,birthdays',
+        'names,birthdays,phoneNumbers,emailAddresses,locations,locales,metadata',
     })
 
+    const dob = peopleDetails?.data?.birthdays?.[0]?.date
     return {
       name: peopleDetails.data.names?.[0]?.displayName,
       firstName: peopleDetails.data.names?.[0]?.givenName,
@@ -127,6 +130,9 @@ export class AuthService implements AuthServiceInterface {
       email: peopleDetails.data.emailAddresses?.[0]?.value,
       accessToken: authToken.tokens.access_token,
       refreshToken: authToken.tokens.refresh_token,
+      dob: dob
+        ? dayjs(dob.year + ' ' + dob.month + ' ' + dob.day).toDate()
+        : null,
     }
   }
 
