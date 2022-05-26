@@ -44,6 +44,7 @@ export class UserService {
       lastName: userDetails.lastName,
       relationshipId: relationship[0]?.id,
       userId: userData.id,
+      dob: userData.dob,
     })
     return userData
   }
