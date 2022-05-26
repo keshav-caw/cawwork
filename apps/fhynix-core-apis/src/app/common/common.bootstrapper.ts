@@ -13,6 +13,8 @@ import { RequestContext } from './jwtservice/requests-context.service'
 import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
 import { HashServiceInterface } from './hashservice/hash-service.interface'
 import { HashService } from './hashservice/hash.service'
+import { IS3Bucket } from './interfaces/s3Bucket-service.interface'
+import { S3BucketService } from './s3BucketService/s3bucket.service'
 
 @injectable()
 export default class CommonBootstrapper {
@@ -31,5 +33,8 @@ export default class CommonBootstrapper {
       .to(RequestContext)
       .inSingletonScope()
     CommonContainer.bind<HashServiceInterface>(CommonTypes.hash).to(HashService)
+    CommonContainer.bind<IS3Bucket>(CommonTypes.s3Bucket)
+      .to(S3BucketService)
+      .inSingletonScope()
   }
 }
