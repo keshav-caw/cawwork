@@ -10,7 +10,7 @@ export class FamilyMemberModel {
   firstName?: string
   lastName?: string
   dob?: Date
-  profileImage?: boolean
+  profileImage?: string
   gender?: string
   otherInfo?: OtherInfoModel
   color?: string

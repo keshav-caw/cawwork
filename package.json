@@ -57,6 +57,7 @@
     "@typescript-eslint/eslint-plugin": "~5.10.0",
     "@typescript-eslint/parser": "~5.10.0",
     "async_hooks": "^1.0.0",
+    "aws-sdk": "^2.1143.0",
     "babel-jest": "27.2.3",
     "cypress": "~9.1.0",
     "eslint": "~8.7.0",

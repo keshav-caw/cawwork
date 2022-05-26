@@ -14,6 +14,7 @@ import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
+import { S3BucketService } from '../../common/s3BucketService/s3bucket.service'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -28,6 +29,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private relationshipService: RelationshipService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
+    @inject(CommonTypes.s3Bucket)
+    private s3Bucket: S3BucketService,
   ) {}
 
   async getFamilyMembersByRelationshipId(
@@ -118,16 +121,23 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     ) {
       const sleepTime = familyMember?.otherInfo?.sleepHours
       const workHoursTime = familyMember?.otherInfo?.workHours
-      const today = dayjs().format('YYYY-MM-DD')
 
-      const sleepStartTime = today + ' ' + sleepTime.startTime
-      const sleepEndTime = today + ' ' + sleepTime.endTime
+      const sleepStartTime = this.getMinutesFromTimestamp(sleepTime.startTime)
+      const sleepEndTime = this.getMinutesFromTimestamp(sleepTime.endTime)
 
-      const workHoursStartTime = today + ' ' + workHoursTime.startTime
-      const workHoursEndTime = today + ' ' + workHoursTime.endTime
+      const workHoursStartTime = this.getMinutesFromTimestamp(
+        workHoursTime.startTime,
+      )
+      const workHoursEndTime = this.getMinutesFromTimestamp(
+        workHoursTime.endTime,
+      )
+
       if (
-        dayjs(sleepStartTime).diff(dayjs(workHoursStartTime), 'minutes') >= 0 &&
-        dayjs(workHoursEndTime).diff(dayjs(sleepStartTime), 'minutes') >= 0
+        workHoursStartTime > workHoursEndTime &&
+        (sleepStartTime >= workHoursStartTime ||
+          sleepStartTime <= workHoursEndTime ||
+          sleepEndTime >= workHoursStartTime ||
+          sleepEndTime <= workHoursEndTime)
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
@@ -135,8 +145,35 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           ApiErrorCode.E0012,
         )
       } else if (
-        dayjs(sleepEndTime).diff(dayjs(workHoursStartTime), 'minutes') >= 0 &&
-        dayjs(workHoursEndTime).diff(dayjs(sleepEndTime), 'minutes') >= 0
+        workHoursStartTime < workHoursEndTime &&
+        ((sleepStartTime >= workHoursStartTime &&
+          sleepStartTime <= workHoursEndTime) ||
+          (sleepEndTime >= workHoursStartTime &&
+            sleepEndTime <= workHoursEndTime))
+      ) {
+        throw new ArgumentValidationError(
+          'Work and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        (workHoursStartTime >= sleepStartTime ||
+          workHoursStartTime <= sleepEndTime ||
+          workHoursEndTime >= sleepStartTime ||
+          workHoursEndTime <= sleepEndTime)
+      ) {
+        throw new ArgumentValidationError(
+          'Work and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        sleepStartTime < sleepEndTime &&
+        ((workHoursStartTime >= sleepStartTime &&
+          workHoursStartTime <= sleepEndTime) ||
+          (workHoursEndTime >= sleepStartTime &&
+            workHoursEndTime <= sleepEndTime))
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
@@ -244,5 +281,17 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         })
       }
     })
+  }
+
+  getMinutesFromTimestamp(timestamp) {
+    const isAm = timestamp.indexOf('AM') > -1
+    const time = timestamp?.replace(' PM', '')?.replace(' AM', '')?.split(':')
+    const hours = time[0]
+    const minutes = time[1]
+    if (isAm) {
+      return Number(hours * 60 + minutes)
+    } else {
+      return Number((hours === '12' ? hours * 60 : (hours + 12) * 60) + minutes)
+    }
   }
 }
