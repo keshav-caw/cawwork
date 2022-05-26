@@ -36,6 +36,8 @@ export class UserService {
   }
 
   async createUser(userDetails: UserModel): Promise<UserModel> {
+    const dob = userDetails.dob
+    delete userDetails.dob
     const userData = await this.userRepository.createUser(userDetails)
     const relationship = await this.getRelationshipsMaster('self')
 
@@ -44,7 +46,7 @@ export class UserService {
       lastName: userDetails.lastName,
       relationshipId: relationship[0]?.id,
       userId: userData.id,
-      dob: userData.dob,
+      dob: dob,
     })
     return userData
   }
