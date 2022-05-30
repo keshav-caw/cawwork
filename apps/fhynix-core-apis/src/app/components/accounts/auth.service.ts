@@ -169,12 +169,15 @@ export class AuthService implements AuthServiceInterface {
 
     const userData = await this.userService.createUser(newUser);
 
+    console.log(userData);
+    
+
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
     })
 
-    await this.emailService.sendEmails(this.emailService.templates.WelcomePage,userDetails.email,{'firstName':userDetails.firstName});
+    // await this.emailService.sendEmails(this.emailService.templates.WelcomePage,userDetails.email,{'firstName':userDetails.firstName});
     
 
     return { authToken: authToken }
