@@ -30,11 +30,11 @@ export class UtilityController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ) { 
     const {fromLatitude,fromLongitude,locationQuery} = req.body;
-    const nearbyPlaces = await this.googleLocationService.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
+    const addresses = await this.googleLocationService.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
     const nearbyPlaceNames = new PaginatedResponsePayload<SearchLocationPayload>();
 
-    for(const result of nearbyPlaces){
-      const searchLocation = new SearchLocationPayload(result.name,result.address);
+    for(const address of addresses){
+      const searchLocation = new SearchLocationPayload(address);
       nearbyPlaceNames.add(searchLocation);
     }
     

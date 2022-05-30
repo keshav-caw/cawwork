@@ -18,8 +18,11 @@ export class GoogleLocationService implements LocationServiceInterface {
 
       const nearbyPlaces = await axios(fetchUrl);
 
+      const addresses:AddressModel[] = [];
+
       for(const result of nearbyPlaces.data.results){
         const address:AddressModel = {
+          name:result.name,
           streetInfo:"NA",
           city:"NA",
           state:"NA",
@@ -38,9 +41,9 @@ export class GoogleLocationService implements LocationServiceInterface {
           localAddressArray.pop();
           address.streetInfo = localAddressArray.join(",");
         }
-        result.address = address;
+        addresses.push(address);
       }
       
-      return nearbyPlaces.data.results;
+      return addresses;
   }
 }
