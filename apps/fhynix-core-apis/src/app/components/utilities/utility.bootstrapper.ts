@@ -2,17 +2,17 @@ import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { CommonContainer } from '../../common/container'
 import { UtilityController } from './utility.controller'
-import { LocationServiceInterface } from '../../common/interfaces/location-service.interface'
-import { GoogleLocationService } from './utilities.service'
+import { LocationProviderInterface } from '../../common/interfaces/location-provider.interface'
+import { LocationProvider } from './location.provider'
 import { UtilityTypes } from './utility.types'
-import { EmailServiceInterface } from '../../common/interfaces/email-service.interface'
-import { EmailService } from './emails.service'
+import { EmailProviderInterface } from '../../common/interfaces/email-provider.interface'
+import { EmailProvider } from './email.provider'
 
 @injectable()
 export default class UtilityBootstrapper {
   public static initialize() {
-      CommonContainer.bind<LocationServiceInterface>(UtilityTypes.googleLocations).to(GoogleLocationService)
+      CommonContainer.bind<LocationProviderInterface>(UtilityTypes.googleLocations).to(LocationProvider)
       CommonContainer.bind<UtilityController>('UtilityController').to(UtilityController)
-      CommonContainer.bind<EmailServiceInterface>(UtilityTypes.emailService).to(EmailService)
+      CommonContainer.bind<EmailProviderInterface>(UtilityTypes.emailProvider).to(EmailProvider)
   }
 }

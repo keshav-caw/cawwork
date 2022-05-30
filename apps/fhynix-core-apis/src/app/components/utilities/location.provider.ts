@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import axios from 'axios';
-import { LocationServiceInterface } from '../../common/interfaces/location-service.interface'
+import { LocationProviderInterface } from '../../common/interfaces/location-provider.interface'
 import { LocationSearchQueryModel } from '../../common/models/location-search-query.model'
 import {environment} from '../../../environments/environment';
 import { AddressModel } from '../../common/models/address.model';
 
 @injectable()
-export class GoogleLocationService implements LocationServiceInterface {
+export class LocationProvider implements LocationProviderInterface {
   private NEARBY_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
   async getNearbyPlaces(details:LocationSearchQueryModel) {

@@ -32,8 +32,6 @@ export class AuthController implements interfaces.Controller {
     @response() res: express.Response,
   ){
     const details = await this.authService.signup(req.body);
-    // console.log(details);
-    
     res.send(details);   
   }
 }

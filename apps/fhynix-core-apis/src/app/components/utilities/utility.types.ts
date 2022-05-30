@@ -1,6 +1,6 @@
 const UtilityTypes = {
     googleLocations: Symbol.for('GoogleLocationService'),
-    emailService:Symbol.for('EmailService')
+    emailProvider:Symbol.for('EmailProvider')
 }
   
 export { UtilityTypes }

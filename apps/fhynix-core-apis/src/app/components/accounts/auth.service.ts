@@ -18,7 +18,7 @@ import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HashService } from '../../common/hashservice/hash.service'
 import { UtilityTypes } from '../utilities/utility.types'
-import { EmailService } from '../utilities/emails.service'
+import { EmailProvider } from '../utilities/email.provider'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -29,7 +29,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
     @inject(CommonTypes.hash) private hashService: HashService,
-    @inject(UtilityTypes.emailService) private emailService: EmailService,
+    @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
   ) {}
 
   async login(userDetails: UserLoginModel) {
@@ -129,6 +129,7 @@ export class AuthService implements AuthServiceInterface {
 
 
   async signup(userDetails) {
+
     if(userDetails.password!==userDetails.confirmPassword){
       throw new ArgumentValidationError(
           'Password',
@@ -169,17 +170,13 @@ export class AuthService implements AuthServiceInterface {
 
     const userData = await this.userService.createUser(newUser);
 
-    // console.log(userData);
-    
-
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
     })
 
-    // await this.emailService.sendEmails(this.emailService.templates.WelcomePage,userDetails.email,{'firstName':userDetails.firstName});
-    
+    await this.emailProvider.sendEmails(this.emailProvider.templates.WelcomePage,userDetails.email,{firstName:userDetails.firstName});
 
-    return { authToken: authToken }
+    return { authToken: authToken}
   }
 }
