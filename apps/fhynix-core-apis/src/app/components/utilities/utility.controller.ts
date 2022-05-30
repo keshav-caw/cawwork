@@ -31,7 +31,7 @@ export class UtilityController implements interfaces.Controller {
     const nearbyPlaces = await this.googleLocationService.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
     const nearbyPlaceNames = new PaginatedResponsePayload<SearchLocationPayload>();
     nearbyPlaces.data.results.forEach(result => {
-      const searchLocation = new SearchLocationPayload(result.name,result.geometry.location);
+      const searchLocation = new SearchLocationPayload(result.name,result.geometry.location,result.vicinity);
       nearbyPlaceNames.add(searchLocation);
     });
     
