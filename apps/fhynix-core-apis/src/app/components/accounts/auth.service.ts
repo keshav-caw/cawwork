@@ -169,7 +169,7 @@ export class AuthService implements AuthServiceInterface {
 
     const userData = await this.userService.createUser(newUser);
 
-    console.log(userData);
+    // console.log(userData);
     
 
     const authToken = await this.jwtService.encode({
