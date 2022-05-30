@@ -8,6 +8,7 @@ import FamilyMemberBootstrapper from './components/family-member/family-member.b
 import RelationshipBootstrapper from './components/relationship/relationship.bootstrapper'
 import HabitsBootstrapper from './components/habits/habits.bootstrapper'
 import ArticleBootstrapper from './components/articles/article.bootstrapper'
+import UtilityBootstrapper from './components/utilities/utility.bootstrapper'
 import TaskBootstrapper from './components/task/task.bootstrapper'
 
 export default class Bootstrapper {
@@ -16,6 +17,7 @@ export default class Bootstrapper {
     UserBootstrapper.initialize()
     AccountBootstrapper.initialize()
     ArticleBootstrapper.initialize()
+    UtilityBootstrapper.initialize()
     HabitsBootstrapper.initialize()
     FamilyMemberBootstrapper.initialize()
     RelationshipBootstrapper.initialize()
