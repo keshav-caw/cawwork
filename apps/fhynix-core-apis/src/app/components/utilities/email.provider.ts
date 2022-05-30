@@ -7,29 +7,33 @@ import {environment} from '../../../environments/environment';
 @injectable()
 export class EmailProvider implements EmailProviderInterface {
     templates: any;
+    private name = 'Fhynix Team'
+    private email = 'team@fhynix.com'
     constructor() {
         this.templates = {
-            WelcomePage:'d-2cdd275e0be743889758a196b7ed334e'
+            WelcomeEmail:'d-2cdd275e0be743889758a196b7ed334e'
         };
     }
 
-    async sendEmails(   
-        templateId: any,
+    async sendEmailUsingTemplate(   
+        templateId: string,
         tos: any,
-        substitutions: any = {},
+        subject:string,
+        substitutions: Object = {},
         ccs?: any,
         attachments: any[] = []
     ){
         sendgrid.setApiKey(environment.sendgridApiKey);
 
         const email: any = {
-            from: { name: 'Fhynix', email: 'tools@fhynix.com' },
+            from: { name: this.name, email: this.email },
             to: tos,
             templateId,
             cc: ccs?.filter((cc: any) => !tos.some((to: any) => cc.email === to.email)),
         };
 
         email.dynamic_template_data = substitutions;
+        email.dynamic_template_data.subject = subject;
 
         email.attachments = [];
         if (attachments.length) {

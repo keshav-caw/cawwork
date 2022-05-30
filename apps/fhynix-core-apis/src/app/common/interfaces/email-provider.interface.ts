@@ -1,9 +1,10 @@
 
 export interface EmailProviderInterface{
-    sendEmails(
-        templateId: any,
+    sendEmailUsingTemplate(
+        templateId: string,
         tos: any,
-        substitutions?: any,
+        subject:string,
+        substitutions?: Object,
         attachments?: any[],
         ccs?: any
     )
