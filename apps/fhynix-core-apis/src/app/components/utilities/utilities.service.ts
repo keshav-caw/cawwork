@@ -15,7 +15,8 @@ export class GoogleLocationService implements LocationServiceInterface {
 
       const fetchUrl = `${this.NEARBY_SEARCH_URL}?radius=${environment.locationSearchRadiusInMeters}&location=${fromLatitude}%2C${fromLongitude}&key=${environment.googleLocationSearchApiKey}&keyword=${locationQuery}`;
 
-      const nearbyPlaces = await axios(fetchUrl);    
-      return nearbyPlaces;
+      const nearbyPlaces = await axios(fetchUrl);
+      
+      return nearbyPlaces.data.results;
   }
 }

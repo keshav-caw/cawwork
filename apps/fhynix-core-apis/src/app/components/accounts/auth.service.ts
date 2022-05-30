@@ -17,6 +17,8 @@ import { AccountModel } from '../../common/models/account-model'
 import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HashService } from '../../common/hashservice/hash.service'
+import { UtilityTypes } from '../utilities/utility.types'
+import { EmailService } from '../utilities/emails.service'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -27,6 +29,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
     @inject(CommonTypes.hash) private hashService: HashService,
+    @inject(UtilityTypes.emailService) private emailService: EmailService,
   ) {}
 
   async login(userDetails: UserLoginModel) {
@@ -170,6 +173,8 @@ export class AuthService implements AuthServiceInterface {
       userId: userData?.id,
       email: userData?.email,
     })
+
+    await this.emailService.sendEmails(this.emailService.templates.WelcomePage,userDetails.email,{'firstName':userDetails.firstName});
     
 
     return { authToken: authToken }

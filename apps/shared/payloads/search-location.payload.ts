@@ -1,13 +1,14 @@
+import { AddressModel } from "apps/fhynix-core-apis/src/app/common/models/address.model";
 import { ResponsePayloadBase } from "./base-response.payload";
 
 export class SearchLocationPayload extends ResponsePayloadBase {
     name:string;
     location:Object;
-    fullAddress:string;
-    constructor(name,location,fullAddress){
+    address:AddressModel;
+    constructor(name,location,address){
         super()
         this.name = name;
         this.location = location;
-        this.fullAddress = fullAddress;
+        this.address = address;
     }
 }
