@@ -7,8 +7,8 @@ import {environment} from '../../../environments/environment';
 @injectable()
 export class EmailProvider implements EmailProviderInterface {
     templates: any;
-    private EMAIL_FROM_NAME = 'Fhynix Team'
-    private EMAIL_FROM_EMAIL = 'team@fhynix.com'
+    private readonly EMAIL_FROM_NAME = 'Fhynix Team'
+    private readonly EMAIL_FROM_EMAIL = 'team@fhynix.com'
     constructor() {
         this.templates = {
             WelcomeEmail:'d-2cdd275e0be743889758a196b7ed334e'
