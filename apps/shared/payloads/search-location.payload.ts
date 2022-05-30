@@ -3,12 +3,10 @@ import { ResponsePayloadBase } from "./base-response.payload";
 
 export class SearchLocationPayload extends ResponsePayloadBase {
     name:string;
-    location:Object;
     address:AddressModel;
-    constructor(name,location,address){
+    constructor(name,address){
         super()
         this.name = name;
-        this.location = location;
         this.address = address;
     }
 }

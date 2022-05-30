@@ -3,4 +3,6 @@ export class AddressModel{
     city:string
     state:string
     country:string
+    lat:number
+    lng:number
 }
