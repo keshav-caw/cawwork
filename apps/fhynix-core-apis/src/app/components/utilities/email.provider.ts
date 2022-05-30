@@ -7,8 +7,8 @@ import {environment} from '../../../environments/environment';
 @injectable()
 export class EmailProvider implements EmailProviderInterface {
     templates: any;
-    private name = 'Fhynix Team'
-    private email = 'team@fhynix.com'
+    private EMAIL_FROM_NAME = 'Fhynix Team'
+    private EMAIL_FROM_EMAIL = 'team@fhynix.com'
     constructor() {
         this.templates = {
             WelcomeEmail:'d-2cdd275e0be743889758a196b7ed334e'
@@ -17,16 +17,16 @@ export class EmailProvider implements EmailProviderInterface {
 
     async sendEmailUsingTemplate(   
         templateId: string,
-        tos: any,
+        tos: string[],
         subject:string,
         substitutions: Object = {},
-        ccs?: any,
+        ccs?: string[],
         attachments: any[] = []
     ){
         sendgrid.setApiKey(environment.sendgridApiKey);
 
         const email: any = {
-            from: { name: this.name, email: this.email },
+            from: { name: this.EMAIL_FROM_NAME, email: this.EMAIL_FROM_EMAIL },
             to: tos,
             templateId,
             cc: ccs?.filter((cc: any) => !tos.some((to: any) => cc.email === to.email)),

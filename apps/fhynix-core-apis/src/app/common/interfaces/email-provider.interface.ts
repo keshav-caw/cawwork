@@ -2,10 +2,10 @@
 export interface EmailProviderInterface{
     sendEmailUsingTemplate(
         templateId: string,
-        tos: any,
+        tos: string[],
         subject:string,
         substitutions?: Object,
         attachments?: any[],
-        ccs?: any
+        ccs?: string[]
     )
 }

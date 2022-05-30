@@ -175,7 +175,7 @@ export class AuthService implements AuthServiceInterface {
       email: userData?.email,
     })
 
-    await this.emailProvider.sendEmailUsingTemplate(this.emailProvider.templates.WelcomeEmail,userDetails.email,"Welcome",{firstName:userDetails.firstName});
+    await this.emailProvider.sendEmailUsingTemplate(this.emailProvider.templates.WelcomeEmail,[userDetails.email],"Welcome",{firstName:userDetails.firstName});
 
     return { authToken: authToken}
   }
