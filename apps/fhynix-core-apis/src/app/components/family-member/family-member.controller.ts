@@ -8,12 +8,17 @@ import {
   httpGet,
   httpDelete,
   next,
+  queryParam,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { CommonTypes } from '../../common/common.types'
 import { FamilyMemberService } from './family-member.service'
 import { FamilyMemberTypes } from './family-member.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
+import multer from 'multer'
+import { fileStorage } from '../../common/multerService/multer.service'
+import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
+import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -40,7 +45,22 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.familyMemberService.createFamilyMemberForUser(req.body))
+    const familyDetails = await this.handleCreateFamilyMember(req, res)
+    res.send(familyDetails)
+  }
+
+  @httpPost('/profile-pic', CommonTypes.jwtAuthMiddleware)
+  private async updateProfilePic(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const familyMemberId = req.query.familyMemberId.toString()
+    const uploadedResponse = await this.handleProfileImageUpload(
+      req,
+      res,
+      familyMemberId,
+    )
+    res.send(uploadedResponse)
   }
 
   @httpDelete('/', CommonTypes.jwtAuthMiddleware)
@@ -50,5 +70,52 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
     res.send(await this.familyMemberService.deleteFamilyMember(familyMemberId))
+  }
+
+  handleProfileImageUpload(req, res, familyMemberId) {
+    const upload = multer({ storage: fileStorage })
+    return new Promise((resolve) => {
+      return upload.single('file')(req, res, async (error: any) => {
+        if (error) {
+          throw new ArgumentValidationError(
+            'Request is not valid',
+            req.file,
+            ApiErrorCode.E0003,
+          )
+        }
+
+        resolve(
+          await this.familyMemberService.updateProfileImage(
+            req.file,
+            familyMemberId,
+          ),
+        )
+      })
+    })
+  }
+
+  handleCreateFamilyMember(req, res) {
+    const upload = multer({ storage: fileStorage })
+    return new Promise((resolve) => {
+      return upload.single('file')(req, res, async (error: any) => {
+        if (error) {
+          throw new ArgumentValidationError(
+            'Request is not valid',
+            req.file,
+            ApiErrorCode.E0003,
+          )
+        }
+        const familyMember =
+          await this.familyMemberService.createFamilyMemberForUser(
+            JSON.parse(req.body.userData),
+          )
+        resolve(
+          await this.familyMemberService.updateProfileImage(
+            req.file,
+            familyMember[0].id,
+          ),
+        )
+      })
+    })
   }
 }

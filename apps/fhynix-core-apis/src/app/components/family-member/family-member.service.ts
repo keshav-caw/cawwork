@@ -15,6 +15,7 @@ import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
 import { S3BucketService } from '../../common/s3BucketService/s3bucket.service'
+import * as fs from 'fs'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -84,7 +85,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
   }
 
-  async createFamilyMemberForUser(familyMembers: FamilyMemberModel[]) {
+  async createFamilyMemberForUser(
+    familyMembers: FamilyMemberModel[],
+  ): Promise<FamilyMemberModel[]> {
     await this.validateFamilyMembers(familyMembers)
     const calls = []
     familyMembers.forEach((familyMember) => {
@@ -94,6 +97,20 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     const response = await Promise.all(calls)
 
     return response
+  }
+
+  async updateProfileImage(
+    profilePicData: Express.Multer.File,
+    familyMemberId,
+  ): Promise<FamilyMemberModel> {
+    const profileImage = await this.s3Bucket.uploadImageToS3Bucket(
+      profilePicData,
+    )
+    fs.unlinkSync('./' + profilePicData.path)
+    return await this.updateFamilyMembers(
+      { profileImage: profileImage },
+      familyMemberId,
+    )
   }
 
   async deleteFamilyMember(familyMemberId: string) {

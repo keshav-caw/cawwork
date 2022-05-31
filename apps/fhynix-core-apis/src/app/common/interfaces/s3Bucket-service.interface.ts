@@ -1,3 +1,3 @@
 export interface IS3Bucket {
-  uploadImageToS3Bucket(imageBase64Object: string, filename)
+  uploadImageToS3Bucket(file: Express.Multer.File, filename)
 }

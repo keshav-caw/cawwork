@@ -12,8 +12,8 @@ import { inject } from 'inversify'
 import { ArticleTypes } from './article.types'
 import { ArticleService } from './articles.service'
 import { CommonTypes } from '../../common/common.types'
-import { CollectionResponsePayload } from 'apps/shared/payloads/api-collection-response-payload'
-import { ArticleResponsePayload } from 'apps/shared/payloads/article-response-payload'
+import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
+import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
 import jwtMiddleWare from '../../middlewares/jwt-auth.middleware'
 import { ArticleRepository } from './article.repository'
 
@@ -33,7 +33,7 @@ export class ArticleController implements interfaces.Controller {
     
     const {pageNumber,pageSize} = req.body;
     const articles = await this.articleService.getArticles({pageNumber,pageSize});
-    const details = new CollectionResponsePayload<ArticleResponsePayload>();
+    const details = new PaginatedResponsePayload<ArticleResponsePayload>();
     for(const article of articles){
         const newArticle = new ArticleResponsePayload(article.title,article.imageUrl,article.url);
         details.add(newArticle);

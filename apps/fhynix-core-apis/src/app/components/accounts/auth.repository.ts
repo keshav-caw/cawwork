@@ -14,10 +14,6 @@ export class AuthRepository implements AuthRepositoryInterface {
 
   async getAccountDetails(username: string): Promise<AccountModel[]> {
     const result = await this.client.accounts?.findMany({
-      select: {
-        id: true,
-        username: true,
-      },
       where: {
         username: username,
         isDeleted: false,
@@ -31,8 +27,7 @@ export class AuthRepository implements AuthRepositoryInterface {
     const result = await this.client.accounts?.create({
       data: accountDetails,
     })
-    
-    
+
     return result
   }
 
