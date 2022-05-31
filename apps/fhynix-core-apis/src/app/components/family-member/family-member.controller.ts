@@ -19,6 +19,8 @@ import multer from 'multer'
 import { fileStorage } from '../../common/multerService/multer.service'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
+import { HabitsService } from '../habits/habits.service'
+import { HabitsTypes } from '../habits/habits.types'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -27,6 +29,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private familyMemberService: FamilyMemberService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
+    @inject(HabitsTypes.habits)
+    private habitsService: HabitsService,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -109,6 +113,9 @@ export class FamilyMemberController implements interfaces.Controller {
           await this.familyMemberService.createFamilyMemberForUser(
             JSON.parse(req.body.userData),
           )
+        const habits = JSON.parse(req.body.habits)
+        habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
+        await this.habitsService.createHabitsForRelationship(habits)
         resolve(
           await this.familyMemberService.updateProfileImage(
             req.file,
