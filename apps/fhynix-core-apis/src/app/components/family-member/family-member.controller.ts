@@ -45,7 +45,8 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.familyMemberService.createFamilyMemberForUser(req.body))
+    const familyDetails = await this.handleCreateFamilyMember(req, res)
+    res.send(familyDetails)
   }
 
   @httpPost('/profile-pic', CommonTypes.jwtAuthMiddleware)
@@ -82,10 +83,36 @@ export class FamilyMemberController implements interfaces.Controller {
             ApiErrorCode.E0003,
           )
         }
+
         resolve(
           await this.familyMemberService.updateProfileImage(
             req.file,
             familyMemberId,
+          ),
+        )
+      })
+    })
+  }
+
+  handleCreateFamilyMember(req, res) {
+    const upload = multer({ storage: fileStorage })
+    return new Promise((resolve) => {
+      return upload.single('file')(req, res, async (error: any) => {
+        if (error) {
+          throw new ArgumentValidationError(
+            'Request is not valid',
+            req.file,
+            ApiErrorCode.E0003,
+          )
+        }
+        const familyMember =
+          await this.familyMemberService.createFamilyMemberForUser(
+            JSON.parse(req.body.userData),
+          )
+        resolve(
+          await this.familyMemberService.updateProfileImage(
+            req.file,
+            familyMember[0].id,
           ),
         )
       })
