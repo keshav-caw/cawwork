@@ -81,6 +81,10 @@ export class AuthService implements AuthServiceInterface {
     return userDetails[0]
   }
 
+  async getAccountDetailsByUsername(username: string): Promise<AccountModel[]> {
+    return await this.authRepository.getAccountDetails(username)
+  }
+
   private async createAccountDetails(profileDetails): Promise<UserModel> {
     const accountDetails = await this.authRepository.createAccounts({
       accessToken: profileDetails.accessToken,

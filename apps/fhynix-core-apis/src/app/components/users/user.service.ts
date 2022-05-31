@@ -1,8 +1,11 @@
 import { RelationshipsMaster } from '@prisma/client'
+import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { UserModel } from '../../common/models/user-model'
+import { AccountTypes } from '../accounts/account.types'
+import { GoogleAuthProvider } from '../accounts/google-auth-provider.service'
 import { FamilyMemberService } from '../family-member/family-member.service'
 import { FamilyMemberTypes } from '../family-member/family-member.types'
 import { UserRepository } from './user.repository'
@@ -13,6 +16,8 @@ export class UserService {
     @inject('UserRepository') private userRepository: UserRepository,
     @inject(FamilyMemberTypes.familyMember)
     private familyMemberService: FamilyMemberService,
+    @inject(AccountTypes.googleAuth)
+    private googleAuthProvider: GoogleAuthProvider,
   ) {}
 
   async getUserDetail(userId: string): Promise<UserModel[]> {
@@ -72,5 +77,41 @@ export class UserService {
     relation: string,
   ): Promise<RelationshipsMaster[]> {
     return await this.userRepository.getRelationshipsMaster(relation)
+  }
+
+  async searchContacts(access_token, refresh_token, searchContact) {
+    const oauth2Client = await this.googleAuthProvider.makeGoogleOAuth2Client({
+      clientId: environment.googleClientId,
+      clientSecret: environment.googleClientSecretKey,
+    })
+
+    oauth2Client.setCredentials({
+      access_token: access_token,
+      refresh_token: refresh_token,
+    })
+    const googleApi = this.googleAuthProvider.makeGooglePeopleApi()
+
+    const contacts = await googleApi.people.connections.list({
+      auth: oauth2Client,
+      resourceName: 'people/me',
+      personFields: 'names,phoneNumbers',
+    })
+
+    const searchedContacts = []
+
+    contacts?.data?.connections?.forEach((contact) => {
+      if (
+        contact.names?.[0]?.displayName
+          ?.toLowerCase()
+          ?.indexOf(searchContact.toLowerCase()) > -1
+      ) {
+        const searchedContact = {
+          name: contact.names?.[0]?.displayName,
+          phoneNumber: contact.phoneNumbers?.[0]?.canonicalForm,
+        }
+        searchedContacts.push(searchedContact)
+      }
+    })
+    return searchedContacts
   }
 }
