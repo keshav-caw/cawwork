@@ -18,6 +18,8 @@ import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HashService } from '../../common/hashservice/hash.service'
 import dayjs from 'dayjs'
+import { UtilityTypes } from '../utilities/utility.types'
+import { EmailProvider } from '../utilities/email.provider'
 
 @injectable()
 export class AuthService implements AuthServiceInterface {
@@ -28,6 +30,7 @@ export class AuthService implements AuthServiceInterface {
     @inject(AccountTypes.googleAuth)
     private googleAuthProvider: GoogleAuthProvider,
     @inject(CommonTypes.hash) private hashService: HashService,
+    @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
   ) {}
 
   async login(userDetails: UserLoginModel) {
@@ -184,6 +187,13 @@ export class AuthService implements AuthServiceInterface {
       userId: userData?.id,
       email: userData?.email,
     })
+
+    await this.emailProvider.sendEmailUsingTemplate(
+      this.emailProvider.templates.WelcomeEmail,
+      [userDetails.email],
+      'Welcome',
+      { firstName: userDetails.firstName },
+    )
 
     return { authToken: authToken }
   }

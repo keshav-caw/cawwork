@@ -2,10 +2,20 @@ import { ResponsePayloadBase } from "./base-response.payload";
 
 export class SearchLocationPayload extends ResponsePayloadBase {
     name:string;
-    location:Object;
-    constructor(name,location){
+    streetInfo:string
+    city:string
+    state:string
+    country:string
+    lat:number
+    lng:number
+    constructor(address){
         super()
-        this.name = name;
-        this.location = location;
+        this.name = address.name;
+        this.streetInfo = address.streetInfo;
+        this.city = address.city;
+        this.state = address.state;
+        this.country = address.country;
+        this.lat = address.lat;
+        this.lng = address.lng;
     }
 }

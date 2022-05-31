@@ -13,4 +13,6 @@ export const environment = {
   s3BucketName: 'fhynix-api-dev-s3',
   locationSearchRadiusInMeters: 5000,
   googleLocationSearchApiKey: 'AIzaSyDutyVJnICQA5erOl7hRurWKouv-P8gL-Q',
+  sendgridApiKey:
+    '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',
 }
