@@ -25,6 +25,7 @@ export class S3BucketService implements IS3Bucket {
       Body: fileStream,
     }
 
+    fs.unlinkSync('./' + file.path)
     return new Promise((resolve) => {
       return this.s3.upload(params, function (err, data) {
         if (err) {

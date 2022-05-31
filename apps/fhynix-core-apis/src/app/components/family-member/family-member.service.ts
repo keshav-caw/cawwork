@@ -30,8 +30,6 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private relationshipService: RelationshipService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
-    @inject(CommonTypes.s3Bucket)
-    private s3Bucket: S3BucketService,
   ) {}
 
   async getFamilyMembersByRelationshipId(
@@ -100,13 +98,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   }
 
   async updateProfileImage(
-    profilePicData: Express.Multer.File,
+    profileImage: string,
     familyMemberId,
   ): Promise<FamilyMemberModel> {
-    const profileImage = await this.s3Bucket.uploadImageToS3Bucket(
-      profilePicData,
-    )
-    fs.unlinkSync('./' + profilePicData.path)
     return await this.updateFamilyMembers(
       { profileImage: profileImage },
       familyMemberId,
