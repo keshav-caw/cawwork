@@ -19,7 +19,7 @@ import multer from 'multer'
 import { fileStorage } from '../../common/multerService/multer.service'
 import { HabitsService } from '../habits/habits.service'
 import { HabitsTypes } from '../habits/habits.types'
-import { S3BucketService } from '../../common/s3BucketService/s3bucket.service'
+import { StorageProvider } from '../../common/s3BucketService/s3bucket.service'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -31,7 +31,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @inject(HabitsTypes.habits)
     private habitsService: HabitsService,
     @inject(CommonTypes.s3Bucket)
-    private s3Bucket: S3BucketService,
+    private s3Bucket: StorageProvider,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -54,7 +54,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const profileImage = await this.s3Bucket.uploadImageToS3Bucket(req.file)
+    const profileImage = await this.s3Bucket.uploadFile(req.file)
     const familyMember =
       await this.familyMemberService.createFamilyMemberForUser(
         JSON.parse(req.body.userData),
@@ -79,7 +79,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    const profileImage = await this.s3Bucket.uploadImageToS3Bucket(req.file)
+    const profileImage = await this.s3Bucket.uploadFile(req.file)
     const uploadedResponse = await this.familyMemberService.updateProfileImage(
       profileImage,
       familyMemberId,

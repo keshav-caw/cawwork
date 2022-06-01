@@ -14,7 +14,7 @@ import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
-import { S3BucketService } from '../../common/s3BucketService/s3bucket.service'
+import { StorageProvider } from '../../common/s3BucketService/s3bucket.service'
 import * as fs from 'fs'
 
 @injectable()
