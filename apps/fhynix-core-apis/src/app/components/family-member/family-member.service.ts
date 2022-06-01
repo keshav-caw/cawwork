@@ -128,10 +128,12 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   validateFamilyMemberOtherInfo(familyMember: FamilyMemberModel) {
     if (
       familyMember?.otherInfo?.sleepHours &&
-      familyMember?.otherInfo?.workHours
+      familyMember?.otherInfo?.workHours &&
+      familyMember?.otherInfo?.lunchHours
     ) {
       const sleepTime = familyMember?.otherInfo?.sleepHours
       const workHoursTime = familyMember?.otherInfo?.workHours
+      const lunchHours = familyMember?.otherInfo?.lunchHours
 
       const sleepStartTime = this.getMinutesFromTimestamp(sleepTime.startTime)
       const sleepEndTime = this.getMinutesFromTimestamp(sleepTime.endTime)
@@ -142,6 +144,12 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       const workHoursEndTime = this.getMinutesFromTimestamp(
         workHoursTime.endTime,
       )
+
+      const lunchHoursStartTime = this.getMinutesFromTimestamp(
+        lunchHours.startTime,
+      )
+
+      const lunchHoursEndTime = this.getMinutesFromTimestamp(lunchHours.endTime)
 
       if (
         workHoursStartTime > workHoursEndTime &&
@@ -190,6 +198,30 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           'Work and sleep hours cannot overlap',
           familyMember,
           ApiErrorCode.E0012,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        (lunchHoursStartTime >= sleepStartTime ||
+          lunchHoursStartTime <= sleepEndTime ||
+          lunchHoursEndTime >= sleepStartTime ||
+          lunchHoursEndTime <= sleepEndTime)
+      ) {
+        throw new ArgumentValidationError(
+          'Lunch and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0023,
+        )
+      } else if (
+        sleepStartTime < sleepEndTime &&
+        ((lunchHoursStartTime >= sleepStartTime &&
+          lunchHoursStartTime <= sleepEndTime) ||
+          (lunchHoursEndTime >= sleepStartTime &&
+            lunchHoursEndTime <= sleepEndTime))
+      ) {
+        throw new ArgumentValidationError(
+          'Lunch and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0023,
         )
       }
     }

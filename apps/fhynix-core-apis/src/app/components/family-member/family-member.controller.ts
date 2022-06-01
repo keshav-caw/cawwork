@@ -54,7 +54,10 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const profileImage = await this.s3Bucket.uploadFile(req.file)
+    let profileImage
+    if (req.file) {
+      profileImage = await this.s3Bucket.uploadFile(req.file)
+    }
     const familyMember =
       await this.familyMemberService.createFamilyMemberForUser(
         JSON.parse(req.body.userData),
@@ -62,11 +65,14 @@ export class FamilyMemberController implements interfaces.Controller {
     const habits = JSON.parse(req.body.habits)
     habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
     await this.habitsService.createHabitsForRelationship(habits)
-    const familyDetails = await this.familyMemberService.updateProfileImage(
-      profileImage,
-      familyMember[0].id,
-    )
-    res.send(familyDetails)
+    let familyDetails
+    if (profileImage) {
+      familyDetails = await this.familyMemberService.updateProfileImage(
+        profileImage,
+        familyMember[0].id,
+      )
+    }
+    res.send(familyDetails ? familyDetails : familyMember)
   }
 
   @httpPost(
