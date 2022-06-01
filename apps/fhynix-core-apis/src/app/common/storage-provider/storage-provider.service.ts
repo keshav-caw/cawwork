@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { StorageProviderInterface } from '../interfaces/storage-provider.interface'
-import AWS from 'aws-sdk'
+import AWS, { S3 } from 'aws-sdk'
 import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import * as fs from 'fs'
 import { ArgumentValidationError } from '../errors/custom-errors/argument-validation.error'
@@ -9,7 +9,7 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 
 @injectable()
 export class StorageProvider implements StorageProviderInterface {
-  s3
+  s3: S3
   constructor() {
     this.s3 = new AWS.S3({
       accessKeyId: environment.awsAccesskeyId,
