@@ -22,7 +22,8 @@ export class StorageProvider implements StorageProviderInterface {
     folderName: string,
   ): Promise<string> {
     const fileStream = fs.readFileSync('./' + file.path)
-    const fileExtension = file.originalname?.split('.')?.[1]
+    const fileExt = file.originalname?.split('.')
+    const fileExtension = fileExt?.[fileExt?.length - 1]
     const params = {
       Bucket: environment.s3BucketName + '/uploads',
       Key: `${folderName}/${file.path}.${fileExtension}`,
