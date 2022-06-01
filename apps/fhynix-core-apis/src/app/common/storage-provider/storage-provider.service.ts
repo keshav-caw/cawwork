@@ -20,7 +20,7 @@ export class StorageProvider implements StorageProviderInterface {
   async uploadFile(file: Express.Multer.File): Promise<string> {
     const fileStream = fs.readFileSync('./' + file.path)
     const params = {
-      Bucket: environment.s3BucketName,
+      Bucket: environment.s3BucketName + '/uploads',
       Key: `${file.path}.jpg`,
       Body: fileStream,
     }

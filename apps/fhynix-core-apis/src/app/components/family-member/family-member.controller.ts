@@ -8,7 +8,6 @@ import {
   httpGet,
   httpDelete,
   next,
-  queryParam,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { CommonTypes } from '../../common/common.types'
@@ -16,10 +15,10 @@ import { FamilyMemberService } from './family-member.service'
 import { FamilyMemberTypes } from './family-member.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import multer from 'multer'
-import { fileStorage } from '../../common/multerService/multer.service'
 import { HabitsService } from '../habits/habits.service'
 import { HabitsTypes } from '../habits/habits.types'
-import { StorageProvider } from '../../common/s3BucketService/s3bucket.service'
+import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
+import { fileStorage } from '../../common/multerService/multer.service'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {

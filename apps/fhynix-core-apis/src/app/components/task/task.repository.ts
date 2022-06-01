@@ -36,7 +36,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
-  async createTasks(task: TaskModel): Promise<TaskModel[]> {
+  async createTask(task: TaskModel): Promise<TaskModel[]> {
     const result = await this.client.tasks?.create({
       data: task,
     })

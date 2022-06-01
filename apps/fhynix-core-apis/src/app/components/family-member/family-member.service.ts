@@ -14,8 +14,6 @@ import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
-import { StorageProvider } from '../../common/s3BucketService/s3bucket.service'
-import * as fs from 'fs'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
