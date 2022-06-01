@@ -17,11 +17,15 @@ export class StorageProvider implements StorageProviderInterface {
     })
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<string> {
+  async uploadFile(
+    file: Express.Multer.File,
+    folderName: string,
+  ): Promise<string> {
     const fileStream = fs.readFileSync('./' + file.path)
+    const fileExtension = file.originalname?.split('.')?.[1]
     const params = {
       Bucket: environment.s3BucketName + '/uploads',
-      Key: `${file.path}.jpg`,
+      Key: `${folderName}/${file.path}.${fileExtension}`,
       Body: fileStream,
     }
 

@@ -18,7 +18,8 @@ import multer from 'multer'
 import { HabitsService } from '../habits/habits.service'
 import { HabitsTypes } from '../habits/habits.types'
 import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
-import { fileStorage } from '../../common/multerService/multer.service'
+import { fileStorage } from '../../middlewares/multer.middleware'
+import { Images } from '../../common/constants/folder-names.constants'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -55,7 +56,7 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {
     let profileImage
     if (req.file) {
-      profileImage = await this.s3Bucket.uploadFile(req.file)
+      profileImage = await this.s3Bucket.uploadFile(req.file, Images)
     }
     const familyMember =
       await this.familyMemberService.createFamilyMemberForUser(
@@ -84,7 +85,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    const profileImage = await this.s3Bucket.uploadFile(req.file)
+    const profileImage = await this.s3Bucket.uploadFile(req.file, Images)
     const uploadedResponse = await this.familyMemberService.updateProfileImage(
       profileImage,
       familyMemberId,
