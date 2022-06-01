@@ -1,5 +1,5 @@
 import { LocationSearchQueryModel } from "../models/location-search-query.model";
 
-export interface LocationServiceInterface {
+export interface LocationProviderInterface {
   getNearbyPlaces(details:LocationSearchQueryModel)
 }

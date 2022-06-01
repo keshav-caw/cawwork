@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 import 'reflect-metadata'
-import { IS3Bucket } from '../interfaces/s3Bucket-service.interface'
+import { StorageProviderInterface } from '../interfaces/storage-provider.interface'
 import AWS from 'aws-sdk'
 import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import * as fs from 'fs'
@@ -8,7 +8,7 @@ import { ArgumentValidationError } from '../errors/custom-errors/argument-valida
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 
 @injectable()
-export class S3BucketService implements IS3Bucket {
+export class StorageProvider implements StorageProviderInterface {
   s3
   constructor() {
     this.s3 = new AWS.S3({
@@ -17,7 +17,7 @@ export class S3BucketService implements IS3Bucket {
     })
   }
 
-  async uploadImageToS3Bucket(file: Express.Multer.File): Promise<string> {
+  async uploadFile(file: Express.Multer.File): Promise<string> {
     const fileStream = fs.readFileSync('./' + file.path)
     const params = {
       Bucket: environment.s3BucketName,
@@ -25,6 +25,7 @@ export class S3BucketService implements IS3Bucket {
       Body: fileStream,
     }
 
+    fs.unlinkSync('./' + file.path)
     return new Promise((resolve) => {
       return this.s3.upload(params, function (err, data) {
         if (err) {

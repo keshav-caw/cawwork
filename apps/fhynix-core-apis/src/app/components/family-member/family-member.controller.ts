@@ -17,10 +17,9 @@ import { FamilyMemberTypes } from './family-member.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import multer from 'multer'
 import { fileStorage } from '../../common/multerService/multer.service'
-import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
-import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HabitsService } from '../habits/habits.service'
 import { HabitsTypes } from '../habits/habits.types'
+import { StorageProvider } from '../../common/s3BucketService/s3bucket.service'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -31,6 +30,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private requestContext: RequestContext,
     @inject(HabitsTypes.habits)
     private habitsService: HabitsService,
+    @inject(CommonTypes.s3Bucket)
+    private s3Bucket: StorageProvider,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -44,24 +45,43 @@ export class FamilyMemberController implements interfaces.Controller {
     return res.send(details)
   }
 
-  @httpPost('/', CommonTypes.jwtAuthMiddleware)
+  @httpPost(
+    '/',
+    CommonTypes.jwtAuthMiddleware,
+    multer({ storage: fileStorage }).single('file'),
+  )
   private async createFamilyMember(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const familyDetails = await this.handleCreateFamilyMember(req, res)
+    const profileImage = await this.s3Bucket.uploadFile(req.file)
+    const familyMember =
+      await this.familyMemberService.createFamilyMemberForUser(
+        JSON.parse(req.body.userData),
+      )
+    const habits = JSON.parse(req.body.habits)
+    habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
+    await this.habitsService.createHabitsForRelationship(habits)
+    const familyDetails = await this.familyMemberService.updateProfileImage(
+      profileImage,
+      familyMember[0].id,
+    )
     res.send(familyDetails)
   }
 
-  @httpPost('/profile-pic', CommonTypes.jwtAuthMiddleware)
+  @httpPost(
+    '/profile-pic',
+    CommonTypes.jwtAuthMiddleware,
+    multer({ storage: fileStorage }).single('file'),
+  )
   private async updateProfilePic(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    const uploadedResponse = await this.handleProfileImageUpload(
-      req,
-      res,
+    const profileImage = await this.s3Bucket.uploadFile(req.file)
+    const uploadedResponse = await this.familyMemberService.updateProfileImage(
+      profileImage,
       familyMemberId,
     )
     res.send(uploadedResponse)
@@ -74,55 +94,5 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
     res.send(await this.familyMemberService.deleteFamilyMember(familyMemberId))
-  }
-
-  handleProfileImageUpload(req, res, familyMemberId) {
-    const upload = multer({ storage: fileStorage })
-    return new Promise((resolve) => {
-      return upload.single('file')(req, res, async (error: any) => {
-        if (error) {
-          throw new ArgumentValidationError(
-            'Request is not valid',
-            req.file,
-            ApiErrorCode.E0003,
-          )
-        }
-
-        resolve(
-          await this.familyMemberService.updateProfileImage(
-            req.file,
-            familyMemberId,
-          ),
-        )
-      })
-    })
-  }
-
-  handleCreateFamilyMember(req, res) {
-    const upload = multer({ storage: fileStorage })
-    return new Promise((resolve) => {
-      return upload.single('file')(req, res, async (error: any) => {
-        if (error) {
-          throw new ArgumentValidationError(
-            'Request is not valid',
-            req.file,
-            ApiErrorCode.E0003,
-          )
-        }
-        const familyMember =
-          await this.familyMemberService.createFamilyMemberForUser(
-            JSON.parse(req.body.userData),
-          )
-        const habits = JSON.parse(req.body.habits)
-        habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
-        await this.habitsService.createHabitsForRelationship(habits)
-        resolve(
-          await this.familyMemberService.updateProfileImage(
-            req.file,
-            familyMember[0].id,
-          ),
-        )
-      })
-    })
   }
 }

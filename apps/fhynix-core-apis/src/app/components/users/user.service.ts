@@ -53,6 +53,7 @@ export class UserService {
       userId: userData.id,
       dob: dob,
     })
+
     return userData
   }
 
