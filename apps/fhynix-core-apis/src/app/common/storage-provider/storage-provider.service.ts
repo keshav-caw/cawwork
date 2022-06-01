@@ -30,17 +30,15 @@ export class StorageProvider implements StorageProviderInterface {
     }
 
     fs.unlinkSync('./' + file.path)
-    return new Promise((resolve) => {
-      return this.s3.upload(params, function (err, data) {
-        if (err) {
-          throw new ArgumentValidationError(
-            'Failed to upload file to s3 bucket',
-            file,
-            ApiErrorCode.E0022,
-          )
-        }
-        resolve(data.Location)
-      })
-    })
+    try {
+      const uploadedData = await this.s3.upload(params).promise()
+      return uploadedData.Location
+    } catch (e) {
+      throw new ArgumentValidationError(
+        'Failed to upload file to s3 bucket',
+        file,
+        ApiErrorCode.E0022,
+      )
+    }
   }
 }
