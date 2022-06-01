@@ -30,7 +30,7 @@ export class TaskService implements TaskServiceInterface {
     this.validateTaskInfo(tasks)
     const calls = []
     tasks.forEach((task) => {
-      calls.push(this.taskRepository.createTasks(task))
+      calls.push(this.taskRepository.createTask(task))
     })
     return await Promise.all(calls)
   }
