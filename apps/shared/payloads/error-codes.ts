@@ -21,4 +21,5 @@ export enum ApiErrorCode {
   'E0020' = 'Last Name is missing',
   'E0021' = 'Atleast 2 habits must be added',
   'E0022' = 'Failed to upload file to s3 bucket',
+  'E0023' = 'Lunch and sleep hours cannot overlap.',
 }
