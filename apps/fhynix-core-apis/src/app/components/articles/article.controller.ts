@@ -50,7 +50,7 @@ export class ArticleController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ){
     const {url} = req.body;
-    const articleData = await this.linkPreviewProvider.addArticle(url);
+    const articleData = await this.linkPreviewProvider.getPreview(url);
     res.send(articleData);
   }
 

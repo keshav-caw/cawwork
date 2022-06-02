@@ -29,4 +29,22 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     
     return result ? result : []
   }
+
+  async addArticle(articleData) {
+    if(!articleData.title || !articleData.url || !articleData.image || !articleData.description){
+      throw new Error("Extraction of data failed")
+    }
+
+    const newArticle = {
+        title:articleData.title,
+        url:articleData.url,
+        imageUrl:articleData.image,
+        description:articleData.description
+    }
+
+    await this.client.articles?.create({
+        data: newArticle,
+    })
+    
+  }
 }

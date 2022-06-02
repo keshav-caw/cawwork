@@ -5,4 +5,5 @@ export interface UserRepositoryInterface {
   getUserDetailsByAccountId(accountId: string): Promise<UserModel[]>
   createUser(userDetails: UserModel): Promise<UserModel>
   updateUserDetails(userDetails: UserModel, userId: string): Promise<UserModel>
+  rejectIfNotAdmin():Promise<void>
 }

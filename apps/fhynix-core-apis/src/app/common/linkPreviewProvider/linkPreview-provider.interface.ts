@@ -1,6 +1,6 @@
 
 export interface LinkPreviewProviderInterface{
-    addArticle(
+    getPreview(
         url:string
     )
 }
