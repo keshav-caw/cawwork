@@ -312,9 +312,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
 
         kids.forEach((kid) => {
           const kidsAge = dayjs().diff(dayjs(kid.dob), 'years')
-          if (kidsAge < 3) {
+          if (kidsAge < 0) {
             throw new ArgumentValidationError(
-              'Kids Dob Invalid',
+              "Kid's DOB should not be a future date",
               familyMembers,
               ApiErrorCode.E0011,
             )

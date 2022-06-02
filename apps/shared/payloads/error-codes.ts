@@ -9,7 +9,7 @@ export enum ApiErrorCode {
   'E0008' = 'You cannot add more than one partner',
   'E0009' = 'More than one user is not allowed to add',
   'E0010' = 'Relationship is invalid',
-  'E0011' = "Kid's age must be minimum 3 years",
+  'E0011' = "Kid's DOB should not be a future date",
   'E0012' = 'Work and sleep hours cannot overlap.',
   'E0013' = 'Access Token is missing',
   'E0014' = "Family member doesn't exist",
