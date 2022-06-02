@@ -13,7 +13,6 @@ import { UserModel } from '../../common/models/user-model'
 @injectable()
 export class UserRepository implements UserRepositoryInterface {
   protected client
-  private readonly requestContext = CommonContainer.get<RequestContext>(CommonTypes.requestContext);
 
   constructor(@inject('DataStore') protected store: DataStore) {
     this.client = this.store.getClient()
@@ -83,20 +82,4 @@ export class UserRepository implements UserRepositoryInterface {
     return result
   }
 
-  async rejectIfNotAdmin(){
-      const userId = this.requestContext.getUserId();
-        
-      const users = await this.client.users?.findMany({
-          select: {
-            isAdmin:true
-          },
-          where: {
-            id:userId
-          },
-      })
-      
-      if(!users[0].isAdmin){
-          throw new UnauthorizedError();
-      }
-  }
 }

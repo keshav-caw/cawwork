@@ -3,6 +3,7 @@ export class ArticleModel {
     title: string
     imageUrl: string
     url: string
+    description?:String
     createdAtUtc?:Date
     createdBy?: String
     updatedAtUtc?: Date

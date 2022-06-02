@@ -7,4 +7,5 @@ export interface AuthRepositoryInterface {
     accountDetails: AccountModel,
     accountId: string,
   ): Promise<AccountModel>
+  rejectIfNotAdmin():Promise<void>
 }

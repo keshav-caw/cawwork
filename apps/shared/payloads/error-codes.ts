@@ -13,4 +13,5 @@ export enum ApiErrorCode {
   'E0012' = 'Work and sleep hours cannot overlap.',
   'E0013' = 'Access Token is missing',
   'E0014' = "Family member doesn't exist",
+  'E0015' = "Invalid URL"
 }

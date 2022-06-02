@@ -42,9 +42,10 @@ export class ArticleRepository implements ArticleRepositoryInterface {
         description:articleData.description
     }
 
-    await this.client.articles?.create({
+    const article:ArticleModel = await this.client.articles?.create({
         data: newArticle,
     })
-    
+
+    return article;
   }
 }
