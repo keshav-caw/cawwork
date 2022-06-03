@@ -1,4 +1,3 @@
-import { RelationshipsMaster } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { TaskServiceInterface } from '../../common/interfaces/task-service.interface'
@@ -15,8 +14,16 @@ export class TaskService implements TaskServiceInterface {
     private taskRepository: TaskRepository,
   ) {}
 
-  async getTasksByUserId(userId: string): Promise<TaskModel[]> {
-    return await this.taskRepository.getTasksByUserId(userId)
+  async getTasksByStartAndEndDate(
+    userId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<TaskModel[]> {
+    return await this.taskRepository.getTasksByStartAndEndDate(
+      userId,
+      startDate,
+      endDate,
+    )
   }
 
   async getTaskDetailsByTaskId(
@@ -43,7 +50,7 @@ export class TaskService implements TaskServiceInterface {
     tasks.forEach((task) => {
       if (dayjs(task.startAtUtc).diff(dayjs(task.endAtUtc), 'minutes') >= 0) {
         throw new ArgumentValidationError(
-          'StartDate must be less than EndDate',
+          'The start date of the task should be less than the end date',
           task,
           ApiErrorCode.E0015,
         )
@@ -52,7 +59,7 @@ export class TaskService implements TaskServiceInterface {
         dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0
       ) {
         throw new ArgumentValidationError(
-          "Start Date and End Date should not be less than today's date",
+          "The start and the end date cannot be less than today's date",
           task,
           ApiErrorCode.E0016,
         )
@@ -61,7 +68,7 @@ export class TaskService implements TaskServiceInterface {
         dayjs(task.notifyAtUtc).diff(dayjs(task.startAtUtc), 'minutes') > 0
       ) {
         throw new ArgumentValidationError(
-          'Notify Date must not be less than start date',
+          'The notify date can not be greater than start date',
           task,
           ApiErrorCode.E0017,
         )

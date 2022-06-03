@@ -12,11 +12,45 @@ export class TaskRepository implements TaskRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getTasksByUserId(userId: string): Promise<TaskModel[]> {
+  async getTasksByStartAndEndDate(
+    userId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<TaskModel[]> {
     const result = await this.client.tasks?.findMany({
       where: {
         userId: userId,
         isDeleted: false,
+        AND: [
+          {
+            AND: [
+              {
+                startAtUtc: {
+                  gt: startDate,
+                },
+              },
+              {
+                startAtUtc: {
+                  lt: endDate,
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                endAtUtc: {
+                  gt: startDate,
+                },
+              },
+              {
+                endAtUtc: {
+                  lt: endDate,
+                },
+              },
+            ],
+          },
+        ],
       },
     })
     return result ? result : []

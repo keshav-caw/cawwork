@@ -16,7 +16,8 @@ model Tasks {
   repeatDuration String? @map("repeat_duration")
   type String
   invites String[]
-  latitudesAndLongitudes String? @map("latitudes_and_longitudes")
+  latitudes Float? 
+  longitudes Float? 
   status String
   recurringTaskId String? @map("recurring_task_id")
 }

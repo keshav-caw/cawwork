@@ -37,7 +37,7 @@ export class UserController implements interfaces.Controller {
     return res.send(details)
   }
 
-  @httpGet('/my-contacts/search', CommonTypes.jwtAuthMiddleware)
+  @httpGet('/my/contacts/search', CommonTypes.jwtAuthMiddleware)
   public async searchContacts(
     @request() req: express.Request,
     @response() res: express.Response,

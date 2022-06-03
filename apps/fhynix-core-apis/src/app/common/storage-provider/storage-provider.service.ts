@@ -4,8 +4,8 @@ import { StorageProviderInterface } from '../interfaces/storage-provider.interfa
 import AWS, { S3 } from 'aws-sdk'
 import { environment } from 'apps/fhynix-core-apis/src/environments/environment'
 import * as fs from 'fs'
-import { ArgumentValidationError } from '../errors/custom-errors/argument-validation.error'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
+import { ThirdPartyAPIError } from '../errors/custom-errors/third-party.error'
 
 @injectable()
 export class StorageProvider implements StorageProviderInterface {
@@ -35,11 +35,7 @@ export class StorageProvider implements StorageProviderInterface {
       const uploadedData = await this.s3.upload(params).promise()
       return uploadedData.Location
     } catch (e) {
-      throw new ArgumentValidationError(
-        'Failed to upload file to s3 bucket',
-        file,
-        ApiErrorCode.E0022,
-      )
+      throw new ThirdPartyAPIError(ApiErrorCode.E0022)
     }
   }
 }
