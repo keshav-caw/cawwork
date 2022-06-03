@@ -30,8 +30,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private requestContext: RequestContext,
     @inject(HabitsTypes.habits)
     private habitsService: HabitsService,
-    @inject(CommonTypes.s3Bucket)
-    private s3Bucket: StorageProvider,
+    @inject(CommonTypes.storage)
+    private storageProvider: StorageProvider,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -56,7 +56,7 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {
     let profileImage
     if (req.file) {
-      profileImage = await this.s3Bucket.uploadFile(req.file, Images)
+      profileImage = await this.storageProvider.uploadFile(req.file, Images)
     }
     const familyMember =
       await this.familyMemberService.createFamilyMemberForUser(
@@ -85,7 +85,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    const profileImage = await this.s3Bucket.uploadFile(req.file, Images)
+    const profileImage = await this.storageProvider.uploadFile(req.file, Images)
     const uploadedResponse = await this.familyMemberService.updateProfileImage(
       profileImage,
       familyMemberId,

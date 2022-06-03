@@ -5,7 +5,7 @@ const CommonTypes = {
   jwtAuthMiddleware: Symbol.for('JWTAuthMiddleWare'),
   requestIdMiddleware: Symbol.for('RequestIdMiddleware'),
   hash: Symbol.for('HashInterface'),
-  s3Bucket: Symbol.for('S3BucketService'),
+  storage: Symbol.for('StorageProvider'),
 }
 
 export { CommonTypes }
