@@ -62,9 +62,11 @@ export class FamilyMemberController implements interfaces.Controller {
       await this.familyMemberService.createFamilyMemberForUser(
         JSON.parse(req.body.userData),
       )
-    const habits = JSON.parse(req.body.habits)
+    const habits = req.body.habits ? JSON.parse(req.body.habits) : []
     habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
-    await this.habitsService.createHabitsForRelationship(habits)
+    if (habits?.length > 0) {
+      await this.habitsService.createHabitsForRelationship(habits)
+    }
     let familyDetails
     if (profileImage) {
       familyDetails = await this.familyMemberService.updateProfileImage(
