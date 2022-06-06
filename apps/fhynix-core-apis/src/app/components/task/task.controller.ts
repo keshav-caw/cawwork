@@ -32,21 +32,26 @@ export class TasksController implements interfaces.Controller {
     @next() next: express.NextFunction,
   ): Promise<any> {
     const userId = this.requestContext.getUserId()
-    const details = await this.taskService.getTasksByUserId(userId)
+    const startDate = req.query.start_date.toString()
+    const endDate = req.query.end_date.toString()
+    const details = await this.taskService.getTasksByStartAndEndDate(
+      userId,
+      startDate,
+      endDate,
+    )
     return res.send(details)
   }
 
   @httpGet('/:taskId', CommonTypes.jwtAuthMiddleware)
   public async getTaskDetailsByTaskId(
-    @queryParam('taskId') taskId: string,
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
     const userId = this.requestContext.getUserId()
     const details = await this.taskService.getTaskDetailsByTaskId(
+      req.params.taskId,
       userId,
-      taskId,
     )
     return res.send(details)
   }
