@@ -63,6 +63,7 @@ export class AuthService implements AuthServiceInterface {
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
+      accountId:userData?.accountId
     })
 
     return { authToken: authToken }
@@ -173,6 +174,7 @@ export class AuthService implements AuthServiceInterface {
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
+      accountId:userData?.accountId
     })
 
     await this.emailProvider.sendEmailUsingTemplate(this.emailProvider.templates.WelcomeEmail,[userDetails.email],"Welcome",{firstName:userDetails.firstName});

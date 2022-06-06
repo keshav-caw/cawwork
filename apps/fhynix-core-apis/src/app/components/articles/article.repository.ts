@@ -29,4 +29,13 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     
     return result ? result : []
   }
+
+  async addArticle(newArticle) {
+
+    const article:ArticleModel = await this.client.articles?.create({
+        data: newArticle,
+    })
+
+    return article;
+  }
 }

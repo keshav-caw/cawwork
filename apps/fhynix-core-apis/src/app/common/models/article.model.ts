@@ -1,8 +1,9 @@
 export class ArticleModel {
-    id: string
+    id?: string
     title: string
     imageUrl: string
     url: string
+    description?:String
     createdAtUtc?:Date
     createdBy?: String
     updatedAtUtc?: Date

@@ -12,4 +12,5 @@ model Accounts {
   refreshToken String? @map("refresh_token")
   username String @map("username")
   password String @map("password")
+  isAdmin Boolean? @default(false) @map("is_admin")
 }

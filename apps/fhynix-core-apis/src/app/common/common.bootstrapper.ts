@@ -13,6 +13,8 @@ import { RequestContext } from './jwtservice/requests-context.service'
 import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
 import { HashServiceInterface } from './hashservice/hash-service.interface'
 import { HashService } from './hashservice/hash.service'
+import { LinkPreviewProviderInterface } from './linkPreviewProvider/linkPreview-provider.interface'
+import { LinkPreviewProvider } from './linkPreviewProvider/linkPreview.provider'
 
 @injectable()
 export default class CommonBootstrapper {
@@ -31,5 +33,6 @@ export default class CommonBootstrapper {
       .to(RequestContext)
       .inSingletonScope()
     CommonContainer.bind<HashServiceInterface>(CommonTypes.hash).to(HashService)
+    CommonContainer.bind<LinkPreviewProviderInterface>(CommonTypes.linkPreview).to(LinkPreviewProvider)
   }
 }

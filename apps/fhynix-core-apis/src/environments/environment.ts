@@ -10,5 +10,6 @@ export const environment = {
   googleClientSecretKey: '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',
   locationSearchRadiusInMeters:5000,
   googleLocationSearchApiKey:'AIzaSyDutyVJnICQA5erOl7hRurWKouv-P8gL-Q',
-  sendgridApiKey:'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'
+  sendgridApiKey:'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',
+  linkPreviewApiKey:'9d082977e45d0c0cc12551116ecfc3dd'
 }
