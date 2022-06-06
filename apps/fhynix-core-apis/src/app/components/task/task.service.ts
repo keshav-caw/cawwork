@@ -62,8 +62,10 @@ export class TaskService implements TaskServiceInterface {
       if (taskDetails.startAtUtc || taskDetails.endAtUtc) {
         if (taskInfo?.length > 0) {
           if (taskInfo[0].recurringTaskId) {
+            const today = dayjs().toISOString()
             await this.taskRepository.deleteTaskByRecurringTaskId(
               taskInfo[0].recurringTaskId,
+              today,
             )
           } else {
             await this.taskRepository.deleteTask(taskId)

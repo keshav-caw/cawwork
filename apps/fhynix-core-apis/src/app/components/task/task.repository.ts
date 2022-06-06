@@ -115,11 +115,15 @@ export class TaskRepository implements TaskRepositoryInterface {
 
   async deleteTaskByRecurringTaskId(
     recurringTaskId: string,
+    currentDate: string,
   ): Promise<TaskModel> {
     const result = await this.client.tasks?.update({
       data: { isDeleted: true },
       where: {
         recurringTaskId: recurringTaskId,
+        startAtUtc: {
+          gt: currentDate,
+        },
       },
     })
     return result
