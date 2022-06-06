@@ -9,6 +9,7 @@ import {
   next,
   queryParam,
   httpDelete,
+  httpPut,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { CommonTypes } from '../../common/common.types'
@@ -62,6 +63,22 @@ export class TasksController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     res.send(await this.taskService.createTasks(req.body))
+  }
+
+  @httpPut('/:taskId', CommonTypes.jwtAuthMiddleware)
+  private async updateTasks(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const userId = this.requestContext.getUserId()
+    res.send(
+      await this.taskService.updateTasks(
+        req.params.taskId,
+        req.body.taskDetails,
+        req.body.isAllEvents,
+        userId,
+      ),
+    )
   }
 
   @httpDelete('/:taskId', CommonTypes.jwtAuthMiddleware)

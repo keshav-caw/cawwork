@@ -19,5 +19,5 @@ model Tasks {
   latitudes Float? 
   longitudes Float? 
   status String
-  recurringTaskId String? @map("recurring_task_id")
+  recurringTaskId String? @unique @map("recurring_task_id")
 }
