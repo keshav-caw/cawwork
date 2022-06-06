@@ -117,7 +117,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     recurringTaskId: string,
     currentDate: string,
   ): Promise<TaskModel> {
-    const result = await this.client.tasks?.update({
+    const result = await this.client.tasks?.updateMany({
       data: { isDeleted: true },
       where: {
         recurringTaskId: recurringTaskId,

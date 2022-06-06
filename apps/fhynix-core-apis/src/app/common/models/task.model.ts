@@ -13,10 +13,16 @@ export class TaskModel {
   endAtUtc: Date
   notifyAtUtc: Date
   notes: string
-  repeatDuration: string
+  repeatMode: RepeatModeModal
   type: string
   invites: string[]
   latitudesAndLongitudes: string
   status: string
   recurringTaskId: string
+}
+
+export class RepeatModeModal {
+  repeatDuration?: string
+  repeatOnWeekDays?: string[]
+  repeatOnDays?: string[]
 }

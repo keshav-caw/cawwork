@@ -7,17 +7,16 @@ model Tasks {
   isDeleted Boolean @default(false) @map("is_deleted")
   familyMemberId String @map("family_member_id")
   userId String @unique @map("user_id")
-  userTemplateId String? @map("user_template_id")
+  eventTemplateId String? @map("event_template_id")
   title String
-  startAtUtc DateTime @map("start_at_utc")
+  startAtUtc DateTime @unique @map("start_at_utc")
   endAtUtc DateTime @map("end_at_utc")
   notifyAtUtc DateTime @map("notify_at_utc")
-  notes String
-  repeatDuration String? @map("repeat_duration")
-  type String
+  notes String?
+  repeatMode Json[] @map("repeat_mode")
   invites String[]
-  latitudes Float? 
-  longitudes Float? 
-  status String
+  latitude Float? 
+  longitude Float? 
+  status String?
   recurringTaskId String? @unique @map("recurring_task_id")
 }
