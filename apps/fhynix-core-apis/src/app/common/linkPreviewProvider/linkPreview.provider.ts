@@ -3,19 +3,13 @@ import 'reflect-metadata'
 import {environment} from '../../../environments/environment';
 import axios from 'axios';
 import { LinkPreviewProviderInterface } from './linkPreview-provider.interface';
-import { DataStore } from '../data/datastore';
-import { ArticleRepository } from '../../components/articles/article.repository';
-import { UserRepository } from '../../components/users/user.repository';
 import { ThirdPartyAPIError } from '../errors/custom-errors/third-party.error';
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes';
+import { ArticleModel } from '../models/article.model';
 
 @injectable()
 export class LinkPreviewProvider implements LinkPreviewProviderInterface {
     private linkPreviewUrl = `http://api.linkpreview.net/?key=${environment.linkPreviewApiKey}`;
-    
-    constructor(
-        @inject('DataStore') protected store: DataStore
-    ) {}
 
     async getPreview(url: string) {
 
@@ -25,10 +19,17 @@ export class LinkPreviewProvider implements LinkPreviewProviderInterface {
             const response = await axios.get(fetchUrl);
             articleData = response.data;
         } catch (error) {
-            throw new ThirdPartyAPIError(ApiErrorCode.E0015);
+            throw new ThirdPartyAPIError(ApiErrorCode.E0003);
         }
 
-        return articleData;
+        const article:ArticleModel = {
+            title:articleData.title,
+            url:articleData.url,
+            imageUrl:articleData.image,
+            description:articleData.description
+        }
+
+        return article;
     }
     
 }

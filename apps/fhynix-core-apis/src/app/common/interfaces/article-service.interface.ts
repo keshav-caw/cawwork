@@ -3,4 +3,5 @@ import { ArticlePaginationModel } from "../models/article-pagination.model";
 
 export interface ArticleServiceInterface {
   getArticles(details:ArticlePaginationModel):Promise<ArticleModel[]>
+  addArticle(url:string):Promise<ArticleModel>
 }

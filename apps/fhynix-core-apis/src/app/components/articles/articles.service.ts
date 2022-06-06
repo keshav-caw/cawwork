@@ -7,6 +7,8 @@ import { ArticlePaginationModel } from '../../common/models/article-pagination.m
 import { AuthRepository } from '../accounts/auth.repository'
 import { CommonTypes } from '../../common/common.types'
 import { LinkPreviewProvider } from '../../common/linkPreviewProvider/linkPreview.provider'
+import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
+import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -21,11 +23,18 @@ export class ArticleService implements ArticleServiceInterface {
   }
 
   async addArticle(url) {
-    await this.authRepository.rejectIfNotAdmin();
 
-    const articleData = await this.linkPreviewProvider.getPreview(url);
+    const newArticle = await this.linkPreviewProvider.getPreview(url);
 
-    const newArticle = await this.articleRepository.addArticle(articleData);
-    return newArticle;
+    if(!newArticle.title || !newArticle.imageUrl){
+      throw new ArgumentValidationError(
+        'linkPreview Data',
+        newArticle,
+        ApiErrorCode.E0015
+      )
+    }
+
+    const article = await this.articleRepository.addArticle(newArticle);
+    return article;
   }
 }

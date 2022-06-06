@@ -5,12 +5,14 @@ import { CommonTypes } from '../common/common.types'
 import { RequestContext } from '../common/jwtservice/requests-context.service'
 import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error'
 import { ArgumentValidationError } from '../common/errors/custom-errors/argument-validation.error'
+import { AuthRepository } from '../components/accounts/auth.repository'
 
 const jwtMiddleWare = (req, res, next) => {
   const jwtService = CommonContainer.get<JWTService>(CommonTypes.jwt)
   const requestContext = CommonContainer.get<RequestContext>(
     CommonTypes.requestContext,
   )
+  const authRepository = CommonContainer.get<AuthRepository>('AuthRepository');
   if (!req.headers.authorization) {
     throw new ArgumentValidationError(
       'Access token is missing',
@@ -22,6 +24,7 @@ const jwtMiddleWare = (req, res, next) => {
       if (jwtService.validate(req.headers.authorization)) {
         const authToken = jwtService.decode(req.headers.authorization)
         requestContext.setUserId(authToken.userId)
+        requestContext.setAccountId(authToken.accountId)
         next()
       }
     } catch (e) {

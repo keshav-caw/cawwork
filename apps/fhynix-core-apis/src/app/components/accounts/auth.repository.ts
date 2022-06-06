@@ -55,20 +55,21 @@ export class AuthRepository implements AuthRepositoryInterface {
     return result
   }
 
-  async rejectIfNotAdmin(){
-    const userId = this.requestContext.getUserId();
-      
-    const users = await this.client.users?.findMany({
-        select: {
-          isAdmin:true
-        },
-        where: {
-          id:userId
-        },
+  async getAccountDetailsById(id){
+    const users = await this.client.accounts?.findMany({
+      select: {
+        id:true,
+        username:true,
+        createdAtUtc:true,
+        updatedAtUtc:true,
+        isAdmin:true
+      },
+      where: {
+        id:id,
+        isDeleted:false
+      },
     })
-    
-    if(!users[0].isAdmin){
-        throw new UnauthorizedError();
-    }
+    return users ? users[0] : users
   }
+
 }

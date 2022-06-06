@@ -22,7 +22,17 @@ export class RequestContext implements IRequestContext {
     })
   }
 
+  async setAccountId(accountId:string) {
+    this.asyncLocalStorage.enterWith({
+      accountId: accountId,
+    })
+  }
+
   getUserId() {
     return this.asyncLocalStorage.getStore()?.['userId']
+  }
+
+  getAccountId() {
+    return this.asyncLocalStorage.getStore()?.['accountId']
   }
 }
