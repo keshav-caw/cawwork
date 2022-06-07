@@ -9,6 +9,8 @@ import { CommonTypes } from '../../common/common.types'
 import { LinkPreviewProvider } from '../../common/linkPreviewProvider/linkPreview.provider'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
+import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
+import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -36,5 +38,31 @@ export class ArticleService implements ArticleServiceInterface {
 
     const article = await this.articleRepository.addArticle(newArticle);
     return article;
+  }
+
+  async getBookmarks(userId){
+    const bookmarks = await this.articleRepository.getBookmarks(userId);
+    const details = [];
+    for(let i=0;i<bookmarks.articleIds.length;i++){
+      const article:ArticleModel = await this.articleRepository.getArticleDetailsById(bookmarks.articleIds[i]);
+      details.push(article);
+      if(i===bookmarks.articleIds.length-1)return details;
+    }
+    return details;
+  }
+
+  async addBookmark(userId,articleId){
+    const bookmarks = await this.articleRepository.getBookmarks(userId);
+    bookmarks.articleIds.push(articleId);
+    const result = await this.articleRepository.upsertBookmarks(userId,bookmarks);
+    return result;
+  }
+
+  async removeBookmark(userId,leavingArticleId){
+    const bookmarks = await this.articleRepository.getBookmarks(userId);
+    const newArticleIds = bookmarks.articleIds.filter((articleId)=> articleId!==leavingArticleId);
+    bookmarks.articleIds = newArticleIds;
+    const result = await this.articleRepository.upsertBookmarks(userId,bookmarks);
+    return result;
   }
 }

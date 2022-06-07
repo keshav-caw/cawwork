@@ -10,3 +10,8 @@ model Articles {
   isDeleted Boolean @default(false) @map("is_deleted")
   description String? @map("description")
 }
+
+model Articles_bookmarked {
+  userId String @id @map("user_id")
+  articleIds String[] @map("article_ids")
+}

@@ -23,12 +23,11 @@ const jwtMiddleWare = (req, res, next) => {
     try {
       if (jwtService.validate(req.headers.authorization)) {
         const authToken = jwtService.decode(req.headers.authorization)
-        requestContext.setUserId(authToken.userId)
-        requestContext.setAccountId(authToken.accountId)
+        requestContext.setIds(authToken.accountId,authToken.userId)
         next()
       }
     } catch (e) {
-      throw new UnauthorizedError()
+      next(new UnauthorizedError());
     }
   }
 }

@@ -13,5 +13,6 @@ export enum ApiErrorCode {
   'E0012' = 'Work and sleep hours cannot overlap.',
   'E0013' = 'Access Token is missing',
   'E0014' = "Family member doesn't exist",
-  'E0015' = "No data found in linkPreview for this URL"
+  'E0015' = "No data found in linkPreview for this URL",
+  'E0016' = "Your account has been deleted. To restore account, please email at support@fhynix.com"
 }

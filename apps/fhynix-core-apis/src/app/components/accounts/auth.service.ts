@@ -52,6 +52,13 @@ export class AuthService implements AuthServiceInterface {
     )
     let userData
     if (user?.length > 0) {
+      if(user[0].isDeleted){
+        throw new ArgumentValidationError(
+           'Deleted Account',
+           user[0],
+           ApiErrorCode.E0016
+        )
+      }
       userData = await this.updateAccountDetails({
         accessToken: profileDetails.accessToken,
         refreshToken: profileDetails.refreshToken,
@@ -180,5 +187,12 @@ export class AuthService implements AuthServiceInterface {
     await this.emailProvider.sendEmailUsingTemplate(this.emailProvider.templates.WelcomeEmail,[userDetails.email],"Welcome",{firstName:userDetails.firstName});
 
     return { authToken: authToken}
+  }
+
+  async deleteAccount(accountId){
+    const account = await this.authRepository.getAccountDetailsById(accountId);
+    account.isDeleted = true;
+    await this.authRepository.updateAccounts(account,accountId);
+    return account;
   }
 }
