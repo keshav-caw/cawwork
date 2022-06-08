@@ -65,7 +65,7 @@ export class TasksController implements interfaces.Controller {
     res.send(await this.taskService.createTasks(req.body))
   }
 
-  @httpPut('/:taskId', CommonTypes.jwtAuthMiddleware)
+  @httpPut('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)
   private async updateTasks(
     @request() req: express.Request,
     @response() res: express.Response,
