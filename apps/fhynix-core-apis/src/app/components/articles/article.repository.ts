@@ -40,44 +40,55 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     return article;
   }
 
-  async getArticleDetailsById(articleId){
-    const article = await this.client.articles?.findUnique({
-      where:{
-        id:articleId
-      },
-      select:{
-        id:true,
-        title: true,
-        imageUrl:true,
-        url:true
-      }
-    })
-    return article;
-  }
-
-  async getBookmarks(userId){
-    const articles_bookmarkeds = await this.client.articles_bookmarked?.findMany({
+  async getArticlesBookmarkedByUser(userId){
+    const bookmarkedArticles = await this.client.articlesBookmarked?.findMany({
       where: {
         userId: userId
       },
     })
+    const result = [];
+    for(const bookmark of bookmarkedArticles){
+      const article:ArticleModel = await this.client.articles?.findUnique({
+        where:{
+          id:bookmark.articleId
+        },
+        select:{
+          id:true,
+          title: true,
+          imageUrl:true,
+          url:true
+        }
+      })
+      result.push(article);
+    }
 
-    return articles_bookmarkeds.length>0 ? articles_bookmarkeds[0] : {userId,articleIds:[]};
+    return result;
   }
 
-  async upsertBookmarks(userId,bookmarks){
-    const result = await this.client.articles_bookmarked?.upsert({
+  async upsertBookmark(bookmark){
+    const result = await this.client.articlesBookmarked?.upsert({
       where: {
-        userId: userId,
+        userId_articleId:{
+          userId:bookmark.userId,
+          articleId:bookmark.articleId
+        }
       },
-      update: {
-        articleIds: bookmarks.articleIds,
-      },
-      create: {
-        userId: userId,
-        articleIds: bookmarks.articleIds,
-      },
+      update: bookmark,
+      create: bookmark,
     });
     return result
+  }
+
+  async removeBookmark(bookmark){
+    const result = await this.client.articlesBookmarked?.update({
+      data: bookmark,
+      where: {
+        userId_articleId:{
+          userId:bookmark.userId,
+          articleId:bookmark.articleId
+        }
+      },
+    })
+    return result;
   }
 }

@@ -5,7 +5,7 @@ import { ArticleBookmarkModel } from "../models/articleBookmark.model";
 export interface ArticleRepositoryInterface {
   getArticles(details:ArticlePaginationModel): Promise<ArticleModel[]>
   addArticle(newArticle):Promise<ArticleModel>
-  getArticleDetailsById(articleId):Promise<ArticleModel>
-  getBookmarks(userId:string):Promise<ArticleBookmarkModel>
-  upsertBookmarks(userId:string,bookmarks:ArticleBookmarkModel):Promise<ArticleBookmarkModel>
+  getArticlesBookmarkedByUser(userId:string):Promise<ArticleModel[]>
+  upsertBookmark(bookmark:ArticleBookmarkModel):Promise<ArticleBookmarkModel>
+  removeBookmark(bookmark:ArticleBookmarkModel):Promise<ArticleBookmarkModel>
 }

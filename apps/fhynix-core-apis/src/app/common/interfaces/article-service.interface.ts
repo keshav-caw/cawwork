@@ -7,5 +7,5 @@ export interface ArticleServiceInterface {
   addArticle(url:string):Promise<ArticleModel>
   getBookmarks(userId:string):Promise<ArticleModel[]>
   addBookmark(userId:string,articleId:string):Promise<ArticleBookmarkModel>
-  removeBookmark(userId:string,leavingArticleId:string):Promise<ArticleBookmarkModel>
+  removeBookmark(userId:string,articleId:string):Promise<ArticleBookmarkModel>
 }

@@ -47,22 +47,22 @@ export class AuthService implements AuthServiceInterface {
     } catch (e) {
       throw new ThirdPartyAPIError(ApiErrorCode.E0003)
     }
-    const user = await this.authRepository.getAccountDetails(
+    const accounts = await this.authRepository.getAccountDetails(
       profileDetails.email,
     )
     let userData
-    if (user?.length > 0) {
-      if(user[0].isDeleted){
+    if (accounts?.length > 0) {
+      if(accounts[0].isDeleted){
         throw new ArgumentValidationError(
-           'Deleted Account',
-           user[0],
+           'Email',
+           profileDetails.email,
            ApiErrorCode.E0016
         )
       }
       userData = await this.updateAccountDetails({
         accessToken: profileDetails.accessToken,
         refreshToken: profileDetails.refreshToken,
-        accountId: user[0]?.id,
+        accountId: accounts[0]?.id,
       })
     } else {
       userData = await this.createAccountDetails(profileDetails)

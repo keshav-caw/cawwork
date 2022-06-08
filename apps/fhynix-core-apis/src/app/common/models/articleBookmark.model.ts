@@ -1,4 +1,7 @@
 export class ArticleBookmarkModel {
     userId:String
-    articleIds:String[]
+    articleId:String
+    isDeleted?:Boolean
+    createdAtUtc?:Date
+    updatedAtUtc?:Date
 }

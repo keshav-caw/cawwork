@@ -11,6 +11,7 @@ import { ArgumentValidationError } from '../../common/errors/custom-errors/argum
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
 import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
+import { ArticleBookmarkModel } from '../../common/models/articleBookmark.model'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -41,28 +42,31 @@ export class ArticleService implements ArticleServiceInterface {
   }
 
   async getBookmarks(userId){
-    const bookmarks = await this.articleRepository.getBookmarks(userId);
-    const details = [];
-    for(let i=0;i<bookmarks.articleIds.length;i++){
-      const article:ArticleModel = await this.articleRepository.getArticleDetailsById(bookmarks.articleIds[i]);
-      details.push(article);
-      if(i===bookmarks.articleIds.length-1)return details;
-    }
+    const details = await this.articleRepository.getArticlesBookmarkedByUser(userId);
     return details;
   }
 
   async addBookmark(userId,articleId){
-    const bookmarks = await this.articleRepository.getBookmarks(userId);
-    bookmarks.articleIds.push(articleId);
-    const result = await this.articleRepository.upsertBookmarks(userId,bookmarks);
-    return result;
+    const bookmark:ArticleBookmarkModel = {
+      userId:userId,
+      articleId:articleId,
+      isDeleted:false,
+      updatedAtUtc:new Date()
+    }
+
+    const result = await this.articleRepository.upsertBookmark(bookmark)
+    return result
   }
 
-  async removeBookmark(userId,leavingArticleId){
-    const bookmarks = await this.articleRepository.getBookmarks(userId);
-    const newArticleIds = bookmarks.articleIds.filter((articleId)=> articleId!==leavingArticleId);
-    bookmarks.articleIds = newArticleIds;
-    const result = await this.articleRepository.upsertBookmarks(userId,bookmarks);
+  async removeBookmark(userId,articleId){
+    const bookmark:ArticleBookmarkModel = {
+      userId:userId,
+      articleId:articleId,
+      isDeleted:true,
+      updatedAtUtc: new Date()
+    }
+
+    const result = await this.articleRepository.removeBookmark(bookmark);
     return result;
   }
 }

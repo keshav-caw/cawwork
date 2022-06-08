@@ -79,9 +79,8 @@ export class ArticleController implements interfaces.Controller {
   ){
     const articleId = req.params.id;
     const userId = this.requestContext.getUserId();
-    
-    const bookmarks = await this.articleService.addBookmark(userId,articleId);
-    res.send(bookmarks);
+    const bookmark = await this.articleService.addBookmark(userId,articleId);
+    res.send(bookmark);
   }
 
   @httpPost('/:id/remove-bookmark',CommonTypes.jwtAuthMiddleware)
@@ -93,8 +92,8 @@ export class ArticleController implements interfaces.Controller {
     const articleId = req.params.id;
     const userId = this.requestContext.getUserId();
     
-    const bookmarks = await this.articleService.removeBookmark(userId,articleId);
-    res.send(bookmarks);
+    const bookmark = await this.articleService.removeBookmark(userId,articleId);
+    res.send(bookmark);
   }
 
 }
