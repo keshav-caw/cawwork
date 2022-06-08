@@ -11,28 +11,30 @@ export class RequestContext implements IRequestContext {
   }
 
   setUserId(userId: string) {
-    this.asyncLocalStorage.enterWith({
-      userId: userId,
-    })
+    let store = this.asyncLocalStorage.getStore();
+    store = store ? store : {}
+    store['userId']=userId
+    this.asyncLocalStorage.enterWith(
+      store
+    )
   }
 
   setEmail(email: string) {
-    this.asyncLocalStorage.enterWith({
-      email: email,
-    })
+    let store = this.asyncLocalStorage.getStore();
+    store = store ? store : {}
+    store['email']=email
+    this.asyncLocalStorage.enterWith(
+      store
+    )
   }
 
   setAccountId(accountId:string) {
-    this.asyncLocalStorage.enterWith({
-      accountId: accountId,
-    })
-  }
-
-  setIds(accountId:string,userId:string){
-    this.asyncLocalStorage.enterWith({
-      accountId: accountId,
-      userId:userId
-    })
+    let store = this.asyncLocalStorage.getStore();
+    store = store ? store : {}
+    store['accountId']=accountId
+    this.asyncLocalStorage.enterWith(
+      store
+    )
   }
 
   getUserId() {
