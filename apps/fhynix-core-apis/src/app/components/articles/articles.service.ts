@@ -9,6 +9,9 @@ import { CommonTypes } from '../../common/common.types'
 import { LinkPreviewProvider } from '../../common/linkPreviewProvider/linkPreview.provider'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
+import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
+import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
+import { ArticleBookmarkModel } from '../../common/models/articleBookmark.model'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -36,5 +39,34 @@ export class ArticleService implements ArticleServiceInterface {
 
     const article = await this.articleRepository.addArticle(newArticle);
     return article;
+  }
+
+  async getBookmarks(userId){
+    const details = await this.articleRepository.getArticlesBookmarkedByUser(userId);
+    return details;
+  }
+
+  async addBookmark(userId,articleId){
+    const bookmark:ArticleBookmarkModel = {
+      userId:userId,
+      articleId:articleId,
+      isDeleted:false,
+      updatedAtUtc:new Date()
+    }
+
+    const result = await this.articleRepository.upsertBookmark(bookmark)
+    return result
+  }
+
+  async removeBookmark(userId,articleId){
+    const bookmark:ArticleBookmarkModel = {
+      userId:userId,
+      articleId:articleId,
+      isDeleted:true,
+      updatedAtUtc: new Date()
+    }
+
+    const result = await this.articleRepository.removeBookmark(bookmark);
+    return result;
   }
 }

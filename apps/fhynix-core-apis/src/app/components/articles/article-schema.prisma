@@ -10,3 +10,12 @@ model Articles {
   isDeleted Boolean @default(false) @map("is_deleted")
   description String? @map("description")
 }
+
+model ArticlesBookmarked {
+  userId String  @map("user_id")
+  articleId String  @map("article_id")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  createdAtUtc DateTime @default(now()) @map("created_at_utc")
+  updatedAtUtc DateTime @default(now()) @map("updated_at_utc")
+  @@unique([userId, articleId])
+}

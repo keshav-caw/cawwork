@@ -1,3 +1,4 @@
+import { AccountModel } from '../models/account-model'
 import { UserLoginModel } from '../models/user-login-model'
 import { UserModel } from '../models/user-model'
 
@@ -9,4 +10,5 @@ export interface AuthServiceInterface {
     accountId,
   }): Promise<UserModel>
   signup(userDetails)
+  deleteAccount(accountId:string):Promise<AccountModel>
 }

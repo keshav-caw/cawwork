@@ -21,6 +21,7 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     },
     {
       select: {
+        id:true,
         title: true,
         imageUrl:true,
         url:true
@@ -37,5 +38,57 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     })
 
     return article;
+  }
+
+  async getArticlesBookmarkedByUser(userId){
+    const bookmarkedArticles = await this.client.articlesBookmarked?.findMany({
+      where: {
+        userId: userId
+      },
+    })
+    const result = [];
+    for(const bookmark of bookmarkedArticles){
+      const article:ArticleModel = await this.client.articles?.findUnique({
+        where:{
+          id:bookmark.articleId
+        },
+        select:{
+          id:true,
+          title: true,
+          imageUrl:true,
+          url:true
+        }
+      })
+      result.push(article);
+    }
+
+    return result;
+  }
+
+  async upsertBookmark(bookmark){
+    const result = await this.client.articlesBookmarked?.upsert({
+      where: {
+        userId_articleId:{
+          userId:bookmark.userId,
+          articleId:bookmark.articleId
+        }
+      },
+      update: bookmark,
+      create: bookmark,
+    });
+    return result
+  }
+
+  async removeBookmark(bookmark){
+    const result = await this.client.articlesBookmarked?.update({
+      data: bookmark,
+      where: {
+        userId_articleId:{
+          userId:bookmark.userId,
+          articleId:bookmark.articleId
+        }
+      },
+    })
+    return result;
   }
 }
