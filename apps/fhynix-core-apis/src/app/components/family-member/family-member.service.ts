@@ -330,7 +330,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     const hours = time[0]
     const minutes = time[1]
     if (isAm) {
-      return Number(hours * 60 + minutes)
+      return Number((hours === '12' ? 0 : hours * 60) + minutes)
     } else {
       return Number((hours === '12' ? hours * 60 : (hours + 12) * 60) + minutes)
     }

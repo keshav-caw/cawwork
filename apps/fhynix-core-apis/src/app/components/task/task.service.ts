@@ -8,6 +8,7 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { TaskModel } from '../../common/models/task.model'
 import { RepeatDurationEnum } from '../../common/enums/repeat-duration.enum'
 import { v4 as uuidv4 } from 'uuid'
+import { TemplateModel } from '../../common/models/template-model'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -35,6 +36,25 @@ export class TaskService implements TaskServiceInterface {
     userId: string,
   ): Promise<TaskModel[]> {
     return await this.taskRepository.getTaskDetailsByTaskId(taskId, userId)
+  }
+
+  async getTemplates(): Promise<TemplateModel[]> {
+    return await this.taskRepository.getTemplates()
+  }
+
+  async createTasksByTemplateId(
+    template: TemplateModel,
+    templateId: string,
+  ): Promise<TaskModel[]> {
+    const scheduledTasks = template.scheduleList
+    delete template.scheduleList
+    template.parentTemplateId = templateId
+    const templateDetails = await this.taskRepository.createTemplate(template)
+
+    scheduledTasks.forEach(
+      (task) => (task.eventTemplateId = templateDetails[0].id),
+    )
+    return await this.createTasks(scheduledTasks)
   }
 
   async createTasks(tasks: TaskModel[]): Promise<TaskModel[]> {
@@ -112,8 +132,13 @@ export class TaskService implements TaskServiceInterface {
     }
   }
 
-  async deleteTask(taskId: string) {
+  async deleteTask(taskId: string): Promise<TaskModel> {
     return await this.taskRepository.deleteTask(taskId)
+  }
+
+  async deleteTemplate(templateId: string): Promise<TaskModel[]> {
+    await this.taskRepository.deleteTemplate(templateId)
+    return await this.taskRepository.deleteTasksByTemplateId(templateId)
   }
 
   createTasksInfo(tasks) {

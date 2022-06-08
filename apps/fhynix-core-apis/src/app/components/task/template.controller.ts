@@ -17,8 +17,8 @@ import { TaskTypes } from './task.types'
 import { TaskService } from './task.service'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 
-@controller('/tasks')
-export class TasksController implements interfaces.Controller {
+@controller('/templates')
+export class TemplateController implements interfaces.Controller {
   constructor(
     @inject(TaskTypes.task)
     private taskService: TaskService,
@@ -27,46 +27,27 @@ export class TasksController implements interfaces.Controller {
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
-  public async getTasksByUserId(
+  public async getTemplates(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const userId = this.requestContext.getUserId()
-    const startDate = req.query.start_date.toString()
-    const endDate = req.query.end_date.toString()
-    const details = await this.taskService.getTasksByStartAndEndDate(
-      userId,
-      startDate,
-      endDate,
-    )
+    const details = await this.taskService.getTemplates()
     return res.send(details)
   }
 
-  @httpGet('/:taskId', CommonTypes.jwtAuthMiddleware)
-  public async getTaskDetailsByTaskId(
-    @request() req: express.Request,
-    @response() res: express.Response,
-    @next() next: express.NextFunction,
-  ): Promise<any> {
-    const userId = this.requestContext.getUserId()
-    const details = await this.taskService.getTaskDetailsByTaskId(
-      req.params.taskId,
-      userId,
-    )
-    return res.send(details)
-  }
-
-  @httpPost('/', CommonTypes.jwtAuthMiddleware)
-  private async createTasks(
+  @httpPost('/:id/tasks', CommonTypes.jwtAuthMiddleware)
+  private async createTaskByTemplate(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.createTasks(req.body))
+    res.send(
+      await this.taskService.createTasksByTemplateId(req.body, req.params.id),
+    )
   }
 
   @httpPut('/:taskId', CommonTypes.jwtAuthMiddleware)
-  private async updateTasks(
+  private async updateTaskByTemplateId(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
@@ -81,7 +62,15 @@ export class TasksController implements interfaces.Controller {
     )
   }
 
-  @httpDelete('/:taskId', CommonTypes.jwtAuthMiddleware)
+  @httpDelete('/:id', CommonTypes.jwtAuthMiddleware)
+  private async deleteTemaplateById(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    res.send(await this.taskService.deleteTemplate(req.params.id))
+  }
+
+  @httpDelete('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)
   private async deleteTask(
     @request() req: express.Request,
     @response() res: express.Response,

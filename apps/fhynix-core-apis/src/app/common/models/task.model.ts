@@ -7,16 +7,16 @@ export class TaskModel {
   isDeleted: boolean
   familyMemberId: string
   userId: string
-  userTemplateId: string
+  eventTemplateId: string
   title: string
   startAtUtc: Date
   endAtUtc: Date
   notifyAtUtc: Date
   notes: string
   repeatMode: RepeatModeModal
-  type: string
   invites: string[]
-  latitudesAndLongitudes: string
+  latitude: number
+  longitude: number
   status: string
   recurringTaskId: string
 }

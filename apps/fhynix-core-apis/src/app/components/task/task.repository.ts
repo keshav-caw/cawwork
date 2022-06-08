@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { TaskRepositoryInterface } from '../../common/interfaces/task-repository.interface'
 import { TaskModel } from '../../common/models/task.model'
+import { TemplateModel } from '../../common/models/template-model'
 
 @injectable()
 export class TaskRepository implements TaskRepositoryInterface {
@@ -70,9 +71,26 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
+  async getTemplates(): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.findMany({
+      where: {
+        isDeleted: false,
+        isMaster: true,
+      },
+    })
+    return result ? result : []
+  }
+
   async createTask(task: TaskModel): Promise<TaskModel[]> {
     const result = await this.client.tasks?.create({
       data: task,
+    })
+    return result
+  }
+
+  async createTemplate(template: TemplateModel): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.create({
+      data: template,
     })
     return result
   }
@@ -124,6 +142,26 @@ export class TaskRepository implements TaskRepositoryInterface {
         startAtUtc: {
           gt: currentDate,
         },
+      },
+    })
+    return result
+  }
+
+  async deleteTemplate(templateId: string): Promise<TemplateModel> {
+    const result = await this.client.eventTemplates?.update({
+      data: { isDeleted: true },
+      where: {
+        id: templateId,
+      },
+    })
+    return result
+  }
+
+  async deleteTasksByTemplateId(templateId: string): Promise<TaskModel[]> {
+    const result = await this.client.tasks?.updateMany({
+      data: { isDeleted: true },
+      where: {
+        recurringTaskId: templateId,
       },
     })
     return result

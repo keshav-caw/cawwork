@@ -6,6 +6,7 @@ import { TasksController } from './task.controller'
 import { TaskRepository } from './task.repository'
 import { TaskService } from './task.service'
 import { TaskTypes } from './task.types'
+import { TemplateController } from './template.controller'
 
 @injectable()
 export default class TaskBootstrapper {
@@ -13,5 +14,8 @@ export default class TaskBootstrapper {
     CommonContainer.bind<TaskRepository>('TaskRepository').to(TaskRepository)
     CommonContainer.bind<TaskServiceInterface>(TaskTypes.task).to(TaskService)
     CommonContainer.bind<TasksController>('TasksController').to(TasksController)
+    CommonContainer.bind<TemplateController>('TemplateController').to(
+      TemplateController,
+    )
   }
 }
