@@ -174,6 +174,42 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           ApiErrorCode.E0012,
         )
       } else if (
+        workHoursStartTime > workHoursEndTime &&
+        ((workHoursTime.startTime?.indexOf('AM') > -1 &&
+          workHoursTime.endTime?.indexOf('AM') > -1) ||
+          (workHoursTime.startTime?.indexOf('PM') > -1 &&
+            workHoursTime.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of work hours cannot be greater than the end time of work hours',
+          familyMember,
+          ApiErrorCode.E0024,
+        )
+      } else if (
+        lunchHoursStartTime > lunchHoursEndTime &&
+        ((lunchHours.startTime?.indexOf('AM') > -1 &&
+          lunchHours.endTime?.indexOf('AM') > -1) ||
+          (lunchHours.startTime?.indexOf('PM') > -1 &&
+            lunchHours.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of lunch hours cannot be greater than the end time of lunch hours',
+          familyMember,
+          ApiErrorCode.E0026,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        ((sleepTime.startTime?.indexOf('AM') > -1 &&
+          sleepTime.endTime?.indexOf('AM') > -1) ||
+          (sleepTime.startTime?.indexOf('PM') > -1 &&
+            sleepTime.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of sleep hours cannot be greater than the end time of sleep hours',
+          familyMember,
+          ApiErrorCode.E0025,
+        )
+      } else if (
         sleepStartTime > sleepEndTime &&
         (workHoursStartTime >= sleepStartTime ||
           workHoursStartTime <= sleepEndTime ||

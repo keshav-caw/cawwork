@@ -22,4 +22,7 @@ export enum ApiErrorCode {
   'E0021' = 'Atleast 2 habits must be added',
   'E0022' = 'Failed to upload file to s3 bucket',
   'E0023' = 'Lunch and sleep hours cannot overlap.',
+  'E0024' = 'The start time of work hours cannot be greater than the end time of work hours',
+  'E0025' = 'The start time of sleep hours cannot be greater than the end time of sleep hours',
+  'E0026' = 'The start time of lunch hours cannot be greater than the end time of lunch hours',
 }
