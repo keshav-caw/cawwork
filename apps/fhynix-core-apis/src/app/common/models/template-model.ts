@@ -14,7 +14,7 @@ export class TemplateModel {
   userId: string
   startAtUtc: Date
   endAtUtc: Date
-  status: boolean
+  status: string
   isMaster: boolean
   scheduleList: TaskModel[]
 }

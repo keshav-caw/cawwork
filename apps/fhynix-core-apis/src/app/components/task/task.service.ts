@@ -38,6 +38,10 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.getTaskDetailsByTaskId(taskId, userId)
   }
 
+  async getMasterTemplates(): Promise<TemplateModel[]> {
+    return await this.taskRepository.getMasterTemplates()
+  }
+
   async getTemplates(): Promise<TemplateModel[]> {
     return await this.taskRepository.getTemplates()
   }
@@ -52,7 +56,7 @@ export class TaskService implements TaskServiceInterface {
     const templateDetails = await this.taskRepository.createTemplate(template)
 
     scheduledTasks.forEach(
-      (task) => (task.eventTemplateId = templateDetails[0].id),
+      (task) => (task.eventTemplateId = templateDetails.id),
     )
     return await this.createTasks(scheduledTasks)
   }
@@ -144,7 +148,7 @@ export class TaskService implements TaskServiceInterface {
   createTasksInfo(tasks) {
     let tasksToBeCreated = []
     tasks.forEach((task: TaskModel) => {
-      if (task.repeatMode.repeatDuration === RepeatDurationEnum.DAILY) {
+      if (task.repeatMode?.repeatDuration === RepeatDurationEnum.DAILY) {
         const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
         for (let i = 0; i <= days; i++) {
           const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
@@ -159,7 +163,7 @@ export class TaskService implements TaskServiceInterface {
           tasksToBeCreated.push(taskToBeAdded)
         }
       } else if (
-        task.repeatMode.repeatDuration === RepeatDurationEnum.MONTHLY
+        task.repeatMode?.repeatDuration === RepeatDurationEnum.MONTHLY
       ) {
         const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'months')
         for (let i = 0; i <= days; i++) {
@@ -175,8 +179,8 @@ export class TaskService implements TaskServiceInterface {
           tasksToBeCreated.push(taskToBeAdded)
         }
       } else if (
-        task.repeatMode.repeatDuration === RepeatDurationEnum.WEEKLY ||
-        task.repeatMode.repeatDuration === RepeatDurationEnum.BI_WEEKLY
+        task.repeatMode?.repeatDuration === RepeatDurationEnum.WEEKLY ||
+        task.repeatMode?.repeatDuration === RepeatDurationEnum.BI_WEEKLY
       ) {
         const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
         const limit =
@@ -193,9 +197,7 @@ export class TaskService implements TaskServiceInterface {
           taskToBeAdded.notifyAtUtc = notify
           tasksToBeCreated.push(taskToBeAdded)
         }
-      } else if (task.repeatMode.repeatDuration === RepeatDurationEnum.NONE) {
-        tasksToBeCreated = tasks
-      } else if (task.repeatMode.repeatOnWeekDays) {
+      } else if (task.repeatMode?.repeatOnWeekDays) {
         const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
         for (let i = 0; i <= days; i = i + 1) {
           const day = dayjs(task.startAtUtc).add(i, 'day').get('day')
@@ -212,7 +214,7 @@ export class TaskService implements TaskServiceInterface {
             tasksToBeCreated.push(taskToBeAdded)
           }
         }
-      } else if (task.repeatMode.repeatOnDays?.length > 0) {
+      } else if (task.repeatMode?.repeatOnDays?.length > 0) {
         const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
         const weekDays = []
         task.repeatMode.repeatOnDays.forEach((repeatDay) => {
@@ -236,6 +238,11 @@ export class TaskService implements TaskServiceInterface {
             tasksToBeCreated.push(taskToBeAdded)
           }
         }
+      } else if (
+        task.repeatMode?.repeatDuration === RepeatDurationEnum.NONE ||
+        !task.repeatMode?.repeatDuration
+      ) {
+        tasksToBeCreated = tasks
       }
     })
     return tasksToBeCreated

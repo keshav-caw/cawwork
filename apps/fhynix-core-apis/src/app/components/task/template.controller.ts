@@ -26,6 +26,16 @@ export class TemplateController implements interfaces.Controller {
     private requestContext: RequestContext,
   ) {}
 
+  @httpGet('/master', CommonTypes.jwtAuthMiddleware)
+  public async getMasterTemplates(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ): Promise<any> {
+    const details = await this.taskService.getMasterTemplates()
+    return res.send(details)
+  }
+
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
   public async getTemplates(
     @request() req: express.Request,

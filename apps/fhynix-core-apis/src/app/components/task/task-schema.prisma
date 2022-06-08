@@ -34,6 +34,6 @@ model EventTemplates {
   userId String? @map("user_id")
   startAtUtc DateTime? @map("start_at_utc")
   endAtUtc DateTime? @map("end_at_utc")
-  status Boolean?
+  status String?
   isMaster Boolean @unique @map("is_master")
 }

@@ -71,11 +71,21 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
-  async getTemplates(): Promise<TemplateModel[]> {
+  async getMasterTemplates(): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.findMany({
       where: {
         isDeleted: false,
         isMaster: true,
+      },
+    })
+    return result ? result : []
+  }
+
+  async getTemplates(): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.findMany({
+      where: {
+        isDeleted: false,
+        isMaster: false,
       },
     })
     return result ? result : []
@@ -88,7 +98,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result
   }
 
-  async createTemplate(template: TemplateModel): Promise<TemplateModel[]> {
+  async createTemplate(template: TemplateModel): Promise<TemplateModel> {
     const result = await this.client.eventTemplates?.create({
       data: template,
     })
