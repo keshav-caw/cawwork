@@ -10,9 +10,13 @@ export class RequestContext implements IRequestContext {
     this.asyncLocalStorage = new AsyncLocalStorage()
   }
 
+  private getStore(){
+    const store = this.asyncLocalStorage.getStore();
+    return store ? store : {}
+  }
+
   setUserId(userId: string) {
-    let store = this.asyncLocalStorage.getStore();
-    store = store ? store : {}
+    const store = this.getStore();
     store['userId']=userId
     this.asyncLocalStorage.enterWith(
       store
@@ -20,8 +24,7 @@ export class RequestContext implements IRequestContext {
   }
 
   setEmail(email: string) {
-    let store = this.asyncLocalStorage.getStore();
-    store = store ? store : {}
+    const store = this.getStore();
     store['email']=email
     this.asyncLocalStorage.enterWith(
       store
@@ -29,8 +32,7 @@ export class RequestContext implements IRequestContext {
   }
 
   setAccountId(accountId:string) {
-    let store = this.asyncLocalStorage.getStore();
-    store = store ? store : {}
+    const store = this.getStore();
     store['accountId']=accountId
     this.asyncLocalStorage.enterWith(
       store
