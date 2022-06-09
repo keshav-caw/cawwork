@@ -51,7 +51,6 @@ export class ArticleService implements ArticleServiceInterface {
       userId:userId,
       articleId:articleId,
       isDeleted:false,
-      updatedAtUtc:new Date()
     }
 
     const result = await this.articleRepository.upsertBookmark(bookmark)
@@ -63,7 +62,6 @@ export class ArticleService implements ArticleServiceInterface {
       userId:userId,
       articleId:articleId,
       isDeleted:true,
-      updatedAtUtc: new Date()
     }
 
     const result = await this.articleRepository.removeBookmark(bookmark);
