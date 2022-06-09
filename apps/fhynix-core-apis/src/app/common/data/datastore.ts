@@ -11,5 +11,19 @@ export class DataStore {
 
   public static initialize() {
     this.dbClient = new PrismaClient()
+
+    this.dbClient.$use(async (params, next) => {
+
+      if(params.action=='create' || params.action=='update'){
+        params.args.data.updatedAtUtc =  new Date();
+      }
+      if(params.action=='upsert'){
+        params.args.update.updatedAtUtc =  new Date();
+        params.args.create.updatedAtUtc =  new Date();
+      }
+      
+      const result = await next(params)
+      return result
+    })
   }
 }
