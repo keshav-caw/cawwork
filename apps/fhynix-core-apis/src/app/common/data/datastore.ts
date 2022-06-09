@@ -20,20 +20,17 @@ export class DataStore {
     )
 
     this.dbClient.$use(async (params, next) => {
-
+      const userId = this.requestContext.getUserId()
       if(params.action=='create' || params.action=='update'){
-        params.args.data.updatedAtUtc =  new Date();
-        params.args.data.updatedBy = this.requestContext.getUserId();
+        params.args.data.updatedBy =userId;
       }
       if(params.action=='create'){
-        params.args.data.createdAtUtc =  new Date();
-        params.args.data.createdBy = this.requestContext.getUserId();
+        params.args.data.createdBy = userId;
       }
       if(params.action=='upsert'){
-        params.args.update.updatedAtUtc =  new Date();
-        params.args.create.updatedAtUtc =  new Date();
-        params.args.update.updatedBy = this.requestContext.getUserId();
-        params.args.create.updatedBy = this.requestContext.getUserId();
+        params.args.update.updatedBy = userId;
+        params.args.create.updatedBy = userId;
+        params.args.create.createdBy = userId;
       }
       
       const result = await next(params)
