@@ -10,11 +10,11 @@ import { DataStoreInterface } from './data/datastore.interface'
 import { JWTInterface } from './jwtservice/interfaces/jwt.interface'
 import { JWTService } from './jwtservice/jwt.service'
 import { RequestContext } from './jwtservice/requests-context.service'
-import { RequestContextInterface } from './jwtservice/interfaces/request-context.interface'
 import { HashServiceInterface } from './hashservice/hash-service.interface'
 import { HashService } from './hashservice/hash.service'
 import { StorageProviderInterface } from './interfaces/storage-provider.interface'
 import { StorageProvider } from './storage-provider/storage-provider.service'
+import { RequestContextInterface } from './jwtservice/interfaces/request-context.interface'
 
 @injectable()
 export default class CommonBootstrapper {
