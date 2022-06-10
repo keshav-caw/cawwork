@@ -52,25 +52,28 @@ export class AuthService implements AuthServiceInterface {
     )
     let userData
     if (accounts?.length > 0) {
-      if(accounts[0].isDeleted){
+      const accountsDeleted = accounts.filter((account) => account.isDeleted)
+      if (accountsDeleted?.length === accounts.length) {
         throw new ArgumentValidationError(
-           'Email',
-           profileDetails.email,
-           ApiErrorCode.E0016
+          'Email',
+          profileDetails.email,
+          ApiErrorCode.E0016,
         )
       }
+      const accountDetails = accounts.filter((account) => !account.isDeleted)
       userData = await this.updateAccountDetails({
         accessToken: profileDetails.accessToken,
         refreshToken: profileDetails.refreshToken,
-        accountId: accounts[0]?.id,
+        accountId: accountDetails[0]?.id,
       })
     } else {
       userData = await this.createAccountDetails(profileDetails)
     }
+
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
-      accountId:userData?.accountId
+      accountId: userData?.accountId,
     })
 
     return { authToken: authToken }
@@ -135,64 +138,66 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
-
   async signup(userDetails) {
-
-    if(userDetails.password!==userDetails.confirmPassword){
+    if (userDetails.password !== userDetails.confirmPassword) {
       throw new ArgumentValidationError(
-          'Password',
-          userDetails.password,
-          ApiErrorCode.E0005,
+        'Password',
+        userDetails.password,
+        ApiErrorCode.E0005,
       )
     }
 
-    const user = await this.authRepository.getAccountDetails(userDetails.email);
-    if(user?.length>0){
+    const user = await this.authRepository.getAccountDetails(userDetails.email)
+    if (user?.length > 0) {
       throw new ArgumentValidationError(
-          'Email',
-          userDetails.email,
-          ApiErrorCode.E0006,
+        'Email',
+        userDetails.email,
+        ApiErrorCode.E0006,
       )
     }
 
-    const encryptedPassword = await this.hashService.hashPassword(userDetails.password);
-    
+    const encryptedPassword = await this.hashService.hashPassword(
+      userDetails.password,
+    )
 
-    const account:AccountModel = {
-        username:userDetails.email,
-        password:encryptedPassword,
-        loginMethod:LoginMethodEnum.EMAIL_PASSWORD,
-    };
+    const account: AccountModel = {
+      username: userDetails.email,
+      password: encryptedPassword,
+      loginMethod: LoginMethodEnum.EMAIL_PASSWORD,
+    }
 
-    const accountDetails = await this.authRepository.createAccounts(account);
+    const accountDetails = await this.authRepository.createAccounts(account)
 
     const newUser: UserModel = {
-      firstName:userDetails.firstName,
-      lastName:userDetails.lastName,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
       email: userDetails.email,
       isOnboardingCompleted: false,
       accountId: accountDetails.id,
     }
 
-    
-
-    const userData = await this.userService.createUser(newUser);
+    const userData = await this.userService.createUser(newUser)
 
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
-      accountId:userData?.accountId
+      accountId: userData?.accountId,
     })
 
-    await this.emailProvider.sendEmailUsingTemplate(this.emailProvider.templates.WelcomeEmail,[userDetails.email],"Welcome",{firstName:userDetails.firstName});
+    await this.emailProvider.sendEmailUsingTemplate(
+      this.emailProvider.templates.WelcomeEmail,
+      [userDetails.email],
+      'Welcome',
+      { firstName: userDetails.firstName },
+    )
 
-    return { authToken: authToken}
+    return { authToken: authToken }
   }
 
-  async deleteAccount(accountId){
-    const account = await this.authRepository.getAccountDetailsById(accountId);
-    account.isDeleted = true;
-    await this.authRepository.updateAccounts(account,accountId);
-    return account;
+  async deleteAccount(accountId) {
+    const account = await this.authRepository.getAccountDetailsById(accountId)
+    account.isDeleted = true
+    await this.authRepository.updateAccounts(account, accountId)
+    return account
   }
 }
