@@ -14,8 +14,6 @@ import { UtilityTypes } from './utility.types'
 import { LocationProvider } from './location.provider'
 import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
 import { SearchLocationPayload } from 'apps/shared/payloads/search-location.payload'
-import axios from 'axios'
-import { AddressModel } from '../../common/models/address.model'
 
 @controller('/utilities')
 export class UtilityController implements interfaces.Controller {
@@ -40,5 +38,4 @@ export class UtilityController implements interfaces.Controller {
     
     res.send(nearbyPlaceNames);
   }
-
 }

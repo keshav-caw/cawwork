@@ -15,4 +15,5 @@ export const environment = {
   googleLocationSearchApiKey: 'AIzaSyDutyVJnICQA5erOl7hRurWKouv-P8gL-Q',
   sendgridApiKey:
     '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',
+  linkPreviewApiKey: '9d082977e45d0c0cc12551116ecfc3dd',
 }

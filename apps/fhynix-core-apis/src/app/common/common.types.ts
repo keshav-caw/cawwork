@@ -6,6 +6,8 @@ const CommonTypes = {
   requestIdMiddleware: Symbol.for('RequestIdMiddleware'),
   hash: Symbol.for('HashInterface'),
   storage: Symbol.for('StorageProvider'),
+  linkPreview: Symbol.for('LinkPreview'),
+  checkAdminMiddleWare: Symbol.for('CheckAdminMiddleWare'),
 }
 
 export { CommonTypes }

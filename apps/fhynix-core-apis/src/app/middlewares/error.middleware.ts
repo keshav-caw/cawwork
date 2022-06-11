@@ -15,7 +15,7 @@ const errorMiddleWare = (err, req, res, next) => {
   const nextFn = next
   let statusCode: number
   let errorResponse
-  let isLogNeeded = false  
+  let isLogNeeded = false
   
   switch (true) {
     case err instanceof ArgumentValidationError:

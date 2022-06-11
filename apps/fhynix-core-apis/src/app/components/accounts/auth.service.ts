@@ -48,22 +48,33 @@ export class AuthService implements AuthServiceInterface {
     } catch (e) {
       throw new ThirdPartyAPIError(ApiErrorCode.E0003)
     }
-    const user = await this.authRepository.getAccountDetails(
+    const accounts = await this.authRepository.getAccountDetails(
       profileDetails.email,
     )
     let userData
-    if (user?.length > 0) {
+    if (accounts?.length > 0) {
+      const accountsDeleted = accounts.filter((account) => account.isDeleted)
+      if (accountsDeleted?.length === accounts.length) {
+        throw new ArgumentValidationError(
+          'Email',
+          profileDetails.email,
+          ApiErrorCode.E0028,
+        )
+      }
+      const accountDetails = accounts.filter((account) => !account.isDeleted)
       userData = await this.updateAccountDetails({
         accessToken: profileDetails.accessToken,
         refreshToken: profileDetails.refreshToken,
-        accountId: user[0]?.id,
+        accountId: accountDetails[0]?.id,
       })
     } else {
       userData = await this.createAccountDetails(profileDetails)
     }
+
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
+      accountId: userData?.accountId,
     })
 
     return { authToken: authToken }
@@ -186,6 +197,7 @@ export class AuthService implements AuthServiceInterface {
     const authToken = await this.jwtService.encode({
       userId: userData?.id,
       email: userData?.email,
+      accountId: userData?.accountId,
     })
 
     await this.emailProvider.sendEmailUsingTemplate(
@@ -196,5 +208,12 @@ export class AuthService implements AuthServiceInterface {
     )
 
     return { authToken: authToken }
+  }
+
+  async deleteAccount(accountId) {
+    const account = await this.authRepository.getAccountDetailsById(accountId)
+    account.isDeleted = true
+    await this.authRepository.updateAccounts(account, accountId)
+    return account
   }
 }

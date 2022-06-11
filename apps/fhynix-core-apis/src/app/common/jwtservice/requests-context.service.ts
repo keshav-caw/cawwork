@@ -10,19 +10,40 @@ export class RequestContext implements RequestContextInterface {
     this.asyncLocalStorage = new AsyncLocalStorage()
   }
 
-  async setUserId(userId: string) {
-    this.asyncLocalStorage.enterWith({
-      userId: userId,
-    })
+  private getStore(){
+    const store = this.asyncLocalStorage.getStore();
+    return store ? store : {}
   }
 
-  async setEmail(email: string) {
-    this.asyncLocalStorage.enterWith({
-      email: email,
-    })
+  setUserId(userId: string) {
+    const store = this.getStore();
+    store['userId']=userId
+    this.asyncLocalStorage.enterWith(
+      store
+    )
+  }
+
+  setEmail(email: string) {
+    const store = this.getStore();
+    store['email']=email
+    this.asyncLocalStorage.enterWith(
+      store
+    )
+  }
+
+  setAccountId(accountId:string) {
+    const store = this.getStore();
+    store['accountId']=accountId
+    this.asyncLocalStorage.enterWith(
+      store
+    )
   }
 
   getUserId() {
     return this.asyncLocalStorage.getStore()?.['userId']
+  }
+
+  getAccountId() {
+    return this.asyncLocalStorage.getStore()?.['accountId']
   }
 }
