@@ -98,7 +98,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result
   }
 
-  async createTemplate(template: TemplateModel): Promise<TemplateModel> {
+  async createTemplate(template: TemplateModel): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.create({
       data: template,
     })

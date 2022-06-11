@@ -70,6 +70,13 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     return familyMembers
   }
 
+  async getFamilyMemberById(id: string): Promise<FamilyMemberModel[]> {
+    const familyMembers = await this.familyMemberRepository.getFamilyMemberById(
+      id,
+    )
+    return familyMembers
+  }
+
   async updateFamilyMembers(
     familyDetails: FamilyMemberModel,
     familyMemberId: string,

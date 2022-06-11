@@ -9,9 +9,9 @@ export class TaskModel {
   userId: string
   eventTemplateId: string
   title: string
-  startAtUtc: Date
-  endAtUtc: Date
-  notifyAtUtc: Date
+  startAtUtc: string
+  endAtUtc: string
+  notifyAtUtc: string
   notes: string
   repeatMode: RepeatModeModal
   invites: string[]
@@ -19,10 +19,16 @@ export class TaskModel {
   longitude: number
   status: string
   recurringTaskId: string
+  checklist: ChecklistModel[]
 }
 
 export class RepeatModeModal {
   repeatDuration?: string
   repeatOnWeekDays?: string[]
   repeatOnDays?: string[]
+}
+
+export class ChecklistModel {
+  name: string
+  isCompleted: boolean
 }

@@ -46,14 +46,21 @@ export class TemplateController implements interfaces.Controller {
     return res.send(details)
   }
 
-  @httpPost('/:id/tasks', CommonTypes.jwtAuthMiddleware)
-  private async createTaskByTemplate(
+  @httpPost('/:id', CommonTypes.jwtAuthMiddleware)
+  private async createTemplate(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(
-      await this.taskService.createTasksByTemplateId(req.body, req.params.id),
-    )
+    res.send(await this.taskService.createUserTemplate(req.body, req.params.id))
+  }
+
+  @httpPost('/:id/tasks', CommonTypes.jwtAuthMiddleware)
+  private async createTasksByTemplate(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const userId = this.requestContext.getUserId()
+    res.send(await this.taskService.createTasksByTemplateId(req.body, userId))
   }
 
   @httpPut('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)
