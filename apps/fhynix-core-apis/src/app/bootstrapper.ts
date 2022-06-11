@@ -9,6 +9,7 @@ import RelationshipBootstrapper from './components/relationship/relationship.boo
 import HabitsBootstrapper from './components/habits/habits.bootstrapper'
 import ArticleBootstrapper from './components/articles/article.bootstrapper'
 import UtilityBootstrapper from './components/utilities/utility.bootstrapper'
+import TaskBootstrapper from './components/task/task.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
@@ -20,6 +21,7 @@ export default class Bootstrapper {
     HabitsBootstrapper.initialize()
     FamilyMemberBootstrapper.initialize()
     RelationshipBootstrapper.initialize()
+    TaskBootstrapper.initialize()
     MiddlewaresBootstrapper.initialize()
     DataStore.initialize()
     HealthCheckBootstrapper.initialize()

@@ -17,6 +17,7 @@ import { AccountModel } from '../../common/models/account-model'
 import { UserModel } from '../../common/models/user-model'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HashService } from '../../common/hashservice/hash.service'
+import dayjs from 'dayjs'
 import { UtilityTypes } from '../utilities/utility.types'
 import { EmailProvider } from '../utilities/email.provider'
 
@@ -57,7 +58,7 @@ export class AuthService implements AuthServiceInterface {
         throw new ArgumentValidationError(
           'Email',
           profileDetails.email,
-          ApiErrorCode.E0016,
+          ApiErrorCode.E0028,
         )
       }
       const accountDetails = accounts.filter((account) => !account.isDeleted)
@@ -94,6 +95,10 @@ export class AuthService implements AuthServiceInterface {
     return userDetails[0]
   }
 
+  async getAccountDetailsByUsername(username: string): Promise<AccountModel[]> {
+    return await this.authRepository.getAccountDetails(username)
+  }
+
   private async createAccountDetails(profileDetails): Promise<UserModel> {
     const accountDetails = await this.authRepository.createAccounts({
       accessToken: profileDetails.accessToken,
@@ -104,9 +109,12 @@ export class AuthService implements AuthServiceInterface {
 
     const userData = await this.userService.createUser({
       email: profileDetails.email,
+      firstName: profileDetails.firstName,
+      lastName: profileDetails.lastName,
       phone: profileDetails.phone,
       isOnboardingCompleted: false,
       accountId: accountDetails.id,
+      dob: profileDetails.dob,
     })
 
     return userData
@@ -127,14 +135,22 @@ export class AuthService implements AuthServiceInterface {
     const peopleDetails = await googleApi.people.get({
       auth: oauth2Client,
       resourceName: 'people/me',
-      personFields: 'names,phoneNumbers,emailAddresses,locations,locales',
+      personFields:
+        'names,birthdays,phoneNumbers,emailAddresses,locations,locales,metadata',
     })
+
+    const dob = peopleDetails?.data?.birthdays?.[0]?.date
     return {
       name: peopleDetails.data.names?.[0]?.displayName,
+      firstName: peopleDetails.data.names?.[0]?.givenName,
+      lastName: peopleDetails.data.names?.[0]?.familyName,
       phone: peopleDetails.data.phoneNumbers?.[0]?.value,
       email: peopleDetails.data.emailAddresses?.[0]?.value,
       accessToken: authToken.tokens.access_token,
       refreshToken: authToken.tokens.refresh_token,
+      dob: dob
+        ? dayjs(dob.year + ' ' + dob.month + ' ' + dob.day).toDate()
+        : null,
     }
   }
 

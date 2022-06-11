@@ -6,7 +6,7 @@ import {
   request,
   response,
   httpGet,
-  next
+  next,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { ArticleTypes } from './article.types'
@@ -26,74 +26,90 @@ export class ArticleController implements interfaces.Controller {
     @inject(ArticleTypes.articles) private articleService: ArticleService,
   ) {}
 
-  @httpGet('/list',CommonTypes.jwtAuthMiddleware)
+  @httpGet('/list', CommonTypes.jwtAuthMiddleware)
   private async getArticles(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ) {
-    const pageNumber = +req.query.pageNumber;
-    const pageSize = +req.query.pageSize;
-    
-    const articles = await this.articleService.getArticles({pageNumber,pageSize});
-    const details = new PaginatedResponsePayload<ArticleResponsePayload>();
-    for(const article of articles){
-        const newArticle = new ArticleResponsePayload(article.id,article.title,article.imageUrl,article.url);
-        details.add(newArticle);
+    const pageNumber = +req.query.pageNumber
+    const pageSize = +req.query.pageSize
+
+    const articles = await this.articleService.getArticles({
+      pageNumber,
+      pageSize,
+    })
+    const details = new PaginatedResponsePayload<ArticleResponsePayload>()
+    for (const article of articles) {
+      const newArticle = new ArticleResponsePayload(
+        article.id,
+        article.title,
+        article.imageUrl,
+        article.url,
+      )
+      details.add(newArticle)
     }
     res.send(details)
   }
 
-  @httpPost('/push',CommonTypes.jwtAuthMiddleware,CommonTypes.checkAdminMiddleWare)
+  @httpPost(
+    '/push',
+    CommonTypes.jwtAuthMiddleware,
+    CommonTypes.checkAdminMiddleware,
+  )
   private async addArticle(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
-  ){
-    const {url} = req.body;
-    const articleData = await this.articleService.addArticle(url);
-    res.send(articleData);
+  ) {
+    const { url } = req.body
+    const articleData = await this.articleService.addArticle(url)
+    res.send(articleData)
   }
 
-  @httpGet('/bookmarks',CommonTypes.jwtAuthMiddleware)
+  @httpGet('/bookmarks', CommonTypes.jwtAuthMiddleware)
   private async getBookmarks(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
-  ){
-    const userId = this.requestContext.getUserId();
-    const articles = await this.articleService.getBookmarks(userId);
-    const details = new PaginatedResponsePayload<ArticleResponsePayload>();
-    for(const article of articles){
-      const newArticle = new ArticleResponsePayload(article.id,article.title,article.imageUrl,article.url);
-      details.add(newArticle);
+  ) {
+    const userId = this.requestContext.getUserId()
+    const articles = await this.articleService.getBookmarks(userId)
+    const details = new PaginatedResponsePayload<ArticleResponsePayload>()
+    for (const article of articles) {
+      const newArticle = new ArticleResponsePayload(
+        article.id,
+        article.title,
+        article.imageUrl,
+        article.url,
+      )
+      details.add(newArticle)
     }
-    res.send(details);
+    res.send(details)
   }
 
-  @httpPost('/:id/add-bookmark',CommonTypes.jwtAuthMiddleware)
+  @httpPost('/:id/add-bookmark', CommonTypes.jwtAuthMiddleware)
   private async addBookmark(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
-  ){
-    const articleId = req.params.id;
-    const userId = this.requestContext.getUserId();
-    const bookmark = await this.articleService.addBookmark(userId,articleId);
-    res.send(bookmark);
+  ) {
+    const articleId = req.params.id
+    const userId = this.requestContext.getUserId()
+    const bookmark = await this.articleService.addBookmark(userId, articleId)
+    res.send(bookmark)
   }
 
-  @httpPost('/:id/remove-bookmark',CommonTypes.jwtAuthMiddleware)
+  @httpPost('/:id/remove-bookmark', CommonTypes.jwtAuthMiddleware)
   private async removeBookmark(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
-  ){
-    const articleId = req.params.id;
-    const userId = this.requestContext.getUserId();
-    
-    const bookmark = await this.articleService.removeBookmark(userId,articleId);
-    res.send(bookmark);
-  }
+  ) {
+    const articleId = req.params.id
+    const userId = this.requestContext.getUserId()
 
+    const bookmark = await this.articleService.removeBookmark(userId, articleId)
+    res.send(bookmark)
+  }
 }

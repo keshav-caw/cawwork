@@ -9,14 +9,14 @@ import { ThirdPartyAPIError } from '../common/errors/custom-errors/third-party.e
 import { BaseError } from '../common/errors/custom-errors/base.error'
 import UnauthorizedError from '../common/errors/custom-errors/unauthorized.error'
 
-const errorMiddleWare = (err, req, res, next) => {
+const errorMiddleware = (err, req, res, next) => {
   const logger = CommonContainer.get<Loggerservice>(CommonTypes.logger)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const nextFn = next
   let statusCode: number
   let errorResponse
   let isLogNeeded = false
-  
+
   switch (true) {
     case err instanceof ArgumentValidationError:
       errorResponse = new APIErrorResponsePayload(
@@ -45,11 +45,11 @@ const errorMiddleWare = (err, req, res, next) => {
       (<BaseError>err).message,
       {},
       'exceptionHandler',
-      'ErrorMiddleWare',
+      'ErrorMiddleware',
     )
   }
 
   res.status(statusCode).send(errorResponse)
 }
 
-export default errorMiddleWare
+export default errorMiddleware

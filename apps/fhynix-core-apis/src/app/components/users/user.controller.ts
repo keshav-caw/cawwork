@@ -8,20 +8,20 @@ import {
   next,
   httpPost,
   httpPut,
-  requestParam,
 } from 'inversify-express-utils'
 import { inject } from 'inversify'
 import { UserService } from './user.service'
-import { JWTService } from '../../common/jwtservice/jwt.service'
 import { UserTypes } from './user.types'
 import { CommonTypes } from '../../common/common.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
+import { AccountTypes } from '../accounts/account.types'
+import { AuthService } from '../accounts/auth.service'
 
 @controller('/users')
 export class UserController implements interfaces.Controller {
   constructor(
     @inject(UserTypes.user) private userService: UserService,
-    @inject(CommonTypes.jwt) private jwtService: JWTService,
+    @inject(AccountTypes.auth) private authService: AuthService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
   ) {}
@@ -35,6 +35,25 @@ export class UserController implements interfaces.Controller {
     const userId = this.requestContext.getUserId()
     const details = await this.userService.getUserDetail(userId)
     return res.send(details)
+  }
+
+  @httpGet('/my/contacts/search', CommonTypes.jwtAuthMiddleware)
+  public async searchContacts(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ): Promise<any> {
+    const userId = this.requestContext.getUserId()
+    const userDetails = await this.userService.getUserDetail(userId)
+    const accountDetails = await this.authService.getAccountDetailsByUsername(
+      userDetails[0].email,
+    )
+    const contacts = await this.userService.searchContacts(
+      accountDetails[0].accessToken,
+      accountDetails[0].refreshToken,
+      req.query.search.toString(),
+    )
+    return res.send(contacts)
   }
 
   @httpPost('/')

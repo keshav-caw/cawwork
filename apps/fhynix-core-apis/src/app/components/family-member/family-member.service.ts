@@ -70,6 +70,13 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     return familyMembers
   }
 
+  async getFamilyMemberById(id: string): Promise<FamilyMemberModel[]> {
+    const familyMembers = await this.familyMemberRepository.getFamilyMemberById(
+      id,
+    )
+    return familyMembers
+  }
+
   async updateFamilyMembers(
     familyDetails: FamilyMemberModel,
     familyMemberId: string,
@@ -81,7 +88,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
   }
 
-  async createFamilyMemberForUser(familyMembers: FamilyMemberModel[]) {
+  async createFamilyMemberForUser(
+    familyMembers: FamilyMemberModel[],
+  ): Promise<FamilyMemberModel[]> {
     await this.validateFamilyMembers(familyMembers)
     const calls = []
     familyMembers.forEach((familyMember) => {
@@ -91,6 +100,16 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     const response = await Promise.all(calls)
 
     return response
+  }
+
+  async updateProfileImage(
+    profileImage: string,
+    familyMemberId,
+  ): Promise<FamilyMemberModel> {
+    return await this.updateFamilyMembers(
+      { profileImage: profileImage },
+      familyMemberId,
+    )
   }
 
   async deleteFamilyMember(familyMemberId: string) {
@@ -114,26 +133,35 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
   validateFamilyMemberOtherInfo(familyMember: FamilyMemberModel) {
     if (
       familyMember?.otherInfo?.sleepHours &&
-      familyMember?.otherInfo?.workHours
+      familyMember?.otherInfo?.workHours &&
+      familyMember?.otherInfo?.lunchHours
     ) {
       const sleepTime = familyMember?.otherInfo?.sleepHours
       const workHoursTime = familyMember?.otherInfo?.workHours
-      const today = dayjs().format('YYYY-MM-DD')
+      const lunchHours = familyMember?.otherInfo?.lunchHours
 
-      sleepTime.startTime = today + ' ' + sleepTime.startTime
-      sleepTime.endTime = today + ' ' + sleepTime.endTime
+      const sleepStartTime = this.getMinutesFromTimestamp(sleepTime.startTime)
+      const sleepEndTime = this.getMinutesFromTimestamp(sleepTime.endTime)
 
-      workHoursTime.startTime = today + ' ' + workHoursTime.startTime
-      workHoursTime.endTime = today + ' ' + workHoursTime.endTime
+      const workHoursStartTime = this.getMinutesFromTimestamp(
+        workHoursTime.startTime,
+      )
+      const workHoursEndTime = this.getMinutesFromTimestamp(
+        workHoursTime.endTime,
+      )
+
+      const lunchHoursStartTime = this.getMinutesFromTimestamp(
+        lunchHours.startTime,
+      )
+
+      const lunchHoursEndTime = this.getMinutesFromTimestamp(lunchHours.endTime)
+
       if (
-        dayjs(sleepTime.startTime).diff(
-          dayjs(workHoursTime.startTime),
-          'minutes',
-        ) >= 0 &&
-        dayjs(workHoursTime.endTime).diff(
-          dayjs(sleepTime.startTime),
-          'minutes',
-        ) >= 0
+        workHoursStartTime > workHoursEndTime &&
+        (sleepStartTime >= workHoursStartTime ||
+          sleepStartTime <= workHoursEndTime ||
+          sleepEndTime >= workHoursStartTime ||
+          sleepEndTime <= workHoursEndTime)
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
@@ -141,25 +169,127 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           ApiErrorCode.E0012,
         )
       } else if (
-        dayjs(sleepTime.endTime).diff(
-          dayjs(workHoursTime.startTime),
-          'minutes',
-        ) >= 0 &&
-        dayjs(workHoursTime.endTime).diff(
-          dayjs(sleepTime.endTime),
-          'minutes',
-        ) >= 0
+        workHoursStartTime < workHoursEndTime &&
+        ((sleepStartTime >= workHoursStartTime &&
+          sleepStartTime <= workHoursEndTime) ||
+          (sleepEndTime >= workHoursStartTime &&
+            sleepEndTime <= workHoursEndTime))
       ) {
         throw new ArgumentValidationError(
           'Work and sleep hours cannot overlap',
           familyMember,
           ApiErrorCode.E0012,
         )
+      } else if (
+        workHoursStartTime > workHoursEndTime &&
+        ((workHoursTime.startTime?.indexOf('AM') > -1 &&
+          workHoursTime.endTime?.indexOf('AM') > -1) ||
+          (workHoursTime.startTime?.indexOf('PM') > -1 &&
+            workHoursTime.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of work hours cannot be greater than the end time of work hours',
+          familyMember,
+          ApiErrorCode.E0024,
+        )
+      } else if (
+        lunchHoursStartTime > lunchHoursEndTime &&
+        ((lunchHours.startTime?.indexOf('AM') > -1 &&
+          lunchHours.endTime?.indexOf('AM') > -1) ||
+          (lunchHours.startTime?.indexOf('PM') > -1 &&
+            lunchHours.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of lunch hours cannot be greater than the end time of lunch hours',
+          familyMember,
+          ApiErrorCode.E0026,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        ((sleepTime.startTime?.indexOf('AM') > -1 &&
+          sleepTime.endTime?.indexOf('AM') > -1) ||
+          (sleepTime.startTime?.indexOf('PM') > -1 &&
+            sleepTime.endTime?.indexOf('PM') > -1))
+      ) {
+        throw new ArgumentValidationError(
+          'The start time of sleep hours cannot be greater than the end time of sleep hours',
+          familyMember,
+          ApiErrorCode.E0025,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        (workHoursStartTime >= sleepStartTime ||
+          workHoursStartTime <= sleepEndTime ||
+          workHoursEndTime >= sleepStartTime ||
+          workHoursEndTime <= sleepEndTime)
+      ) {
+        throw new ArgumentValidationError(
+          'Work and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        sleepStartTime < sleepEndTime &&
+        ((workHoursStartTime >= sleepStartTime &&
+          workHoursStartTime <= sleepEndTime) ||
+          (workHoursEndTime >= sleepStartTime &&
+            workHoursEndTime <= sleepEndTime))
+      ) {
+        throw new ArgumentValidationError(
+          'Work and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0012,
+        )
+      } else if (
+        sleepStartTime > sleepEndTime &&
+        (lunchHoursStartTime >= sleepStartTime ||
+          lunchHoursStartTime <= sleepEndTime ||
+          lunchHoursEndTime >= sleepStartTime ||
+          lunchHoursEndTime <= sleepEndTime)
+      ) {
+        throw new ArgumentValidationError(
+          'Lunch and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0023,
+        )
+      } else if (
+        sleepStartTime < sleepEndTime &&
+        ((lunchHoursStartTime >= sleepStartTime &&
+          lunchHoursStartTime <= sleepEndTime) ||
+          (lunchHoursEndTime >= sleepStartTime &&
+            lunchHoursEndTime <= sleepEndTime))
+      ) {
+        throw new ArgumentValidationError(
+          'Lunch and sleep hours cannot overlap',
+          familyMember,
+          ApiErrorCode.E0023,
+        )
       }
     }
   }
 
   async validateFamilyMembers(familyMembers: FamilyMemberModel[]) {
+    familyMembers.forEach((familyMember) => {
+      if (!familyMember.firstName) {
+        throw new ArgumentValidationError(
+          'First Name is missing',
+          familyMember,
+          ApiErrorCode.E0019,
+        )
+      } else if (!familyMember.lastName) {
+        throw new ArgumentValidationError(
+          'Last Name is missing',
+          familyMember,
+          ApiErrorCode.E0020,
+        )
+      } else if (!familyMember.dob) {
+        throw new ArgumentValidationError(
+          'Date Of Birth is missing',
+          familyMember,
+          ApiErrorCode.E0018,
+        )
+      }
+    })
     const relations = await this.relationshipRepository.getRelationshipsMaster()
     let relationshipIds = familyMembers.map((family) => family.relationshipId)
     relationshipIds = [...new Set(relationshipIds)]
@@ -225,9 +355,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
 
         kids.forEach((kid) => {
           const kidsAge = dayjs().diff(dayjs(kid.dob), 'years')
-          if (kidsAge < 3) {
+          if (kidsAge < 0) {
             throw new ArgumentValidationError(
-              'Kids Dob Invalid',
+              "Kid's DOB should not be a future date",
               familyMembers,
               ApiErrorCode.E0011,
             )
@@ -235,5 +365,17 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
         })
       }
     })
+  }
+
+  getMinutesFromTimestamp(timestamp) {
+    const isAm = timestamp.indexOf('AM') > -1
+    const time = timestamp?.replace(' PM', '')?.replace(' AM', '')?.split(':')
+    const hours = time[0]
+    const minutes = time[1]
+    if (isAm) {
+      return Number((hours === '12' ? 0 : hours * 60) + minutes)
+    } else {
+      return Number((hours === '12' ? hours * 60 : (hours + 12) * 60) + minutes)
+    }
   }
 }

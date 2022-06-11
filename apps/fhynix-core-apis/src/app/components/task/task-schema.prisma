@@ -1,0 +1,41 @@
+model Tasks {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  familyMemberId String @map("family_member_id")
+  userId String @unique @map("user_id")
+  eventTemplateId String? @map("event_template_id")
+  title String
+  startAtUtc DateTime @unique @map("start_at_utc")
+  endAtUtc DateTime @map("end_at_utc")
+  notifyAtUtc DateTime @map("notify_at_utc")
+  notes String?
+  repeatMode Json[] @map("repeat_mode")
+  invites String[]
+  latitude Float? 
+  longitude Float? 
+  status String?
+  recurringTaskId String? @unique @map("recurring_task_id")
+  checklist Json[]
+  type String?
+}
+
+model EventTemplates {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  parentTemplateId String? @map("parent_template_id")
+  templateName String @map("template_name")
+  forRelationship String[] @map("for_relationship")
+  userId String? @map("user_id")
+  startAtUtc DateTime? @map("start_at_utc")
+  endAtUtc DateTime? @map("end_at_utc")
+  status String?
+  isMaster Boolean @unique @map("is_master")
+}

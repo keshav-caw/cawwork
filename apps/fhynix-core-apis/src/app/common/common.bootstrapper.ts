@@ -10,9 +10,11 @@ import { DataStoreInterface } from './data/datastore.interface'
 import { JWTInterface } from './jwtservice/interfaces/jwt.interface'
 import { JWTService } from './jwtservice/jwt.service'
 import { RequestContext } from './jwtservice/requests-context.service'
-import { IRequestContext } from './jwtservice/interfaces/request-context.interface'
 import { HashServiceInterface } from './hashservice/hash-service.interface'
 import { HashService } from './hashservice/hash.service'
+import { StorageProviderInterface } from './interfaces/storage-provider.interface'
+import { StorageProvider } from './storage-provider/storage-provider.service'
+import { RequestContextInterface } from './jwtservice/interfaces/request-context.interface'
 import { LinkPreviewProviderInterface } from './linkPreviewProvider/linkPreview-provider.interface'
 import { LinkPreviewProvider } from './linkPreviewProvider/linkPreview.provider'
 
@@ -29,10 +31,15 @@ export default class CommonBootstrapper {
       DataStoreRepository,
     )
     CommonContainer.bind<JWTInterface>(CommonTypes.jwt).to(JWTService)
-    CommonContainer.bind<IRequestContext>(CommonTypes.requestContext)
+    CommonContainer.bind<RequestContextInterface>(CommonTypes.requestContext)
       .to(RequestContext)
       .inSingletonScope()
     CommonContainer.bind<HashServiceInterface>(CommonTypes.hash).to(HashService)
-    CommonContainer.bind<LinkPreviewProviderInterface>(CommonTypes.linkPreview).to(LinkPreviewProvider)
+    CommonContainer.bind<StorageProviderInterface>(CommonTypes.storage).to(
+      StorageProvider,
+    )
+    CommonContainer.bind<LinkPreviewProviderInterface>(
+      CommonTypes.linkPreview,
+    ).to(LinkPreviewProvider)
   }
 }

@@ -35,6 +35,16 @@ export class FamilyMemberRepository implements FamilyMemberRepositoryInterface {
     return result ? result : []
   }
 
+  async getFamilyMemberById(id: string): Promise<FamilyMemberModel[]> {
+    const result = await this.client.familyMembers?.findMany({
+      where: {
+        id: id,
+        isDeleted: false,
+      },
+    })
+    return result ? result : []
+  }
+
   async createFamilyMember(
     familyDetails: FamilyMemberModel,
   ): Promise<FamilyMemberModel> {

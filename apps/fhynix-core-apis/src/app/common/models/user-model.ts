@@ -13,4 +13,5 @@ export class UserModel {
   isOnboardingCompleted?: boolean
   firstName?: string
   lastName?: string
+  dob?: Date
 }

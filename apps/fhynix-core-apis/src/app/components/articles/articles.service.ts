@@ -18,53 +18,55 @@ export class ArticleService implements ArticleServiceInterface {
   constructor(
     @inject('ArticleRepository') private articleRepository: ArticleRepository,
     @inject('AuthRepository') private authRepository: AuthRepository,
-    @inject(CommonTypes.linkPreview) private linkPreviewProvider: LinkPreviewProvider
+    @inject(CommonTypes.linkPreview)
+    private linkPreviewProvider: LinkPreviewProvider,
   ) {}
 
-  async getArticles(details:ArticlePaginationModel) {
-      return await this.articleRepository.getArticles(details);
+  async getArticles(details: ArticlePaginationModel) {
+    return await this.articleRepository.getArticles(details)
   }
 
   async addArticle(url) {
+    const newArticle = await this.linkPreviewProvider.getPreview(url)
 
-    const newArticle = await this.linkPreviewProvider.getPreview(url);
-
-    if(!newArticle.title || !newArticle.imageUrl){
+    if (!newArticle.title || !newArticle.imageUrl) {
       throw new ArgumentValidationError(
         'linkPreview Data',
         newArticle,
-        ApiErrorCode.E0015
+        ApiErrorCode.E0027,
       )
     }
 
-    const article = await this.articleRepository.addArticle(newArticle);
-    return article;
+    const article = await this.articleRepository.addArticle(newArticle)
+    return article
   }
 
-  async getBookmarks(userId){
-    const details = await this.articleRepository.getArticlesBookmarkedByUser(userId);
-    return details;
+  async getBookmarks(userId) {
+    const details = await this.articleRepository.getArticlesBookmarkedByUser(
+      userId,
+    )
+    return details
   }
 
-  async addBookmark(userId,articleId){
-    const bookmark:ArticleBookmarkModel = {
-      userId:userId,
-      articleId:articleId,
-      isDeleted:false,
+  async addBookmark(userId, articleId) {
+    const bookmark: ArticleBookmarkModel = {
+      userId: userId,
+      articleId: articleId,
+      isDeleted: false,
     }
 
     const result = await this.articleRepository.upsertBookmark(bookmark)
     return result
   }
 
-  async removeBookmark(userId,articleId){
-    const bookmark:ArticleBookmarkModel = {
-      userId:userId,
-      articleId:articleId,
-      isDeleted:true,
+  async removeBookmark(userId, articleId) {
+    const bookmark: ArticleBookmarkModel = {
+      userId: userId,
+      articleId: articleId,
+      isDeleted: true,
     }
 
-    const result = await this.articleRepository.removeBookmark(bookmark);
-    return result;
+    const result = await this.articleRepository.removeBookmark(bookmark)
+    return result
   }
 }

@@ -1,10 +1,10 @@
 import { injectable } from 'inversify'
 import 'reflect-metadata'
 import { AsyncLocalStorage } from 'async_hooks'
-import { IRequestContext } from './interfaces/request-context.interface'
+import { RequestContextInterface } from './interfaces/request-context.interface'
 
 @injectable()
-export class RequestContext implements IRequestContext {
+export class RequestContext implements RequestContextInterface {
   asyncLocalStorage
   constructor() {
     this.asyncLocalStorage = new AsyncLocalStorage()

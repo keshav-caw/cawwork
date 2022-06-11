@@ -14,6 +14,12 @@ import { CommonTypes } from '../../common/common.types'
 import { FamilyMemberService } from './family-member.service'
 import { FamilyMemberTypes } from './family-member.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
+import multer from 'multer'
+import { HabitsService } from '../habits/habits.service'
+import { HabitsTypes } from '../habits/habits.types'
+import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
+import { fileStorage } from '../../middlewares/multer.middleware'
+import { Images } from '../../common/constants/folder-names.constants'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -22,6 +28,10 @@ export class FamilyMemberController implements interfaces.Controller {
     private familyMemberService: FamilyMemberService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
+    @inject(HabitsTypes.habits)
+    private habitsService: HabitsService,
+    @inject(CommonTypes.storage)
+    private storageProvider: StorageProvider,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -35,12 +45,54 @@ export class FamilyMemberController implements interfaces.Controller {
     return res.send(details)
   }
 
-  @httpPost('/', CommonTypes.jwtAuthMiddleware)
+  @httpPost(
+    '/',
+    CommonTypes.jwtAuthMiddleware,
+    multer({ storage: fileStorage }).single('file'),
+  )
   private async createFamilyMember(
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.familyMemberService.createFamilyMemberForUser(req.body))
+    let profileImage
+    if (req.file) {
+      profileImage = await this.storageProvider.uploadFile(req.file, Images)
+    }
+    const familyMember =
+      await this.familyMemberService.createFamilyMemberForUser(
+        JSON.parse(req.body.userData),
+      )
+    const habits = req.body.habits ? JSON.parse(req.body.habits) : []
+    habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
+    if (habits?.length > 0) {
+      await this.habitsService.createHabitsForRelationship(habits)
+    }
+    let familyDetails
+    if (profileImage) {
+      familyDetails = await this.familyMemberService.updateProfileImage(
+        profileImage,
+        familyMember[0].id,
+      )
+    }
+    res.send(familyDetails ? familyDetails : familyMember)
+  }
+
+  @httpPost(
+    '/profile-pic',
+    CommonTypes.jwtAuthMiddleware,
+    multer({ storage: fileStorage }).single('file'),
+  )
+  private async updateProfilePic(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const familyMemberId = req.query.familyMemberId.toString()
+    const profileImage = await this.storageProvider.uploadFile(req.file, Images)
+    const uploadedResponse = await this.familyMemberService.updateProfileImage(
+      profileImage,
+      familyMemberId,
+    )
+    res.send(uploadedResponse)
   }
 
   @httpDelete('/', CommonTypes.jwtAuthMiddleware)
