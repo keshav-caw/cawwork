@@ -370,7 +370,7 @@ export class TaskService implements TaskServiceInterface {
     workHoursStartTime: number,
     workHoursEndTime: number,
     tasks: TaskModel[],
-  ) {
+  ): TaskModel[] {
     const selectedTimeSlabs = []
     defaultTimeSlabs.forEach((timeSlab) => {
       const slab = timeSlab.split(' - ')
@@ -416,7 +416,10 @@ export class TaskService implements TaskServiceInterface {
     return tasks ? tasks : []
   }
 
-  validateTemplateTasksBySelectedTasks(selectedTask, selectedTimeSlabs) {
+  validateTemplateTasksBySelectedTasks(
+    selectedTask,
+    selectedTimeSlabs,
+  ): [Record<string, number>] {
     let selectedSlabs = selectedTimeSlabs
     selectedTask.selectedTasks.forEach((task) => {
       selectedSlabs.forEach((timeSlab) => {
@@ -445,7 +448,7 @@ export class TaskService implements TaskServiceInterface {
     return selectedSlabs
   }
 
-  getMinutesFromTimestamp(timestamp) {
+  getMinutesFromTimestamp(timestamp): number {
     const isAm = timestamp?.indexOf('AM') > -1
     const time = timestamp?.replace(' PM', '')?.replace(' AM', '')?.split(':')
     const hours = Number(time[0])
