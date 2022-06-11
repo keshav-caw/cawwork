@@ -35,9 +35,9 @@ export default class CommonBootstrapper {
       .to(RequestContext)
       .inSingletonScope()
     CommonContainer.bind<HashServiceInterface>(CommonTypes.hash).to(HashService)
-    CommonContainer.bind<StorageProviderInterface>(CommonTypes.storage)
-      .to(StorageProvider)
-      .inSingletonScope()
+    CommonContainer.bind<StorageProviderInterface>(CommonTypes.storage).to(
+      StorageProvider,
+    )
     CommonContainer.bind<LinkPreviewProviderInterface>(
       CommonTypes.linkPreview,
     ).to(LinkPreviewProvider)

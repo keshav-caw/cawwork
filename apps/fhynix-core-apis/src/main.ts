@@ -1,7 +1,7 @@
 // import express from 'express';
 // import { Message } from '@monorepo-react-node/api-interfaces';
 import Bootstrapper from './app/bootstrapper'
-import errorMiddleWare from './app/middlewares/error.middleware'
+import errorMiddleware from './app/middlewares/error.middleware'
 import { CommonContainer } from './app/common/container'
 import * as bodyParser from 'body-parser'
 import { InversifyExpressServer } from 'inversify-express-utils'
@@ -23,7 +23,7 @@ server.setConfig((app) => {
 })
 
 server.setErrorConfig((appForErrorConfig) => {
-  appForErrorConfig.use(errorMiddleWare)
+  appForErrorConfig.use(errorMiddleware)
 })
 const app = server.build()
 app.listen(3000)

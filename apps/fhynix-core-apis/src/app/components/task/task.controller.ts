@@ -18,7 +18,7 @@ import { TaskService } from './task.service'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 
 @controller('/tasks')
-export class TasksController implements interfaces.Controller {
+export class TaskController implements interfaces.Controller {
   constructor(
     @inject(TaskTypes.task)
     private taskService: TaskService,
