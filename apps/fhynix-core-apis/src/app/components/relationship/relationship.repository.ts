@@ -14,11 +14,6 @@ export class RelationshipRepository implements RelationshipRepositoryInterface {
 
   async getRelationshipsMaster(): Promise<RelationshipsMaster[]> {
     const result = await this.client.relationshipsMaster?.findMany({
-      select: {
-        id: true,
-        relation: true,
-        relationType: true,
-      },
       where: {
         isDeleted: false,
       },
