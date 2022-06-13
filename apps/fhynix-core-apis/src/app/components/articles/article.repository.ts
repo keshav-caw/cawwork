@@ -43,7 +43,8 @@ export class ArticleRepository implements ArticleRepositoryInterface {
   async getArticlesBookmarkedByUser(userId){
     const bookmarkedArticles = await this.client.articlesBookmarked?.findMany({
       where: {
-        userId: userId
+        userId: userId,
+        isDeleted:false,
       },
     })
     const result = [];
