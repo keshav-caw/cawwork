@@ -6,6 +6,7 @@ export class TaskModel {
   updatedBy: string
   isDeleted: boolean
   familyMemberId: string
+  relationshipId: string
   userId: string
   eventTemplateId: string
   title: string

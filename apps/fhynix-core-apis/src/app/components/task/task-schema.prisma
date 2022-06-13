@@ -5,7 +5,8 @@ model Tasks {
   updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
   updatedBy String? @map("updated_by")
   isDeleted Boolean @default(false) @map("is_deleted")
-  familyMemberId String @map("family_member_id")
+  familyMemberId String? @map("family_member_id")
+  relationshipId String @map("relationship_id")
   userId String @unique @map("user_id")
   eventTemplateId String? @map("event_template_id")
   title String
