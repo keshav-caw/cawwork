@@ -112,7 +112,7 @@ export class UserService {
       (header) => header.name === 'To',
     )
 
-    const contacts = contactValue[0]?.value?.split(' ')
+    const contacts = contactValue?.[0]?.value?.split(' ')
 
     const searchedContacts = []
 
