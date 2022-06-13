@@ -30,7 +30,7 @@ const errorMiddleware = (err, req, res, next) => {
       break
     case err instanceof ThirdPartyAPIError:
       errorResponse = new APIErrorResponsePayload(ApiErrorCode.E0003)
-      statusCode = 401
+      statusCode = 500
       break
     case err instanceof DatabaseError:
     default:

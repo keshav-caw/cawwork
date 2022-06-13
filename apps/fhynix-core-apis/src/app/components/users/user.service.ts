@@ -90,27 +90,35 @@ export class UserService {
       access_token: access_token,
       refresh_token: refresh_token,
     })
-    const googleApi = this.googleAuthProvider.makeGooglePeopleApi()
 
-    const contacts = await googleApi.people.connections.list({
+    const googleGmailApi = this.googleAuthProvider.makeGoogleGmailApi()
+
+    const messages = await googleGmailApi.users.messages.list({
       auth: oauth2Client,
-      resourceName: 'people/me',
-      personFields: 'names,phoneNumbers',
+      userId: 'me',
+      q: `to:${searchContact}`,
     })
+
+    if (!messages.data?.messages || messages.data?.messages?.length === 0) {
+      return []
+    }
+    const messageDetails = await googleGmailApi.users.messages.get({
+      auth: oauth2Client,
+      userId: 'me',
+      id: messages.data?.messages[0]?.id,
+    })
+
+    const contactValue = messageDetails.data.payload?.headers?.filter(
+      (header) => header.name === 'To',
+    )
+
+    const contacts = contactValue[0]?.value?.split(' ')
 
     const searchedContacts = []
 
-    contacts?.data?.connections?.forEach((contact) => {
-      if (
-        contact.names?.[0]?.displayName
-          ?.toLowerCase()
-          ?.indexOf(searchContact.toLowerCase()) > -1
-      ) {
-        const searchedContact = {
-          name: contact.names?.[0]?.displayName,
-          phoneNumber: contact.phoneNumbers?.[0]?.canonicalForm,
-        }
-        searchedContacts.push(searchedContact)
+    contacts.forEach((contact) => {
+      if (contact.indexOf(searchContact) > -1) {
+        searchedContacts.push({ email: contact.trim() })
       }
     })
     return searchedContacts
