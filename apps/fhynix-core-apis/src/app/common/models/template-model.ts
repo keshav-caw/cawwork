@@ -17,4 +17,15 @@ export class TemplateModel {
   status: string
   isMaster: boolean
   scheduleList: TaskModel[]
+  otherInfo: OtherInfoModel[]
+}
+
+export class OtherInfoModel {
+  description: string
+  placeholder: string
+  gradientColors: string[]
+  id: number
+  image: string
+  title: string
+  titleColor: string
 }

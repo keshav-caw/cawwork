@@ -39,4 +39,5 @@ model EventTemplates {
   endAtUtc DateTime? @map("end_at_utc")
   status String?
   isMaster Boolean @unique @map("is_master")
+  otherInfo Json[] @map("other_info")
 }
