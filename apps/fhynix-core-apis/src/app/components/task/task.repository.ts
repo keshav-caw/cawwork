@@ -71,6 +71,20 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
+  async getTaskDetailsByTemplateId(
+    eventTemplateId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    const result = await this.client.tasks?.findMany({
+      where: {
+        eventTemplateId: eventTemplateId,
+        userId: userId,
+        isDeleted: false,
+      },
+    })
+    return result ? result : []
+  }
+
   async getMasterTemplates(): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.findMany({
       where: {

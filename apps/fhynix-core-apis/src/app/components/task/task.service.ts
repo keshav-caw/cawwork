@@ -44,6 +44,16 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.getTaskDetailsByTaskId(taskId, userId)
   }
 
+  async getTaskDetailsByTemplateId(
+    eventTemplateId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    return await this.taskRepository.getTaskDetailsByTemplateId(
+      eventTemplateId,
+      userId,
+    )
+  }
+
   async getMasterTemplates(): Promise<TemplateModel[]> {
     return await this.taskRepository.getMasterTemplates()
   }
