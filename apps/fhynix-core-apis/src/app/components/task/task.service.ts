@@ -286,6 +286,12 @@ export class TaskService implements TaskServiceInterface {
 
   validateTaskInfo(tasks: TaskModel[]) {
     tasks.forEach((task) => {
+      if (!task.recurringEndAtUtc) {
+        task.endAtUtc = dayjs(task.endAtUtc)
+          .add(1, 'year')
+          .subtract(1, 'day')
+          .toISOString()
+      }
       if (
         task.startAtUtc &&
         task.endAtUtc &&

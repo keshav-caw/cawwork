@@ -12,6 +12,8 @@ export class TaskModel {
   title: string
   startAtUtc: string
   endAtUtc: string
+  recurringStartAtUtc: string
+  recurringEndAtUtc: string
   notifyAtUtc: string
   notes: string
   repeatMode: RepeatModeModal
