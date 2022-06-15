@@ -183,14 +183,27 @@ export class TaskService implements TaskServiceInterface {
 
   createTasksInfo(tasks) {
     let tasksToBeCreated = []
+    let recurringEndDate = null
     tasks.forEach((task: TaskModel) => {
+      if (!task.recurringEndAtUtc && task.recurringStartAtUtc) {
+        recurringEndDate = dayjs(task.endAtUtc)
+          .add(1, 'year')
+          .subtract(1, 'day')
+          .toISOString()
+      } else if (task.recurringStartAtUtc) {
+        recurringEndDate = dayjs(task.recurringEndAtUtc).toISOString()
+      } else {
+        recurringEndDate = dayjs(task.endAtUtc).toISOString()
+      }
+
       if (task.repeatMode?.repeatDuration === RepeatDurationEnum.DAILY) {
-        const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
+        const days = dayjs(recurringEndDate).diff(
+          dayjs(task.startAtUtc),
+          'days',
+        )
         for (let i = 0; i <= days; i++) {
           const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
-          const end = dayjs(task.endAtUtc)
-            .subtract(days - i, 'day')
-            .toISOString()
+          const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
           const notify = dayjs(task.notifyAtUtc).add(i, 'day').toISOString()
           const taskToBeAdded = JSON.parse(JSON.stringify(task))
           taskToBeAdded.startAtUtc = start
@@ -201,12 +214,13 @@ export class TaskService implements TaskServiceInterface {
       } else if (
         task.repeatMode?.repeatDuration === RepeatDurationEnum.MONTHLY
       ) {
-        const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'months')
+        const days = dayjs(recurringEndDate).diff(
+          dayjs(task.startAtUtc),
+          'months',
+        )
         for (let i = 0; i <= days; i++) {
           const start = dayjs(task.startAtUtc).add(i, 'month').toISOString()
-          const end = dayjs(task.endAtUtc)
-            .subtract(days - i, 'month')
-            .toISOString()
+          const end = dayjs(task.endAtUtc).add(i, 'month').toISOString()
           const notify = dayjs(task.notifyAtUtc).add(i, 'month').toISOString()
           const taskToBeAdded = JSON.parse(JSON.stringify(task))
           taskToBeAdded.startAtUtc = start
@@ -218,14 +232,15 @@ export class TaskService implements TaskServiceInterface {
         task.repeatMode?.repeatDuration === RepeatDurationEnum.WEEKLY ||
         task.repeatMode?.repeatDuration === RepeatDurationEnum.BI_WEEKLY
       ) {
-        const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
+        const days = dayjs(recurringEndDate).diff(
+          dayjs(task.startAtUtc),
+          'days',
+        )
         const limit =
           task.repeatMode.repeatDuration === RepeatDurationEnum.WEEKLY ? 7 : 14
         for (let i = 0; i <= days; i = i + limit) {
           const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
-          const end = dayjs(task.endAtUtc)
-            .subtract(days - i, 'day')
-            .toISOString()
+          const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
           const notify = dayjs(task.notifyAtUtc).add(i, 'day').toISOString()
           const taskToBeAdded = JSON.parse(JSON.stringify(task))
           taskToBeAdded.startAtUtc = start
@@ -234,14 +249,15 @@ export class TaskService implements TaskServiceInterface {
           tasksToBeCreated.push(taskToBeAdded)
         }
       } else if (task.repeatMode?.repeatOnWeekDays) {
-        const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
+        const days = dayjs(recurringEndDate).diff(
+          dayjs(task.startAtUtc),
+          'days',
+        )
         for (let i = 0; i <= days; i = i + 1) {
           const day = dayjs(task.startAtUtc).add(i, 'day').get('day')
           if (day > 0 && day < 6) {
             const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
-            const end = dayjs(task.endAtUtc)
-              .subtract(days - i, 'day')
-              .toISOString()
+            const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
             const notify = dayjs(task.notifyAtUtc).add(i, 'day').toISOString()
             const taskToBeAdded = JSON.parse(JSON.stringify(task))
             taskToBeAdded.startAtUtc = start
@@ -251,7 +267,10 @@ export class TaskService implements TaskServiceInterface {
           }
         }
       } else if (task.repeatMode?.repeatOnDays?.length > 0) {
-        const days = dayjs(task.endAtUtc).diff(dayjs(task.startAtUtc), 'days')
+        const days = dayjs(recurringEndDate).diff(
+          dayjs(task.startAtUtc),
+          'days',
+        )
         const weekDays = []
         task.repeatMode.repeatOnDays.forEach((repeatDay) => {
           const dayIndex = this.days.findIndex((day) => day === repeatDay)
@@ -263,9 +282,7 @@ export class TaskService implements TaskServiceInterface {
           const day = dayjs(task.startAtUtc).add(i, 'day').get('day')
           if (weekDays.findIndex((weekDay) => weekDay === day) > 0) {
             const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
-            const end = dayjs(task.endAtUtc)
-              .subtract(days - i, 'day')
-              .toISOString()
+            const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
             const notify = dayjs(task.notifyAtUtc).add(i, 'day').toISOString()
             const taskToBeAdded = JSON.parse(JSON.stringify(task))
             taskToBeAdded.startAtUtc = start
@@ -286,12 +303,6 @@ export class TaskService implements TaskServiceInterface {
 
   validateTaskInfo(tasks: TaskModel[]) {
     tasks.forEach((task) => {
-      if (!task.recurringEndAtUtc) {
-        task.endAtUtc = dayjs(task.endAtUtc)
-          .add(1, 'year')
-          .subtract(1, 'day')
-          .toISOString()
-      }
       if (
         task.startAtUtc &&
         task.endAtUtc &&

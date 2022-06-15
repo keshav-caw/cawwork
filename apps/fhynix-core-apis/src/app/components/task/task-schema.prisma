@@ -12,8 +12,8 @@ model Tasks {
   title String
   startAtUtc DateTime @unique @map("start_at_utc")
   endAtUtc DateTime @map("end_at_utc")
-  recurringStartAtUtc DateTime @unique @map("recurring_start_at_utc")
-  recurringEndAtUtc DateTime @map("recurring_end_at_utc")
+  recurringStartAtUtc DateTime? @map("recurring_start_at_utc")
+  recurringEndAtUtc DateTime? @map("recurring_end_at_utc")
   notifyAtUtc DateTime @map("notify_at_utc")
   notes String?
   repeatMode Json[] @map("repeat_mode")
