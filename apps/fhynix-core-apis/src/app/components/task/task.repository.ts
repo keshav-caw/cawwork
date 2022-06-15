@@ -119,6 +119,19 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result
   }
 
+  async updateUserTemplate(
+    template: TemplateModel,
+    templateId: string,
+  ): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.update({
+      data: template,
+      where: {
+        id: templateId,
+      },
+    })
+    return result
+  }
+
   async updateTaskById(
     taskDetails: TaskModel,
     taskId: string,

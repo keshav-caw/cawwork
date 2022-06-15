@@ -72,6 +72,18 @@ export class TaskService implements TaskServiceInterface {
     return templateDetails
   }
 
+  async updateUserTemplate(
+    template: TemplateModel,
+    templateId: string,
+  ): Promise<TemplateModel[]> {
+    const templateDetails = await this.taskRepository.updateUserTemplate(
+      template,
+      templateId,
+    )
+
+    return templateDetails
+  }
+
   async createTasksByTemplateId(
     tasks: TaskModel[],
     userId: string,

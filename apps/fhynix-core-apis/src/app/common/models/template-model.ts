@@ -9,6 +9,7 @@ export class TemplateModel {
   isDeleted: boolean
   parentTemplateId: string
   templateName: string
+  familyMemberId: string
   forRelationship: string
   userTemplateId: string
   userId: string

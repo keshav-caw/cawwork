@@ -77,6 +77,14 @@ export class TemplateController implements interfaces.Controller {
     res.send(await this.taskService.createTasksByTemplateId(req.body, userId))
   }
 
+  @httpPut('/:id', CommonTypes.jwtAuthMiddleware)
+  private async updateTemplate(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    res.send(await this.taskService.updateUserTemplate(req.body, req.params.id))
+  }
+
   @httpPut('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)
   private async updateTaskByTemplateId(
     @request() req: express.Request,

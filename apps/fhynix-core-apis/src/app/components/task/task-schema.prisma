@@ -33,11 +33,12 @@ model EventTemplates {
   isDeleted Boolean @default(false) @map("is_deleted")
   parentTemplateId String? @map("parent_template_id")
   templateName String @map("template_name")
+  familyMemberId String? @map("family_member_id")
   forRelationship String[] @map("for_relationship")
   userId String? @map("user_id")
   startAtUtc DateTime? @map("start_at_utc")
   endAtUtc DateTime? @map("end_at_utc")
   status String?
-  isMaster Boolean @unique @map("is_master")
+  isMaster Boolean? @unique @map("is_master")
   otherInfo Json[] @map("other_info")
 }
