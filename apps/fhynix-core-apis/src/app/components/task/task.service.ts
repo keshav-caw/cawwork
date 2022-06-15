@@ -431,7 +431,8 @@ export class TaskService implements TaskServiceInterface {
     selectedTimeSlabs,
   ): [Record<string, number>] {
     let selectedSlabs = selectedTimeSlabs
-    selectedTask.selectedTasks.forEach((task) => {
+
+    selectedTask.selectedTasks?.forEach((task) => {
       selectedSlabs.forEach((timeSlab) => {
         const startTime = this.getMinutesFromTimestamp(
           dayjs(task.startAtUtc).format('hh:mm A'),
