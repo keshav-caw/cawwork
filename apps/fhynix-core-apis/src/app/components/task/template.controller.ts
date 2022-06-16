@@ -106,7 +106,8 @@ export class TemplateController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.deleteTemplate(req.params.id))
+    const userId = this.requestContext.getUserId()
+    res.send(await this.taskService.deleteTemplate(req.params.id, userId))
   }
 
   @httpDelete('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)

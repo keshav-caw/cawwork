@@ -176,9 +176,12 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.deleteTask(taskId)
   }
 
-  async deleteTemplate(templateId: string): Promise<TaskModel[]> {
+  async deleteTemplate(
+    templateId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
     await this.taskRepository.deleteTemplate(templateId)
-    return await this.taskRepository.deleteTasksByTemplateId(templateId)
+    return await this.taskRepository.deleteTasksByTemplateId(templateId, userId)
   }
 
   createTasksInfo(tasks) {
