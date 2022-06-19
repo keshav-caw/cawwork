@@ -176,6 +176,16 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.deleteTask(taskId)
   }
 
+  async deleteTaskByRecurringTaskId(
+    recurringTaskId: string,
+  ): Promise<TaskModel> {
+    const today = dayjs().toISOString()
+    return await this.taskRepository.deleteTaskByRecurringTaskId(
+      recurringTaskId,
+      today,
+    )
+  }
+
   async deleteTemplate(
     templateId: string,
     userId: string,
