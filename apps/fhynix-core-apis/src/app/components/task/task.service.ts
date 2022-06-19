@@ -330,8 +330,8 @@ export class TaskService implements TaskServiceInterface {
       } else if (
         task.startAtUtc &&
         task.endAtUtc &&
-        (dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
-          dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0)
+        dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0
       ) {
         throw new ArgumentValidationError(
           "The start and the end date cannot be less than today's date",
