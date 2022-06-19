@@ -89,7 +89,7 @@ export class TaskController implements interfaces.Controller {
     res.send(await this.taskService.deleteTask(req.params.taskId))
   }
 
-  @httpDelete('/:recurringTaskId', CommonTypes.jwtAuthMiddleware)
+  @httpDelete('/all/:recurringTaskId', CommonTypes.jwtAuthMiddleware)
   private async deleteRecurringTasks(
     @request() req: express.Request,
     @response() res: express.Response,
