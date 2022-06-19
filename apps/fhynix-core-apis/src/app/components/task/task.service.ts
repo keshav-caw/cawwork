@@ -113,6 +113,7 @@ export class TaskService implements TaskServiceInterface {
     taskId: string,
     taskDetails: TaskModel,
     isAllEvents: boolean,
+    isDateUpdated: boolean,
     userId: string,
   ): Promise<TaskModel[]> {
     this.validateTaskInfo([taskDetails])
@@ -121,7 +122,7 @@ export class TaskService implements TaskServiceInterface {
         taskId,
         userId,
       )
-      if (taskDetails.startAtUtc || taskDetails.endAtUtc) {
+      if (isDateUpdated) {
         if (taskInfo?.length > 0) {
           if (taskInfo[0].recurringTaskId) {
             const today = dayjs().toISOString()
@@ -154,7 +155,7 @@ export class TaskService implements TaskServiceInterface {
         taskId,
         userId,
       )
-      if (taskDetails.startAtUtc || taskDetails.endAtUtc) {
+      if (isDateUpdated) {
         await this.taskRepository.deleteTask(taskId)
         if (taskInfo?.length > 0) {
           const keys = Object.keys(taskDetails)

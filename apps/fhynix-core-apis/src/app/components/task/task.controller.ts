@@ -76,6 +76,7 @@ export class TaskController implements interfaces.Controller {
         req.params.taskId,
         req.body.taskDetails,
         req.body.isAllEvents,
+        req.body.isDateUpdated,
         userId,
       ),
     )
