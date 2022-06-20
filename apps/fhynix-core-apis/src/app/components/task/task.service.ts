@@ -155,7 +155,7 @@ export class TaskService implements TaskServiceInterface {
 
       if (taskInfo?.length === 0 || !taskInfo) {
         throw new ArgumentValidationError(
-          'Unable to edit the task. It is already been deleted',
+          'Unable to edit task. It is already been deleted',
           taskDetails,
           ApiErrorCode.E0104,
         )
@@ -197,7 +197,7 @@ export class TaskService implements TaskServiceInterface {
 
       if (taskInfo?.length === 0 || !taskInfo) {
         throw new ArgumentValidationError(
-          'Unable to edit the task. It is already been deleted',
+          'Unable to edit task. It is already been deleted',
           taskDetails,
           ApiErrorCode.E0104,
         )
