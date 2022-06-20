@@ -28,4 +28,6 @@ export enum ApiErrorCode {
   'E0027' = 'No data found in linkPreview for this URL',
   'E0028' = 'Your account has been deleted. To restore account, please email at support@fhynix.com',
   'E0101' = 'Failed to send email',
+  'E0102' = 'The start date of the template should be less than the end date',
+  'E0103' = "The start and the end date of the template cannot be less than today's date",
 }

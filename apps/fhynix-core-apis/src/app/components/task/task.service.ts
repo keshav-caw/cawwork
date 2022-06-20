@@ -73,6 +73,7 @@ export class TaskService implements TaskServiceInterface {
     templateId: string,
   ): Promise<TemplateModel[]> {
     template.parentTemplateId = templateId
+    this.validateTemplateInfo(template)
     const templateDetails = await this.taskRepository.createTemplate(template)
 
     return templateDetails
@@ -82,6 +83,7 @@ export class TaskService implements TaskServiceInterface {
     template: TemplateModel,
     templateId: string,
   ): Promise<TemplateModel[]> {
+    this.validateTemplateInfo(template)
     const templateDetails = await this.taskRepository.updateUserTemplate(
       template,
       templateId,
@@ -341,6 +343,35 @@ export class TaskService implements TaskServiceInterface {
       }
     })
     return tasksToBeCreated
+  }
+
+  validateTemplateInfo(template: TemplateModel, isUpdateTemplate = false) {
+    if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      dayjs(template.startAtUtc).diff(dayjs(template.endAtUtc), 'minutes') >= 0
+    ) {
+      throw new ArgumentValidationError(
+        'The start date of the template should be less than the end date',
+        template,
+        ApiErrorCode.E0102,
+      )
+    } else if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      ((dayjs(template.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        dayjs(template.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        isUpdateTemplate) ||
+        ((dayjs(template.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
+          dayjs(template.endAtUtc).diff(dayjs(), 'minutes') < 0) &&
+          !isUpdateTemplate))
+    ) {
+      throw new ArgumentValidationError(
+        "The start and the end date of the template cannot be less than today's date",
+        template,
+        ApiErrorCode.E0103,
+      )
+    }
   }
 
   validateTaskInfo(tasks: TaskModel[], isUpdateTasks = false) {
