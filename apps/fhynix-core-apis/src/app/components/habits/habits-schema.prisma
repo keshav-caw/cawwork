@@ -15,6 +15,19 @@ model Habits {
   isVisible Boolean @map("is_visible")
 }
 
+model ActivitiesMaster {
+  id  String  @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  name String
+  appliesForRelation String[]  @map("applies_for_relations")
+  canBeHabit Boolean @map("can_be_habit")
+  isCustom Boolean @map("is_custom")
+}
+
 model FamilyMemberHabits {
   id  String   @id @default(uuid())
   createdAtUtc DateTime? @default(now()) @map("created_at_utc")

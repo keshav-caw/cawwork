@@ -1,5 +1,5 @@
 export class HabitsModel {
-  id: string
+  id?: string
   createdAtUtc?: Date
   createdBy?: string
   updatedAtUtc?: Date
@@ -7,5 +7,6 @@ export class HabitsModel {
   isDeleted?: boolean
   name: string
   appliesForRelation: string
-  isVisible?: boolean
+  canBeHabit?: boolean
+  isCustom?: boolean
 }

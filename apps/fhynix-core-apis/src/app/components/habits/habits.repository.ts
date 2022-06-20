@@ -13,9 +13,10 @@ export class HabitsRepository implements HabitsRepositoryInterface {
   }
 
   async getHabitsByRelationship(relationship: string): Promise<HabitsModel[]> {
-    const result = await this.client.habits?.findMany({
+    const result = await this.client.activitiesMaster?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
+        canBeHabit: true,
         isDeleted: false,
       },
     })
@@ -28,6 +29,13 @@ export class HabitsRepository implements HabitsRepositoryInterface {
         familyMemberId: familyMemberId,
         isDeleted: false,
       },
+    })
+    return result
+  }
+
+  async createHabit(habit: HabitsModel): Promise<HabitsModel[]> {
+    const result = await this.client.activitiesMaster?.create({
+      data: habit,
     })
     return result
   }

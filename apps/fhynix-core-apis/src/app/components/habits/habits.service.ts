@@ -54,9 +54,20 @@ export class HabitsService implements HabitsServiceInterface {
     return response
   }
 
-  async createRelationshipHabits(relationshipHabits) {
+  async createRelationshipHabits(relationshipHabit: FamilyMemberHabitsModel) {
+    let createdCustomHabit
+    if (relationshipHabit.habitId) {
+      const customHabits = {
+        name: relationshipHabit.name,
+        appliesForRelation: relationshipHabit.appliesForRelation,
+        canBeHabit: true,
+        isCustom: true,
+      }
+      createdCustomHabit = await this.habitsRepository.createHabit(customHabits)
+      relationshipHabit.habitId = createdCustomHabit[0]?.id
+    }
     return await this.habitsRepository.createRelationshipHabits(
-      relationshipHabits,
+      relationshipHabit,
     )
   }
 }
