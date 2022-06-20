@@ -198,7 +198,9 @@ export class TaskService implements TaskServiceInterface {
           return await this.createTasks(taskInfo, userId, true)
         }
       } else {
-        return await this.taskRepository.updateTaskById(taskDetails, taskId)
+        const calls = []
+        calls.push(this.taskRepository.updateTaskById(taskDetails, taskId))
+        return await Promise.all(calls)
       }
     }
   }
