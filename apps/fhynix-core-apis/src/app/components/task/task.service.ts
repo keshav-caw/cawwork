@@ -13,6 +13,10 @@ import { FamilyMemberService } from '../family-member/family-member.service'
 import { FamilyMemberTypes } from '../family-member/family-member.types'
 import { defaultTimeSlabs } from '../../common/constants/default-times.constants'
 import * as _ from 'lodash'
+import { UserService } from '../users/user.service'
+import { UserTypes } from '../users/user.types'
+import { EmailProvider } from '../utilities/email.provider'
+import { UtilityTypes } from '../utilities/utility.types'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -23,6 +27,8 @@ export class TaskService implements TaskServiceInterface {
     private taskRepository: TaskRepository,
     @inject(FamilyMemberTypes.familyMember)
     private familyMemberService: FamilyMemberService,
+    @inject(UserTypes.user) private userService: UserService,
+    @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
   ) {}
 
   async getTasksByStartAndEndDate(
@@ -89,11 +95,16 @@ export class TaskService implements TaskServiceInterface {
     userId: string,
   ): Promise<TaskModel[]> {
     const tasksNeededToBeAdded = await this.validateTemplateTasks(tasks, userId)
-    return await this.createTasks(tasksNeededToBeAdded)
+    return await this.createTasks(tasksNeededToBeAdded, userId)
   }
 
-  async createTasks(tasks: TaskModel[]): Promise<TaskModel[]> {
-    this.validateTaskInfo(tasks)
+  async createTasks(
+    tasks: TaskModel[],
+    userId: string,
+    isUpdateTasks = false,
+  ): Promise<TaskModel[]> {
+    this.validateTaskInfo(tasks, isUpdateTasks)
+    const userDetails = await this.userService.getUserDetail(userId)
     const createTasksInfo = this.createTasksInfo(tasks)
     const recurringTaskId = uuidv4()
     const calls = []
@@ -106,7 +117,24 @@ export class TaskService implements TaskServiceInterface {
         : null
       calls.push(this.taskRepository.createTask(task))
     })
-    return await Promise.all(calls)
+
+    const createdTasks = await Promise.all(calls)
+    const emailCalls = []
+    const task = createTasksInfo[0]
+    if (task?.invites?.length > 0) {
+      emailCalls.push(
+        this.emailProvider.sendEmailUsingTemplate(
+          this.emailProvider.templates.eventTemplateId,
+          task.invites,
+          task.title,
+          {
+            text: `Invitation for the ${task.title}`,
+            username: userDetails[0].firstName,
+          },
+        ),
+      )
+    }
+    return createdTasks
   }
 
   async updateTasks(
@@ -116,7 +144,7 @@ export class TaskService implements TaskServiceInterface {
     isDateUpdated: boolean,
     userId: string,
   ): Promise<TaskModel[]> {
-    this.validateTaskInfo([taskDetails])
+    this.validateTaskInfo([taskDetails], true)
     if (isAllEvents) {
       const taskInfo = await this.taskRepository.getTaskDetailsByTaskId(
         taskId,
@@ -140,9 +168,9 @@ export class TaskService implements TaskServiceInterface {
           delete taskInfo[0]['id']
           delete taskInfo[0]['createdAtUtc']
           delete taskInfo[0]['updatedAtUtc']
-          return await this.createTasks(taskInfo)
+          return await this.createTasks(taskInfo, userId, true)
         } else {
-          return await this.createTasks([taskDetails])
+          return await this.createTasks([taskDetails], userId, true)
         }
       } else {
         return await this.taskRepository.updateTaskByRecurringTaskId(
@@ -165,7 +193,7 @@ export class TaskService implements TaskServiceInterface {
           delete taskInfo[0]['id']
           delete taskInfo[0]['createdAtUtc']
           delete taskInfo[0]['updatedAtUtc']
-          return await this.createTasks(taskInfo)
+          return await this.createTasks(taskInfo, userId, true)
         }
       } else {
         return await this.taskRepository.updateTaskById(taskDetails, taskId)
@@ -315,7 +343,7 @@ export class TaskService implements TaskServiceInterface {
     return tasksToBeCreated
   }
 
-  validateTaskInfo(tasks: TaskModel[]) {
+  validateTaskInfo(tasks: TaskModel[], isUpdateTasks = false) {
     tasks.forEach((task) => {
       if (
         task.startAtUtc &&
@@ -330,8 +358,12 @@ export class TaskService implements TaskServiceInterface {
       } else if (
         task.startAtUtc &&
         task.endAtUtc &&
-        dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
-        dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0
+        ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+          dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+          isUpdateTasks) ||
+          ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
+            dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0) &&
+            !isUpdateTasks))
       ) {
         throw new ArgumentValidationError(
           "The start and the end date cannot be less than today's date",

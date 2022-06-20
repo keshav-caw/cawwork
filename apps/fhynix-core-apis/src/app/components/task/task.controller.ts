@@ -62,7 +62,8 @@ export class TaskController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.createTasks(req.body))
+    const userId = this.requestContext.getUserId()
+    res.send(await this.taskService.createTasks(req.body, userId))
   }
 
   @httpPut('/:taskId', CommonTypes.jwtAuthMiddleware)

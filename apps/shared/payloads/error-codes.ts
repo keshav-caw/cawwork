@@ -27,4 +27,5 @@ export enum ApiErrorCode {
   'E0026' = 'The start time of lunch hours cannot be greater than the end time of lunch hours',
   'E0027' = 'No data found in linkPreview for this URL',
   'E0028' = 'Your account has been deleted. To restore account, please email at support@fhynix.com',
+  'E0101' = 'Failed to send email',
 }
