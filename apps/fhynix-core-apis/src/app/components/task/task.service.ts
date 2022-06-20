@@ -152,6 +152,15 @@ export class TaskService implements TaskServiceInterface {
         taskId,
         userId,
       )
+
+      if (taskInfo?.length === 0 || !taskInfo) {
+        throw new ArgumentValidationError(
+          'Unable to edit the task. It is already been deleted',
+          taskDetails,
+          ApiErrorCode.E0104,
+        )
+      }
+
       if (isDateUpdated) {
         if (taskInfo?.length > 0) {
           if (taskInfo[0].recurringTaskId) {
@@ -185,6 +194,15 @@ export class TaskService implements TaskServiceInterface {
         taskId,
         userId,
       )
+
+      if (taskInfo?.length === 0 || !taskInfo) {
+        throw new ArgumentValidationError(
+          'Unable to edit the task. It is already been deleted',
+          taskDetails,
+          ApiErrorCode.E0104,
+        )
+      }
+
       if (isDateUpdated) {
         await this.taskRepository.deleteTask(taskId)
         if (taskInfo?.length > 0) {

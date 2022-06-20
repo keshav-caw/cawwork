@@ -30,4 +30,5 @@ export enum ApiErrorCode {
   'E0101' = 'Failed to send email',
   'E0102' = 'The start date of the template should be less than the end date',
   'E0103' = "The start and the end date of the template cannot be less than today's date",
+  'E0104' = 'Unable to edit the task. It is already been deleted',
 }
