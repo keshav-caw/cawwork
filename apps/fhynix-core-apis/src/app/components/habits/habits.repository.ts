@@ -2,8 +2,8 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { HabitsRepositoryInterface } from '../../common/interfaces/habits-repository.interface'
-import { FamilyMemberHabitsModel } from '../../common/models/family-member-habits-model'
-import { HabitsModel } from '../../common/models/habits-model'
+import { FamilyMemberActivityModel } from '../../common/models/family-member-habits-model'
+import { ActivitiesMasterModel } from '../../common/models/habits-model'
 @injectable()
 export class HabitsRepository implements HabitsRepositoryInterface {
   protected client
@@ -12,7 +12,9 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getHabitsByRelationship(relationship: string): Promise<HabitsModel[]> {
+  async getHabitsByRelationship(
+    relationship: string,
+  ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
@@ -23,7 +25,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async getAllActivities(): Promise<HabitsModel[]> {
+  async getAllActivities(): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
         isDeleted: false,
@@ -32,8 +34,10 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async getHabitsById(familyMemberId: string): Promise<HabitsModel[]> {
-    const result = await this.client.familyMemberHabits?.findMany({
+  async getHabitsById(
+    familyMemberId: string,
+  ): Promise<ActivitiesMasterModel[]> {
+    const result = await this.client.familyMemberActivity?.findMany({
       where: {
         familyMemberId: familyMemberId,
         isDeleted: false,
@@ -42,7 +46,9 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async createHabit(habit: HabitsModel): Promise<HabitsModel[]> {
+  async createHabit(
+    habit: ActivitiesMasterModel,
+  ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.create({
       data: habit,
     })
@@ -50,9 +56,9 @@ export class HabitsRepository implements HabitsRepositoryInterface {
   }
 
   async createRelationshipHabits(
-    relationshipHabits: FamilyMemberHabitsModel,
-  ): Promise<FamilyMemberHabitsModel> {
-    const result = await this.client.familyMemberHabits?.create({
+    relationshipHabits: FamilyMemberActivityModel,
+  ): Promise<FamilyMemberActivityModel> {
+    const result = await this.client.familyMemberActivity?.create({
       data: relationshipHabits,
     })
     return result
@@ -60,10 +66,10 @@ export class HabitsRepository implements HabitsRepositoryInterface {
 
   async deleteRelationshipHabits(
     familyMemberId: string,
-  ): Promise<FamilyMemberHabitsModel[]> {
+  ): Promise<FamilyMemberActivityModel[]> {
     const habitByFamilyId = await this.getHabitsById(familyMemberId)
     if (habitByFamilyId?.length > 0) {
-      const result = await this.client.familyMemberHabits?.update({
+      const result = await this.client.familyMemberActivity?.update({
         data: { isDeleted: true },
         where: {
           familyMemberId: familyMemberId,

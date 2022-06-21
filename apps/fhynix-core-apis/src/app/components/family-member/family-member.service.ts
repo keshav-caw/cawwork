@@ -62,6 +62,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       calls.push(this.habitsService.getHabitsById(familyMember.id))
     })
     const habitsForFamily = await Promise.all(calls)
+
     familyMembers.map((familyMember, index) => {
       familyMember['habits'] = habitsForFamily?.find(
         (habit, ind) => index === ind,

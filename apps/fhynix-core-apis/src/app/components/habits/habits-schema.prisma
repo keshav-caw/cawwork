@@ -40,3 +40,14 @@ model FamilyMemberHabits {
   name String
   appliesForRelation String[] @map("applies_for_relations")
 }
+
+model FamilyMemberActivity {
+  id  String   @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  familyMemberId String @unique @map("family_member_id")
+  activityId String @map("activity_id")
+}

@@ -3,8 +3,8 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { HabitsServiceInterface } from '../../common/interfaces/habits-service.interface'
-import { FamilyMemberHabitsModel } from '../../common/models/family-member-habits-model'
-import { HabitsModel } from '../../common/models/habits-model'
+import { FamilyMemberActivityModel } from '../../common/models/family-member-habits-model'
+import { ActivitiesMasterModel } from '../../common/models/habits-model'
 import { HabitsRepository } from './habits.repository'
 
 @injectable()
@@ -13,21 +13,23 @@ export class HabitsService implements HabitsServiceInterface {
     @inject('HabitsRepository') private habitsRepository: HabitsRepository,
   ) {}
 
-  async getHabitsByRelationship(relationship: string): Promise<HabitsModel[]> {
+  async getHabitsByRelationship(
+    relationship: string,
+  ): Promise<ActivitiesMasterModel[]> {
     return await this.habitsRepository.getHabitsByRelationship(relationship)
   }
 
-  async getAllActivities(): Promise<HabitsModel[]> {
+  async getAllActivities(): Promise<ActivitiesMasterModel[]> {
     return await this.habitsRepository.getAllActivities()
   }
 
-  async getHabitsById(relationship: string): Promise<HabitsModel[]> {
+  async getHabitsById(relationship: string): Promise<ActivitiesMasterModel[]> {
     return await this.habitsRepository.getHabitsById(relationship)
   }
 
   async createHabitsForRelationship(
-    relationshipHabits: FamilyMemberHabitsModel[],
-  ): Promise<FamilyMemberHabitsModel[]> {
+    relationshipHabits: FamilyMemberActivityModel[],
+  ): Promise<FamilyMemberActivityModel[]> {
     if (relationshipHabits?.length < 2) {
       throw new ArgumentValidationError(
         'Atleast 2 habits must be added',
@@ -58,9 +60,9 @@ export class HabitsService implements HabitsServiceInterface {
     return response
   }
 
-  async createRelationshipHabits(relationshipHabit: FamilyMemberHabitsModel) {
+  async createRelationshipHabits(relationshipHabit: FamilyMemberActivityModel) {
     let createdCustomHabit
-    if (!relationshipHabit.habitId) {
+    if (!relationshipHabit.activityId) {
       const customHabits = {
         name: relationshipHabit.name,
         appliesForRelation: relationshipHabit.appliesForRelation,
@@ -68,7 +70,7 @@ export class HabitsService implements HabitsServiceInterface {
         isCustom: true,
       }
       createdCustomHabit = await this.habitsRepository.createHabit(customHabits)
-      relationshipHabit.habitId = createdCustomHabit?.id
+      relationshipHabit.activityId = createdCustomHabit?.id
     }
     return await this.habitsRepository.createRelationshipHabits(
       relationshipHabit,

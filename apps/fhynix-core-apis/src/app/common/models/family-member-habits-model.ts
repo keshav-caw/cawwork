@@ -1,4 +1,4 @@
-export class FamilyMemberHabitsModel {
+export class FamilyMemberActivityModel {
   id: string
   createdAtUtc?: Date
   createdBy?: string
@@ -6,7 +6,7 @@ export class FamilyMemberHabitsModel {
   updatedBy?: string
   isDeleted?: boolean
   familyMemberId: string
-  habitId: string
+  activityId: string
   name: string
   appliesForRelation: string
 }

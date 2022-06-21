@@ -339,7 +339,7 @@
         "familyMemberId": {
           "type": "string"
         },
-        "habitId": {
+        "activityId": {
           "type": "string"
         },
         "name": {
@@ -356,7 +356,7 @@
         "familyMemberId": {
           "type": "string"
         },
-        "habitId": {
+        "activityId": {
           "type": "string"
         },
         "name": {

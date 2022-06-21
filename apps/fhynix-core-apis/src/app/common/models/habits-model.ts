@@ -1,4 +1,4 @@
-export class HabitsModel {
+export class ActivitiesMasterModel {
   id?: string
   createdAtUtc?: Date
   createdBy?: string
