@@ -23,6 +23,15 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
+  async getAllActivities(): Promise<HabitsModel[]> {
+    const result = await this.client.activitiesMaster?.findMany({
+      where: {
+        isDeleted: false,
+      },
+    })
+    return result
+  }
+
   async getHabitsById(familyMemberId: string): Promise<HabitsModel[]> {
     const result = await this.client.familyMemberHabits?.findMany({
       where: {

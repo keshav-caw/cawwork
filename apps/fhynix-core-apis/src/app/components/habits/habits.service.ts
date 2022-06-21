@@ -17,6 +17,10 @@ export class HabitsService implements HabitsServiceInterface {
     return await this.habitsRepository.getHabitsByRelationship(relationship)
   }
 
+  async getAllActivities(): Promise<HabitsModel[]> {
+    return await this.habitsRepository.getAllActivities()
+  }
+
   async getHabitsById(relationship: string): Promise<HabitsModel[]> {
     return await this.habitsRepository.getHabitsById(relationship)
   }
@@ -56,7 +60,7 @@ export class HabitsService implements HabitsServiceInterface {
 
   async createRelationshipHabits(relationshipHabit: FamilyMemberHabitsModel) {
     let createdCustomHabit
-    if (relationshipHabit.habitId) {
+    if (!relationshipHabit.habitId) {
       const customHabits = {
         name: relationshipHabit.name,
         appliesForRelation: relationshipHabit.appliesForRelation,
@@ -64,7 +68,7 @@ export class HabitsService implements HabitsServiceInterface {
         isCustom: true,
       }
       createdCustomHabit = await this.habitsRepository.createHabit(customHabits)
-      relationshipHabit.habitId = createdCustomHabit[0]?.id
+      relationshipHabit.habitId = createdCustomHabit?.id
     }
     return await this.habitsRepository.createRelationshipHabits(
       relationshipHabit,

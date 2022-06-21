@@ -30,9 +30,15 @@ export class HabitsController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const details = await this.habitsService.getHabitsByRelationship(
-      req.query.relationship.toString(),
-    )
+    let details
+    if (req.query.canBeHabit) {
+      details = await this.habitsService.getHabitsByRelationship(
+        req.query.relationship.toString(),
+      )
+    } else {
+      details = await this.habitsService.getAllActivities()
+    }
+
     return res.send(details)
   }
 
