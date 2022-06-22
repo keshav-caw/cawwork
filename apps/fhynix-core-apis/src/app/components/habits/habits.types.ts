@@ -1,5 +1,5 @@
-const HabitsTypes = {
-  habits: Symbol.for('HabitsService'),
+const ActivityTypes = {
+  activity: Symbol.for('ActivityService'),
 }
 
-export { HabitsTypes }
+export { ActivityTypes }

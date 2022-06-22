@@ -2,29 +2,32 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
-import { HabitsServiceInterface } from '../../common/interfaces/habits-service.interface'
+import { ActivityServiceInterface } from '../../common/interfaces/habits-service.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-habits-model'
 import { ActivitiesMasterModel } from '../../common/models/habits-model'
-import { HabitsRepository } from './habits.repository'
+import { ActivityRepository } from './habits.repository'
 
 @injectable()
-export class HabitsService implements HabitsServiceInterface {
+export class ActivityService implements ActivityServiceInterface {
   constructor(
-    @inject('HabitsRepository') private habitsRepository: HabitsRepository,
+    @inject('ActivityRepository')
+    private activityRepository: ActivityRepository,
   ) {}
 
   async getHabitsByRelationship(
     relationship: string,
   ): Promise<ActivitiesMasterModel[]> {
-    return await this.habitsRepository.getHabitsByRelationship(relationship)
+    return await this.activityRepository.getHabitsByRelationship(relationship)
   }
 
   async getAllActivities(): Promise<ActivitiesMasterModel[]> {
-    return await this.habitsRepository.getAllActivities()
+    return await this.activityRepository.getAllActivities()
   }
 
   async getHabitsById(relationship: string): Promise<ActivitiesMasterModel[]> {
-    return await this.habitsRepository.getHabitsById(relationship)
+    return await this.activityRepository.getActvityByFamilyMemberId(
+      relationship,
+    )
   }
 
   async createHabitsForRelationship(
@@ -45,7 +48,7 @@ export class HabitsService implements HabitsServiceInterface {
 
     familyMemberIds.forEach((familyMemberId) => {
       familyMemberCalls.push(
-        this.habitsRepository.deleteRelationshipHabits(familyMemberId),
+        this.activityRepository.deleteRelationshipHabits(familyMemberId),
       )
     })
 
@@ -69,10 +72,14 @@ export class HabitsService implements HabitsServiceInterface {
         canBeHabit: true,
         isCustom: true,
       }
-      createdCustomHabit = await this.habitsRepository.createHabit(customHabits)
+      createdCustomHabit = await this.activityRepository.createActivity(
+        customHabits,
+      )
       relationshipHabit.activityId = createdCustomHabit?.id
     }
-    return await this.habitsRepository.createRelationshipHabits(
+    delete relationshipHabit['name']
+    delete relationshipHabit['appliesForRelation']
+    return await this.activityRepository.createRelationshipHabits(
       relationshipHabit,
     )
   }

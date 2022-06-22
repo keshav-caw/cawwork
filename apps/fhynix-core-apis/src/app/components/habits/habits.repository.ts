@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
-import { HabitsRepositoryInterface } from '../../common/interfaces/habits-repository.interface'
+import { ActivityRepositoryInterface } from '../../common/interfaces/habits-repository.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-habits-model'
 import { ActivitiesMasterModel } from '../../common/models/habits-model'
 @injectable()
-export class HabitsRepository implements HabitsRepositoryInterface {
+export class ActivityRepository implements ActivityRepositoryInterface {
   protected client
 
   constructor(@inject('DataStore') protected store: DataStore) {
@@ -34,7 +34,7 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async getHabitsById(
+  async getActvityByFamilyMemberId(
     familyMemberId: string,
   ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.familyMemberActivity?.findMany({
@@ -46,11 +46,11 @@ export class HabitsRepository implements HabitsRepositoryInterface {
     return result
   }
 
-  async createHabit(
-    habit: ActivitiesMasterModel,
+  async createActivity(
+    activity: ActivitiesMasterModel,
   ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.create({
-      data: habit,
+      data: activity,
     })
     return result
   }
@@ -67,7 +67,9 @@ export class HabitsRepository implements HabitsRepositoryInterface {
   async deleteRelationshipHabits(
     familyMemberId: string,
   ): Promise<FamilyMemberActivityModel[]> {
-    const habitByFamilyId = await this.getHabitsById(familyMemberId)
+    const habitByFamilyId = await this.getActvityByFamilyMemberId(
+      familyMemberId,
+    )
     if (habitByFamilyId?.length > 0) {
       const result = await this.client.familyMemberActivity?.update({
         data: { isDeleted: true },

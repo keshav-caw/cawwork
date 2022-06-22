@@ -11,14 +11,14 @@ import {
 import { inject } from 'inversify'
 import { JWTService } from '../../common/jwtservice/jwt.service'
 import { CommonTypes } from '../../common/common.types'
-import { HabitsService } from './habits.service'
-import { HabitsTypes } from './habits.types'
+import { ActivityService } from './habits.service'
+import { ActivityTypes } from './habits.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 
 @controller('/habits')
 export class HabitsController implements interfaces.Controller {
   constructor(
-    @inject(HabitsTypes.habits) private habitsService: HabitsService,
+    @inject(ActivityTypes.activity) private activityService: ActivityService,
     @inject(CommonTypes.jwt) private jwtService: JWTService,
     @inject(CommonTypes.requestContext)
     private authStoreService: RequestContext,
@@ -32,11 +32,11 @@ export class HabitsController implements interfaces.Controller {
   ): Promise<any> {
     let details
     if (req.query.canBeHabit) {
-      details = await this.habitsService.getHabitsByRelationship(
+      details = await this.activityService.getHabitsByRelationship(
         req.query.relationship.toString(),
       )
     } else {
-      details = await this.habitsService.getAllActivities()
+      details = await this.activityService.getAllActivities()
     }
 
     return res.send(details)
@@ -47,6 +47,6 @@ export class HabitsController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.habitsService.createHabitsForRelationship(req.body))
+    res.send(await this.activityService.createHabitsForRelationship(req.body))
   }
 }

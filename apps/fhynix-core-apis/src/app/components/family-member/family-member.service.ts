@@ -7,8 +7,8 @@ import { ArgumentValidationError } from '../../common/errors/custom-errors/argum
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
-import { HabitsService } from '../habits/habits.service'
-import { HabitsTypes } from '../habits/habits.types'
+import { ActivityService } from '../habits/habits.service'
+import { ActivityTypes } from '../habits/habits.types'
 import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
@@ -22,8 +22,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private familyMemberRepository: FamilyMemberRepository,
     @inject('RelationshipRepository')
     private relationshipRepository: RelationshipRepository,
-    @inject(HabitsTypes.habits)
-    private habitsService: HabitsService,
+    @inject(ActivityTypes.activity)
+    private activityService: ActivityService,
     @inject(RelationshipTypes.relationship)
     private relationshipService: RelationshipService,
     @inject(CommonTypes.requestContext)
@@ -39,7 +39,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       )
 
     if (userDetails?.length > 0) {
-      const habitsForFamily = await this.habitsService.getHabitsById(
+      const habitsForFamily = await this.activityService.getHabitsById(
         userDetails?.[0]?.id,
       )
       userDetails[0]['habits'] = habitsForFamily
@@ -59,7 +59,7 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
     const calls = []
     familyMembers?.forEach((familyMember) => {
-      calls.push(this.habitsService.getHabitsById(familyMember.id))
+      calls.push(this.activityService.getHabitsById(familyMember.id))
     })
     const habitsForFamily = await Promise.all(calls)
 
