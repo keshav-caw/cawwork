@@ -160,8 +160,24 @@ export class TaskService implements TaskServiceInterface {
           ApiErrorCode.E0104,
         )
       }
+      if (!taskDetails.repeatMode) {
+        delete taskInfo[0].repeatMode
+      }
 
       if (isDateUpdated) {
+        if (
+          taskInfo[0].startAtUtc &&
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].startAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The start and the end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0016,
+          )
+        }
+
         if (taskInfo?.length > 0) {
           if (taskInfo[0].recurringTaskId) {
             const today = dayjs().toISOString()
@@ -202,8 +218,24 @@ export class TaskService implements TaskServiceInterface {
           ApiErrorCode.E0104,
         )
       }
+      if (!taskDetails.repeatMode) {
+        delete taskInfo[0].repeatMode
+      }
 
       if (isDateUpdated) {
+        if (
+          taskInfo[0].startAtUtc &&
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].startAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The start and the end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0016,
+          )
+        }
+
         await this.taskRepository.deleteTask(taskId)
         if (taskInfo?.length > 0) {
           const keys = Object.keys(taskDetails)
@@ -530,6 +562,7 @@ export class TaskService implements TaskServiceInterface {
         tasks[0],
         selectedTimeSlabs,
       )
+
       tasks.forEach((task, index) => {
         const selectedTimeSlab = selectedSlabs[index]
           ? selectedSlabs[index]
@@ -548,6 +581,7 @@ export class TaskService implements TaskServiceInterface {
         delete task['selectedTasks']
       })
     }
+
     return tasks ? tasks : []
   }
 
@@ -556,7 +590,38 @@ export class TaskService implements TaskServiceInterface {
     selectedTimeSlabs,
   ): [Record<string, number>] {
     let selectedSlabs = selectedTimeSlabs
+    const startTimeOfCurrentDate = this.getMinutesFromTimestamp(
+      dayjs().format('hh:mm A'),
+    )
+    const endTimeOfCurrentDate = this.getMinutesFromTimestamp(
+      dayjs().format('hh:mm A'),
+    )
 
+    if (
+      dayjs(selectedTask.startAtUtc).format('YYYY-MM-DD') ===
+        dayjs().format('YYYY-MM-DD') ||
+      dayjs(selectedTask.endAtUtc).format('YYYY-MM-DD') ===
+        dayjs().format('YYYY-MM-DD')
+    ) {
+      selectedSlabs.forEach((timeSlab) => {
+        if (
+          timeSlab.startTime < startTimeOfCurrentDate ||
+          timeSlab.endTime < startTimeOfCurrentDate ||
+          timeSlab.startTime < endTimeOfCurrentDate ||
+          timeSlab.endTime < endTimeOfCurrentDate ||
+          (startTimeOfCurrentDate === timeSlab.startTime &&
+            endTimeOfCurrentDate === timeSlab.endTime)
+        ) {
+          selectedSlabs = selectedSlabs.filter(
+            (slab) =>
+              !(
+                slab.startTime === timeSlab.startTime &&
+                slab.endTime === timeSlab.endTime
+              ),
+          )
+        }
+      })
+    }
     selectedTask.selectedTasks?.forEach((task) => {
       selectedSlabs.forEach((timeSlab) => {
         const startTime = this.getMinutesFromTimestamp(
