@@ -439,7 +439,6 @@ export class TaskService implements TaskServiceInterface {
     tasks: TaskModel[],
     userId: string,
   ): Promise<TaskModel[]> {
-    this.validateTaskInfo(tasks)
     const familyMemberId = tasks[0]?.familyMemberId
     const userDetails = await this.familyMemberService.getFamilyMemberById(
       familyMemberId,
