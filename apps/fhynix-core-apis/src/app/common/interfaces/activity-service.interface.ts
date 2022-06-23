@@ -1,7 +1,7 @@
-import { ActivitiesMasterModel } from '../models/habits-model'
+import { ActivitiesMasterModel } from '../models/activity-model'
 
 export interface ActivityServiceInterface {
-  getHabitsByRelationship(
+  getActivityByRelationship(
     relationship: string,
   ): Promise<ActivitiesMasterModel[]>
 }

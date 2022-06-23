@@ -7,8 +7,8 @@ import { ArgumentValidationError } from '../../common/errors/custom-errors/argum
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
-import { ActivityService } from '../habits/habits.service'
-import { ActivityTypes } from '../habits/habits.types'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
@@ -39,10 +39,11 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       )
 
     if (userDetails?.length > 0) {
-      const habitsForFamily = await this.activityService.getHabitsById(
-        userDetails?.[0]?.id,
-      )
-      userDetails[0]['habits'] = habitsForFamily
+      const activitiesForFamily =
+        await this.activityService.getActivityByFamilyMemberId(
+          userDetails?.[0]?.id,
+        )
+      userDetails[0]['activities'] = activitiesForFamily
     } else {
       throw new ArgumentValidationError(
         "Family member doesn't exist",
@@ -59,13 +60,15 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
     const calls = []
     familyMembers?.forEach((familyMember) => {
-      calls.push(this.activityService.getHabitsById(familyMember.id))
+      calls.push(
+        this.activityService.getActivityByFamilyMemberId(familyMember.id),
+      )
     })
-    const habitsForFamily = await Promise.all(calls)
+    const activitiesForFamily = await Promise.all(calls)
 
     familyMembers.map((familyMember, index) => {
-      familyMember['habits'] = habitsForFamily?.find(
-        (habit, ind) => index === ind,
+      familyMember['activities'] = activitiesForFamily?.find(
+        (activity, ind) => index === ind,
       )
     })
     return familyMembers

@@ -86,13 +86,13 @@
         "consumes": ["application/json"]
       }
     },
-    "/habits": {
+    "/activities": {
       "get": {
         "security": [{ "Bearer": [] }],
-        "operationId": "getHabits",
-        "tags": ["habits"],
-        "description": "Get habits by relationship",
-        "summary": "Get habits list",
+        "operationId": "getActivities",
+        "tags": ["activities"],
+        "description": "Get activities by relationship",
+        "summary": "Get activities list",
         "parameters": [
           {
             "in": "query",
@@ -106,7 +106,7 @@
         "responses": {
           "200": {
             "description": "Success",
-            "schema": { "$ref": "#/definitions/habits" }
+            "schema": { "$ref": "#/definitions/Activities" }
           },
           "400": { "description": "Client error and Bad Request" },
           "500": { "description": "Internal Server Error" }
@@ -116,25 +116,25 @@
       },
       "post": {
         "security": [{ "Bearer": [] }],
-        "operationId": "family-member-habits",
-        "tags": ["family-member-habits"],
-        "description": "add family member habits",
-        "summary": "add family member habits",
+        "operationId": "family-member-activities",
+        "tags": ["family-member-activities"],
+        "description": "add family member activities",
+        "summary": "add family member activities",
         "parameters": [
           {
             "in": "body",
             "name": "body",
-            "description": "add habit at member level",
+            "description": "add activity at member level",
             "required": false,
             "schema": {
-              "$ref": "#/definitions/FamilyMemberHabitsDto"
+              "$ref": "#/definitions/FamilyMemberActivitiesDto"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
-            "schema": { "$ref": "#/definitions/FamilyMemberHabits" }
+            "schema": { "$ref": "#/definitions/FamilyMemberActivities" }
           },
           "400": { "description": "Client error and Bad Request" },
           "500": { "description": "Internal Server Error" }
@@ -314,7 +314,7 @@
         }
       }
     },
-    "habits": {
+    "activities": {
       "properties": {
         "id": {
           "type": "string"
@@ -330,7 +330,7 @@
         }
       }
     },
-    "FamilyMemberHabits": {
+    "FamilyMemberActivities": {
       "type": "object",
       "properties": {
         "id": {
@@ -350,7 +350,7 @@
         }
       }
     },
-    "FamilyMemberHabitsDto": {
+    "FamilyMemberActivitiesDto": {
       "type": "object",
       "properties": {
         "familyMemberId": {

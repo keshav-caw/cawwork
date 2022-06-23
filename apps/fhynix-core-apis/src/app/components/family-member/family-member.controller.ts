@@ -15,8 +15,8 @@ import { FamilyMemberService } from './family-member.service'
 import { FamilyMemberTypes } from './family-member.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import multer from 'multer'
-import { ActivityService } from '../habits/habits.service'
-import { ActivityTypes } from '../habits/habits.types'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
 import { fileStorage } from '../../middlewares/multer.middleware'
 import { Images } from '../../common/constants/folder-names.constants'
@@ -62,10 +62,14 @@ export class FamilyMemberController implements interfaces.Controller {
       await this.familyMemberService.createFamilyMemberForUser(
         JSON.parse(req.body.userData),
       )
-    const habits = req.body.habits ? JSON.parse(req.body.habits) : []
-    habits.forEach((habit) => (habit.familyMemberId = familyMember[0].id))
-    if (habits?.length > 0) {
-      await this.activityService.createHabitsForRelationship(habits)
+    const activities = req.body.activities
+      ? JSON.parse(req.body.activities)
+      : []
+    activities.forEach(
+      (activity) => (activity.familyMemberId = familyMember[0].id),
+    )
+    if (activities?.length > 0) {
+      await this.activityService.createActivitiesForRelationship(activities)
     }
     let familyDetails
     if (profileImage) {

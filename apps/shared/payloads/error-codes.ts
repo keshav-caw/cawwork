@@ -19,7 +19,7 @@ export enum ApiErrorCode {
   'E0018' = 'Date Of Birth is missing',
   'E0019' = 'First Name is missing',
   'E0020' = 'Last Name is missing',
-  'E0021' = 'Atleast 2 habits must be added',
+  'E0021' = 'Atleast 2 activities must be added',
   'E0022' = 'Failed to upload file to s3 bucket',
   'E0023' = 'Lunch and sleep hours cannot overlap.',
   'E0024' = 'The start time of work hours cannot be greater than the end time of work hours',

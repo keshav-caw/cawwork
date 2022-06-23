@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
-import { ActivityRepositoryInterface } from '../../common/interfaces/habits-repository.interface'
-import { FamilyMemberActivityModel } from '../../common/models/family-member-habits-model'
-import { ActivitiesMasterModel } from '../../common/models/habits-model'
+import { ActivityRepositoryInterface } from '../../common/interfaces/activity-repository.interface'
+import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
+import { ActivitiesMasterModel } from '../../common/models/activity-model'
 @injectable()
 export class ActivityRepository implements ActivityRepositoryInterface {
   protected client
@@ -12,7 +12,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getHabitsByRelationship(
+  async getActivityByRelationship(
     relationship: string,
   ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
@@ -34,7 +34,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     return result
   }
 
-  async getActvityByFamilyMemberId(
+  async getActivityByFamilyMemberId(
     familyMemberId: string,
   ): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.familyMemberActivity?.findMany({
@@ -55,22 +55,22 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     return result
   }
 
-  async createRelationshipHabits(
-    relationshipHabits: FamilyMemberActivityModel,
+  async createRelationshipActivity(
+    relationshipActivity: FamilyMemberActivityModel,
   ): Promise<FamilyMemberActivityModel> {
     const result = await this.client.familyMemberActivity?.create({
-      data: relationshipHabits,
+      data: relationshipActivity,
     })
     return result
   }
 
-  async deleteRelationshipHabits(
+  async deleteRelationshipActivities(
     familyMemberId: string,
   ): Promise<FamilyMemberActivityModel[]> {
-    const habitByFamilyId = await this.getActvityByFamilyMemberId(
+    const activityByFamilyId = await this.getActivityByFamilyMemberId(
       familyMemberId,
     )
-    if (habitByFamilyId?.length > 0) {
+    if (activityByFamilyId?.length > 0) {
       const result = await this.client.familyMemberActivity?.update({
         data: { isDeleted: true },
         where: {
