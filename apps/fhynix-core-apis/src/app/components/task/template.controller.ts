@@ -42,7 +42,8 @@ export class TemplateController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ): Promise<any> {
-    const details = await this.taskService.getTemplates()
+    const userId = this.requestContext.getUserId()
+    const details = await this.taskService.getTemplates(userId)
     return res.send(details)
   }
 

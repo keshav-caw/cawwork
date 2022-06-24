@@ -64,8 +64,8 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.getMasterTemplates()
   }
 
-  async getTemplates(): Promise<TemplateModel[]> {
-    return await this.taskRepository.getTemplates()
+  async getTemplates(userId: string): Promise<TemplateModel[]> {
+    return await this.taskRepository.getTemplates(userId)
   }
 
   async createUserTemplate(

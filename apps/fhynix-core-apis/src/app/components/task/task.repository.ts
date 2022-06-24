@@ -95,11 +95,12 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
-  async getTemplates(): Promise<TemplateModel[]> {
+  async getTemplates(userId: string): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.findMany({
       where: {
         isDeleted: false,
         isMaster: false,
+        userId: userId,
       },
     })
     return result ? result : []
