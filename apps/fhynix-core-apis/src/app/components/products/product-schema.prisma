@@ -1,4 +1,4 @@
-model Articles {
+model Products {
   id  String @id @default(uuid())
   title String @map("title")
   imageUrl String @map("image_url")
@@ -9,16 +9,6 @@ model Articles {
   updatedBy String? @map("updated_by")
   isDeleted Boolean @default(false) @map("is_deleted")
   description String? @map("description")
+  price String @map("price")
   activityIds String[] @map("activity_ids")
-}
-
-model ArticlesBookmarked {
-  userId String  @map("user_id")
-  articleId String  @map("article_id")
-  isDeleted Boolean @default(false) @map("is_deleted")
-  createdAtUtc DateTime @default(now()) @map("created_at_utc")
-  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
-  createdBy String? @map("created_by")
-  updatedBy String? @map("updated_by")
-  @@unique([userId, articleId])
 }

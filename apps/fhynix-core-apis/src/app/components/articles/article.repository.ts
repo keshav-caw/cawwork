@@ -31,6 +31,22 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     return result ? result : []
   }
 
+  async getArticlesToSuggest():Promise<ArticleModel[]>{
+    const result = await this.client.articles?.findMany({
+
+    },
+    {
+      select: {
+        id:true,
+        title: true,
+        imageUrl:true,
+        url:true
+      }
+    })
+    
+    return result ? result : []
+  }
+
   async addArticle(newArticle) {
 
     const article:ArticleModel = await this.client.articles?.create({
@@ -57,7 +73,8 @@ export class ArticleRepository implements ArticleRepositoryInterface {
           id:true,
           title: true,
           imageUrl:true,
-          url:true
+          url:true,
+          activityIds:true
         }
       })
       result.push(article);
