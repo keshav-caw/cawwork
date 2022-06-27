@@ -6,6 +6,7 @@ import { ArgumentValidationError } from '../../common/errors/custom-errors/argum
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ProductServiceInterface } from '../../common/interfaces/product-service.interface'
 import { ProductRepository } from './product.repository'
+import { ProductModel } from '../../common/models/product.model'
 
 @injectable()
 export class ProductService implements ProductServiceInterface {
@@ -16,8 +17,8 @@ export class ProductService implements ProductServiceInterface {
   ) {}
 
 
-  async addProduct(url,activityIds,price) {
-    const newProduct = await this.linkPreviewProvider.getPreview(url);
+  async addProduct(url,price,activityIds) {
+    const newProduct:ProductModel = await this.linkPreviewProvider.getPreview(url);
 
     if(!newProduct.title || !newProduct.imageUrl){
       throw new ArgumentValidationError(

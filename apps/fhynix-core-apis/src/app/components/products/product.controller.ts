@@ -25,14 +25,14 @@ export class ProductController implements interfaces.Controller {
   ) {}
 
 
-  @httpPost('/push',CommonTypes.jwtAuthMiddleware,CommonTypes.checkAdminMiddleware)
+  @httpPost('/',CommonTypes.jwtAuthMiddleware,CommonTypes.checkAdminMiddleware)
   private async addProduct(
     @request() req: express.Request,
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ){
     const {url,activityIds,price} = req.body;
-    const productData = await this.productService.addProduct(url,activityIds,price);
+    const productData = await this.productService.addProduct(url,price,activityIds);
     res.send(productData);
   }
 

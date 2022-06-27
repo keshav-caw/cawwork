@@ -31,9 +31,15 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     return result ? result : []
   }
 
-  async getArticlesToSuggest():Promise<ArticleModel[]>{
+  async getAllArticles():Promise<ArticleModel[]>{
     const result = await this.client.articles?.findMany({
-
+      take:50,
+      where:{
+        isDeleted:false,
+      },
+      orderBy:{
+        createdAtUtc:'asc'
+      }
     },
     {
       select: {

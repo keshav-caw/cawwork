@@ -36,74 +36,18 @@ export class ArticleService implements ArticleServiceInterface {
     return await this.articleRepository.getArticles(details)
   }
 
-  async getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,activityIds){
-    for(const article of unfilteredArticles){
-      for(const activityId of activityIds){
-        if(article.activityIds?.includes(activityId) && articleIdSet.has(article.id)==false){
-          articles.push(article);
-          articleIdSet.add(article.id);
-          break;
-        }
-      }
-    }
-  }
-
   async getArticlesToSuggest(userId:string){
-    const unfilteredArticles = await this.articleRepository.getArticlesToSuggest()
+    const unfilteredArticles = await this.articleRepository.getAllArticles()
     const articles = [];
     const articleIdSet = new Set<string>();
-
-    const familyMembers = await this.familyMemberService.getFamilyMembers(userId);
-    const relations = await this.relationshipRepository.getRelationshipsMasterByRelation('self');
-    const selfRelationshipId = relations[0].id;
-
-
-    // Here we are getting activityIds related to user-self
-    const selfActivityIdSet = new Set<string>();
-    for(const familyMember of familyMembers){
-      if(familyMember.relationshipId===selfRelationshipId){
-        for(const familyMemberActivity of familyMember['activities']){
-          selfActivityIdSet.add(familyMemberActivity.activityId);
-        }
-      }
-    }
-    this.getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,selfActivityIdSet);
-
-
-    // and here collecting activityIds for family-members of that user
-    // note that we are not collecting activityIds for both user-self and his family-Members because we has already collected them in selfActivityIds
-    const familyMemberActivityIdSet = new Set<string>();
-    for(const familyMember of familyMembers){
-      if(familyMember.relationshipId!==selfRelationshipId){
-        for(const familyMemberActivity of familyMember['activities']){
-          if(selfActivityIdSet.has(familyMemberActivity.activityId)===false){
-            familyMemberActivityIdSet.add(familyMemberActivity.activityId);
-          }
-        }
-      }
-    }
-    this.getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,familyMemberActivityIdSet);
-
-
-    // getting articles relevant to incoming next 7 days tasks
-    const startDate = new Date();
-    const startDateInUtc = startDate.toISOString();
-    const endDate = new Date(startDate.setDate(startDate.getDate() + 7));
-    const endDateInUtc = endDate.toISOString();
-    const taskActivityIdSet = new Set<string>();
-    const tasks = await this.taskService.getTasksByStartAndEndDate(userId,startDateInUtc,endDateInUtc)
-    for(const task of tasks){
-      if(task.activityId){
-        taskActivityIdSet.add(task.activityId);
-      }
-    }
+    const taskActivityIdSet = await this.taskService.getTasksInNextFourteenDays(userId);
     this.getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,taskActivityIdSet);
 
     return articles
   }
 
   async addArticle(url,activityIds) {
-    const newArticle = await this.linkPreviewProvider.getPreview(url)
+    const newArticle:ArticleModel = await this.linkPreviewProvider.getPreview(url)
 
     if (!newArticle.title || !newArticle.imageUrl) {
       throw new ArgumentValidationError(
@@ -147,5 +91,17 @@ export class ArticleService implements ArticleServiceInterface {
 
     const result = await this.articleRepository.removeBookmark(bookmark)
     return result
+  }
+
+  private async getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,activityIds){
+    for(const article of unfilteredArticles){
+      for(const activityId of activityIds){
+        if(article.activityIds?.includes(activityId) && !articleIdSet.has(article.id)){
+          articles.push(article);
+          articleIdSet.add(article.id);
+          break;
+        }
+      }
+    }
   }
 }

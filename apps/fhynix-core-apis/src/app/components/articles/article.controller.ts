@@ -61,7 +61,7 @@ export class ArticleController implements interfaces.Controller {
     const userId = this.requestContext.getUserId();
 
     const articles = await this.articleService.getArticlesToSuggest(userId);
-    const details = new PaginatedResponsePayload<ArticleResponsePayload>()
+    const details = [];
     for (const article of articles) {
       const newArticle = new ArticleResponsePayload(
         article.id,
@@ -69,7 +69,7 @@ export class ArticleController implements interfaces.Controller {
         article.imageUrl,
         article.url,
       )
-      details.add(newArticle)
+      details.push(newArticle)
     }
     res.send(details)
   }

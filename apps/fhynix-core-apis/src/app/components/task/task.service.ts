@@ -17,6 +17,7 @@ import { UserService } from '../users/user.service'
 import { UserTypes } from '../users/user.types'
 import { EmailProvider } from '../utilities/email.provider'
 import { UtilityTypes } from '../utilities/utility.types'
+import { TimespanHelper } from '../utilities/timespan.helper'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -29,7 +30,20 @@ export class TaskService implements TaskServiceInterface {
     private familyMemberService: FamilyMemberService,
     @inject(UserTypes.user) private userService: UserService,
     @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
+    @inject(UtilityTypes.timespanHelper) private timespanHelper: TimespanHelper,
   ) {}
+
+  async getTasksInNextFourteenDays(userId){
+    const taskActivityIdSet = new Set<string>();
+    const interval = this.timespanHelper.nextFourteenDays();
+    const tasks = await this.getTasksByStartAndEndDate(userId,interval.startDateInUtc,interval.endDateInUtc);
+    for(const task of tasks){
+      if(task.activityId){
+        taskActivityIdSet.add(task.activityId);
+      }
+    }
+    return taskActivityIdSet
+  }
 
   async getTasksByStartAndEndDate(
     userId: string,
