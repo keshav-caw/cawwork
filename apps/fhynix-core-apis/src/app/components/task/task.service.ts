@@ -13,6 +13,10 @@ import { FamilyMemberService } from '../family-member/family-member.service'
 import { FamilyMemberTypes } from '../family-member/family-member.types'
 import { defaultTimeSlabs } from '../../common/constants/default-times.constants'
 import * as _ from 'lodash'
+import { UserService } from '../users/user.service'
+import { UserTypes } from '../users/user.types'
+import { EmailProvider } from '../utilities/email.provider'
+import { UtilityTypes } from '../utilities/utility.types'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -23,6 +27,8 @@ export class TaskService implements TaskServiceInterface {
     private taskRepository: TaskRepository,
     @inject(FamilyMemberTypes.familyMember)
     private familyMemberService: FamilyMemberService,
+    @inject(UserTypes.user) private userService: UserService,
+    @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
   ) {}
 
   async getTasksByStartAndEndDate(
@@ -58,8 +64,8 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.getMasterTemplates()
   }
 
-  async getTemplates(): Promise<TemplateModel[]> {
-    return await this.taskRepository.getTemplates()
+  async getTemplates(userId: string): Promise<TemplateModel[]> {
+    return await this.taskRepository.getTemplates(userId)
   }
 
   async createUserTemplate(
@@ -67,6 +73,7 @@ export class TaskService implements TaskServiceInterface {
     templateId: string,
   ): Promise<TemplateModel[]> {
     template.parentTemplateId = templateId
+    this.validateTemplateInfo(template)
     const templateDetails = await this.taskRepository.createTemplate(template)
 
     return templateDetails
@@ -76,6 +83,7 @@ export class TaskService implements TaskServiceInterface {
     template: TemplateModel,
     templateId: string,
   ): Promise<TemplateModel[]> {
+    this.validateTemplateInfo(template)
     const templateDetails = await this.taskRepository.updateUserTemplate(
       template,
       templateId,
@@ -89,11 +97,16 @@ export class TaskService implements TaskServiceInterface {
     userId: string,
   ): Promise<TaskModel[]> {
     const tasksNeededToBeAdded = await this.validateTemplateTasks(tasks, userId)
-    return await this.createTasks(tasksNeededToBeAdded)
+    return await this.createTasks(tasksNeededToBeAdded, userId)
   }
 
-  async createTasks(tasks: TaskModel[]): Promise<TaskModel[]> {
-    this.validateTaskInfo(tasks)
+  async createTasks(
+    tasks: TaskModel[],
+    userId: string,
+    isUpdateTasks = false,
+  ): Promise<TaskModel[]> {
+    this.validateTaskInfo(tasks, isUpdateTasks)
+    const userDetails = await this.userService.getUserDetail(userId)
     const createTasksInfo = this.createTasksInfo(tasks)
     const recurringTaskId = uuidv4()
     const calls = []
@@ -106,22 +119,65 @@ export class TaskService implements TaskServiceInterface {
         : null
       calls.push(this.taskRepository.createTask(task))
     })
-    return await Promise.all(calls)
+
+    const createdTasks = await Promise.all(calls)
+    const emailCalls = []
+    const task = createTasksInfo[0]
+    if (task?.invites?.length > 0) {
+      emailCalls.push(
+        this.emailProvider.sendEmailUsingTemplate(
+          this.emailProvider.templates.eventTemplateId,
+          task.invites,
+          task.title,
+          {
+            text: `Invitation for the ${task.title}`,
+            username: userDetails[0].firstName,
+          },
+        ),
+      )
+    }
+    return createdTasks
   }
 
   async updateTasks(
     taskId: string,
     taskDetails: TaskModel,
     isAllEvents: boolean,
+    isDateUpdated: boolean,
     userId: string,
   ): Promise<TaskModel[]> {
-    this.validateTaskInfo([taskDetails])
+    this.validateTaskInfo([taskDetails], true)
     if (isAllEvents) {
       const taskInfo = await this.taskRepository.getTaskDetailsByTaskId(
         taskId,
         userId,
       )
-      if (taskDetails.startAtUtc || taskDetails.endAtUtc) {
+
+      if (taskInfo?.length === 0 || !taskInfo) {
+        throw new ArgumentValidationError(
+          'Unable to edit task. It is already been deleted',
+          taskDetails,
+          ApiErrorCode.E0104,
+        )
+      }
+      if (!taskDetails.repeatMode) {
+        delete taskInfo[0].repeatMode
+      }
+
+      if (isDateUpdated) {
+        if (
+          taskInfo[0].startAtUtc &&
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].startAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The start and the end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0016,
+          )
+        }
+
         if (taskInfo?.length > 0) {
           if (taskInfo[0].recurringTaskId) {
             const today = dayjs().toISOString()
@@ -139,9 +195,9 @@ export class TaskService implements TaskServiceInterface {
           delete taskInfo[0]['id']
           delete taskInfo[0]['createdAtUtc']
           delete taskInfo[0]['updatedAtUtc']
-          return await this.createTasks(taskInfo)
+          return await this.createTasks(taskInfo, userId, true)
         } else {
-          return await this.createTasks([taskDetails])
+          return await this.createTasks([taskDetails], userId, true)
         }
       } else {
         return await this.taskRepository.updateTaskByRecurringTaskId(
@@ -154,7 +210,32 @@ export class TaskService implements TaskServiceInterface {
         taskId,
         userId,
       )
-      if (taskDetails.startAtUtc || taskDetails.endAtUtc) {
+
+      if (taskInfo?.length === 0 || !taskInfo) {
+        throw new ArgumentValidationError(
+          'Unable to edit task. It is already been deleted',
+          taskDetails,
+          ApiErrorCode.E0104,
+        )
+      }
+      if (!taskDetails.repeatMode) {
+        delete taskInfo[0].repeatMode
+      }
+
+      if (isDateUpdated) {
+        if (
+          taskInfo[0].startAtUtc &&
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].startAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The start and the end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0016,
+          )
+        }
+
         await this.taskRepository.deleteTask(taskId)
         if (taskInfo?.length > 0) {
           const keys = Object.keys(taskDetails)
@@ -164,16 +245,28 @@ export class TaskService implements TaskServiceInterface {
           delete taskInfo[0]['id']
           delete taskInfo[0]['createdAtUtc']
           delete taskInfo[0]['updatedAtUtc']
-          return await this.createTasks(taskInfo)
+          return await this.createTasks(taskInfo, userId, true)
         }
       } else {
-        return await this.taskRepository.updateTaskById(taskDetails, taskId)
+        const calls = []
+        calls.push(this.taskRepository.updateTaskById(taskDetails, taskId))
+        return await Promise.all(calls)
       }
     }
   }
 
   async deleteTask(taskId: string): Promise<TaskModel> {
     return await this.taskRepository.deleteTask(taskId)
+  }
+
+  async deleteTaskByRecurringTaskId(
+    recurringTaskId: string,
+  ): Promise<TaskModel> {
+    const today = dayjs().toISOString()
+    return await this.taskRepository.deleteTaskByRecurringTaskId(
+      recurringTaskId,
+      today,
+    )
   }
 
   async deleteTemplate(
@@ -304,7 +397,36 @@ export class TaskService implements TaskServiceInterface {
     return tasksToBeCreated
   }
 
-  validateTaskInfo(tasks: TaskModel[]) {
+  validateTemplateInfo(template: TemplateModel, isUpdateTemplate = false) {
+    if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      dayjs(template.startAtUtc).diff(dayjs(template.endAtUtc), 'minutes') >= 0
+    ) {
+      throw new ArgumentValidationError(
+        'The start date of the template should be less than the end date',
+        template,
+        ApiErrorCode.E0102,
+      )
+    } else if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      ((dayjs(template.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        dayjs(template.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        isUpdateTemplate) ||
+        ((dayjs(template.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
+          dayjs(template.endAtUtc).diff(dayjs(), 'minutes') < 0) &&
+          !isUpdateTemplate))
+    ) {
+      throw new ArgumentValidationError(
+        "The start and the end date of the template cannot be less than today's date",
+        template,
+        ApiErrorCode.E0103,
+      )
+    }
+  }
+
+  validateTaskInfo(tasks: TaskModel[], isUpdateTasks = false) {
     tasks.forEach((task) => {
       if (
         task.startAtUtc &&
@@ -319,8 +441,12 @@ export class TaskService implements TaskServiceInterface {
       } else if (
         task.startAtUtc &&
         task.endAtUtc &&
-        (dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
-          dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0)
+        ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+          dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+          isUpdateTasks) ||
+          ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
+            dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0) &&
+            !isUpdateTasks))
       ) {
         throw new ArgumentValidationError(
           "The start and the end date cannot be less than today's date",
@@ -345,7 +471,6 @@ export class TaskService implements TaskServiceInterface {
     tasks: TaskModel[],
     userId: string,
   ): Promise<TaskModel[]> {
-    this.validateTaskInfo(tasks)
     const familyMemberId = tasks[0]?.familyMemberId
     const userDetails = await this.familyMemberService.getFamilyMemberById(
       familyMemberId,
@@ -437,6 +562,7 @@ export class TaskService implements TaskServiceInterface {
         tasks[0],
         selectedTimeSlabs,
       )
+
       tasks.forEach((task, index) => {
         const selectedTimeSlab = selectedSlabs[index]
           ? selectedSlabs[index]
@@ -455,6 +581,7 @@ export class TaskService implements TaskServiceInterface {
         delete task['selectedTasks']
       })
     }
+
     return tasks ? tasks : []
   }
 
@@ -463,7 +590,38 @@ export class TaskService implements TaskServiceInterface {
     selectedTimeSlabs,
   ): [Record<string, number>] {
     let selectedSlabs = selectedTimeSlabs
+    const startTimeOfCurrentDate = this.getMinutesFromTimestamp(
+      dayjs().format('hh:mm A'),
+    )
+    const endTimeOfCurrentDate = this.getMinutesFromTimestamp(
+      dayjs().format('hh:mm A'),
+    )
 
+    if (
+      dayjs(selectedTask.startAtUtc).format('YYYY-MM-DD') ===
+        dayjs().format('YYYY-MM-DD') ||
+      dayjs(selectedTask.endAtUtc).format('YYYY-MM-DD') ===
+        dayjs().format('YYYY-MM-DD')
+    ) {
+      selectedSlabs.forEach((timeSlab) => {
+        if (
+          timeSlab.startTime < startTimeOfCurrentDate ||
+          timeSlab.endTime < startTimeOfCurrentDate ||
+          timeSlab.startTime < endTimeOfCurrentDate ||
+          timeSlab.endTime < endTimeOfCurrentDate ||
+          (startTimeOfCurrentDate === timeSlab.startTime &&
+            endTimeOfCurrentDate === timeSlab.endTime)
+        ) {
+          selectedSlabs = selectedSlabs.filter(
+            (slab) =>
+              !(
+                slab.startTime === timeSlab.startTime &&
+                slab.endTime === timeSlab.endTime
+              ),
+          )
+        }
+      })
+    }
     selectedTask.selectedTasks?.forEach((task) => {
       selectedSlabs.forEach((timeSlab) => {
         const startTime = this.getMinutesFromTimestamp(
