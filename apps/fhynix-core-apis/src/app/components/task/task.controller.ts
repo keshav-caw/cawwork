@@ -62,7 +62,8 @@ export class TaskController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.createTasks(req.body))
+    const userId = this.requestContext.getUserId()
+    res.send(await this.taskService.createTasks(req.body, userId))
   }
 
   @httpPut('/:taskId', CommonTypes.jwtAuthMiddleware)
@@ -76,6 +77,7 @@ export class TaskController implements interfaces.Controller {
         req.params.taskId,
         req.body.taskDetails,
         req.body.isAllEvents,
+        req.body.isDateUpdated,
         userId,
       ),
     )
@@ -87,5 +89,17 @@ export class TaskController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     res.send(await this.taskService.deleteTask(req.params.taskId))
+  }
+
+  @httpDelete('/all/:recurringTaskId', CommonTypes.jwtAuthMiddleware)
+  private async deleteRecurringTasks(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    res.send(
+      await this.taskService.deleteTaskByRecurringTaskId(
+        req.params.recurringTaskId,
+      ),
+    )
   }
 }

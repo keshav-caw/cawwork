@@ -9,6 +9,7 @@ export class TemplateModel {
   isDeleted: boolean
   parentTemplateId: string
   templateName: string
+  familyMemberId: string
   forRelationship: string
   userTemplateId: string
   userId: string
@@ -17,4 +18,15 @@ export class TemplateModel {
   status: string
   isMaster: boolean
   scheduleList: TaskModel[]
+  otherInfo: OtherInfoModel[]
+}
+
+export class OtherInfoModel {
+  description: string
+  placeholder: string
+  gradientColors: string[]
+  id: number
+  image: string
+  title: string
+  titleColor: string
 }

@@ -46,6 +46,20 @@ export class TemplateController implements interfaces.Controller {
     return res.send(details)
   }
 
+  @httpGet('/:id/tasks', CommonTypes.jwtAuthMiddleware)
+  public async getTaskDetailsByTemplateId(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ): Promise<any> {
+    const userId = this.requestContext.getUserId()
+    const details = await this.taskService.getTaskDetailsByTemplateId(
+      req.params.id,
+      userId,
+    )
+    return res.send(details)
+  }
+
   @httpPost('/:id', CommonTypes.jwtAuthMiddleware)
   private async createTemplate(
     @request() req: express.Request,
@@ -63,6 +77,14 @@ export class TemplateController implements interfaces.Controller {
     res.send(await this.taskService.createTasksByTemplateId(req.body, userId))
   }
 
+  @httpPut('/:id', CommonTypes.jwtAuthMiddleware)
+  private async updateTemplate(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    res.send(await this.taskService.updateUserTemplate(req.body, req.params.id))
+  }
+
   @httpPut('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)
   private async updateTaskByTemplateId(
     @request() req: express.Request,
@@ -74,6 +96,7 @@ export class TemplateController implements interfaces.Controller {
         req.params.taskId,
         req.body.taskDetails,
         req.body.isAllEvents,
+        req.body.isDateUpdated,
         userId,
       ),
     )
@@ -84,7 +107,8 @@ export class TemplateController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    res.send(await this.taskService.deleteTemplate(req.params.id))
+    const userId = this.requestContext.getUserId()
+    res.send(await this.taskService.deleteTemplate(req.params.id, userId))
   }
 
   @httpDelete('/:id/tasks/:taskId', CommonTypes.jwtAuthMiddleware)

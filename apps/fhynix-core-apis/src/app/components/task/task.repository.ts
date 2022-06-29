@@ -71,6 +71,20 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result ? result : []
   }
 
+  async getTaskDetailsByTemplateId(
+    eventTemplateId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    const result = await this.client.tasks?.findMany({
+      where: {
+        eventTemplateId: eventTemplateId,
+        userId: userId,
+        isDeleted: false,
+      },
+    })
+    return result ? result : []
+  }
+
   async getMasterTemplates(): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.findMany({
       where: {
@@ -101,6 +115,19 @@ export class TaskRepository implements TaskRepositoryInterface {
   async createTemplate(template: TemplateModel): Promise<TemplateModel[]> {
     const result = await this.client.eventTemplates?.create({
       data: template,
+    })
+    return result
+  }
+
+  async updateUserTemplate(
+    template: TemplateModel,
+    templateId: string,
+  ): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.update({
+      data: template,
+      where: {
+        id: templateId,
+      },
     })
     return result
   }
@@ -167,11 +194,15 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result
   }
 
-  async deleteTasksByTemplateId(templateId: string): Promise<TaskModel[]> {
+  async deleteTasksByTemplateId(
+    templateId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
     const result = await this.client.tasks?.updateMany({
       data: { isDeleted: true },
       where: {
-        recurringTaskId: templateId,
+        userId: userId,
+        eventTemplateId: templateId,
       },
     })
     return result

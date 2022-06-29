@@ -19,7 +19,7 @@ export enum ApiErrorCode {
   'E0018' = 'Date Of Birth is missing',
   'E0019' = 'First Name is missing',
   'E0020' = 'Last Name is missing',
-  'E0021' = 'Atleast 2 habits must be added',
+  'E0021' = 'Atleast 2 activities must be added',
   'E0022' = 'Failed to upload file to s3 bucket',
   'E0023' = 'Lunch and sleep hours cannot overlap.',
   'E0024' = 'The start time of work hours cannot be greater than the end time of work hours',
@@ -27,4 +27,8 @@ export enum ApiErrorCode {
   'E0026' = 'The start time of lunch hours cannot be greater than the end time of lunch hours',
   'E0027' = 'No data found in linkPreview for this URL',
   'E0028' = 'Your account has been deleted. To restore account, please email at support@fhynix.com',
+  'E0101' = 'Failed to send email',
+  'E0102' = 'The start date of the template should be less than the end date',
+  'E0103' = "The start and the end date of the template cannot be less than today's date",
+  'E0104' = 'Unable to edit task. It is already been deleted',
 }

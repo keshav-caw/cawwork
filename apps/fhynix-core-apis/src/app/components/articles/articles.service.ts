@@ -12,6 +12,12 @@ import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
 import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
 import { ArticleBookmarkModel } from '../../common/models/articleBookmark.model'
+import { FamilyMemberService } from '../family-member/family-member.service'
+import { FamilyMemberTypes } from '../family-member/family-member.types'
+import { RelationshipRepository } from '../relationship/relationship.repository'
+import { ActivityRepository } from '../activity/activity.repository'
+import {TaskTypes} from '../task/task.types'
+import {TaskService} from '../task/task.service'
 
 @injectable()
 export class ArticleService implements ArticleServiceInterface {
@@ -20,14 +26,28 @@ export class ArticleService implements ArticleServiceInterface {
     @inject('AuthRepository') private authRepository: AuthRepository,
     @inject(CommonTypes.linkPreview)
     private linkPreviewProvider: LinkPreviewProvider,
+    @inject(FamilyMemberTypes.familyMember)private familyMemberService: FamilyMemberService,
+    @inject('ActivityRepository') private activityRepository: ActivityRepository,
+    @inject('RelationshipRepository') private relationshipRepository: RelationshipRepository,
+    @inject(TaskTypes.task) private taskService: TaskService,
   ) {}
 
   async getArticles(details: ArticlePaginationModel) {
     return await this.articleRepository.getArticles(details)
   }
 
-  async addArticle(url) {
-    const newArticle = await this.linkPreviewProvider.getPreview(url)
+  async getArticlesToSuggest(userId:string){
+    const mostRecent50Articles = await this.articleRepository.getMostRecent50Articles()
+    const articles = [];
+    const articleIdSet = new Set<string>();
+    const taskActivityIdSet = await this.taskService.getTasksInNextFourteenDays(userId);
+    this.getArticlesFromActivityIds(articles,articleIdSet,mostRecent50Articles,taskActivityIdSet);
+
+    return articles
+  }
+
+  async addArticle(url,activityIds) {
+    const newArticle:ArticleModel = await this.linkPreviewProvider.getPreview(url)
 
     if (!newArticle.title || !newArticle.imageUrl) {
       throw new ArgumentValidationError(
@@ -37,15 +57,18 @@ export class ArticleService implements ArticleServiceInterface {
       )
     }
 
+    newArticle.activityIds = activityIds;
+
     const article = await this.articleRepository.addArticle(newArticle)
     return article
   }
 
   async getBookmarks(userId) {
-    const details = await this.articleRepository.getArticlesBookmarkedByUser(
+    const articles = await this.articleRepository.getArticlesBookmarkedByUser(
       userId,
     )
-    return details
+
+    return articles
   }
 
   async addBookmark(userId, articleId) {
@@ -68,5 +91,17 @@ export class ArticleService implements ArticleServiceInterface {
 
     const result = await this.articleRepository.removeBookmark(bookmark)
     return result
+  }
+
+  private async getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,activityIds){
+    for(const article of unfilteredArticles){
+      for(const activityId of activityIds){
+        if(article.activityIds?.includes(activityId) && !articleIdSet.has(article.id)){
+          articles.push(article);
+          articleIdSet.add(article.id);
+          break;
+        }
+      }
+    }
   }
 }

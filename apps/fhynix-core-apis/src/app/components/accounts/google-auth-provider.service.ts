@@ -15,4 +15,8 @@ export class GoogleAuthProvider {
   makeGooglePeopleApi() {
     return google.people('v1')
   }
+
+  makeGoogleGmailApi() {
+    return google.gmail('v1')
+  }
 }

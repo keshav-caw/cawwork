@@ -6,11 +6,14 @@ export class TaskModel {
   updatedBy: string
   isDeleted: boolean
   familyMemberId: string
+  relationshipId: string
   userId: string
   eventTemplateId: string
   title: string
   startAtUtc: string
   endAtUtc: string
+  recurringStartAtUtc: string
+  recurringEndAtUtc: string
   notifyAtUtc: string
   notes: string
   repeatMode: RepeatModeModal
@@ -20,6 +23,7 @@ export class TaskModel {
   status: string
   recurringTaskId: string
   checklist: ChecklistModel[]
+  activityId: string
 }
 
 export class RepeatModeModal {

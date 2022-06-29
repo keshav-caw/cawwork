@@ -5,12 +5,15 @@ model Tasks {
   updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
   updatedBy String? @map("updated_by")
   isDeleted Boolean @default(false) @map("is_deleted")
-  familyMemberId String @map("family_member_id")
+  familyMemberId String? @map("family_member_id")
+  relationshipId String @map("relationship_id")
   userId String @unique @map("user_id")
   eventTemplateId String? @map("event_template_id")
   title String
   startAtUtc DateTime @unique @map("start_at_utc")
   endAtUtc DateTime @map("end_at_utc")
+  recurringStartAtUtc DateTime? @map("recurring_start_at_utc")
+  recurringEndAtUtc DateTime? @map("recurring_end_at_utc")
   notifyAtUtc DateTime @map("notify_at_utc")
   notes String?
   repeatMode Json[] @map("repeat_mode")
@@ -32,10 +35,13 @@ model EventTemplates {
   isDeleted Boolean @default(false) @map("is_deleted")
   parentTemplateId String? @map("parent_template_id")
   templateName String @map("template_name")
+  familyMemberId String? @map("family_member_id")
   forRelationship String[] @map("for_relationship")
   userId String? @map("user_id")
   startAtUtc DateTime? @map("start_at_utc")
   endAtUtc DateTime? @map("end_at_utc")
+  tasks Json[]
   status String?
-  isMaster Boolean @unique @map("is_master")
+  isMaster Boolean? @unique @map("is_master")
+  otherInfo Json[] @map("other_info")
 }

@@ -7,8 +7,8 @@ import { ArgumentValidationError } from '../../common/errors/custom-errors/argum
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
-import { HabitsService } from '../habits/habits.service'
-import { HabitsTypes } from '../habits/habits.types'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { RelationshipService } from '../relationship/relationship.service'
@@ -22,8 +22,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private familyMemberRepository: FamilyMemberRepository,
     @inject('RelationshipRepository')
     private relationshipRepository: RelationshipRepository,
-    @inject(HabitsTypes.habits)
-    private habitsService: HabitsService,
+    @inject(ActivityTypes.activity)
+    private activityService: ActivityService,
     @inject(RelationshipTypes.relationship)
     private relationshipService: RelationshipService,
     @inject(CommonTypes.requestContext)
@@ -39,10 +39,11 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       )
 
     if (userDetails?.length > 0) {
-      const habitsForFamily = await this.habitsService.getHabitsById(
-        userDetails?.[0]?.id,
-      )
-      userDetails[0]['habits'] = habitsForFamily
+      const activitiesForFamily =
+        await this.activityService.getActivityByFamilyMemberId(
+          userDetails?.[0]?.id,
+        )
+      userDetails[0]['activities'] = activitiesForFamily
     } else {
       throw new ArgumentValidationError(
         "Family member doesn't exist",
@@ -59,12 +60,15 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
     const calls = []
     familyMembers?.forEach((familyMember) => {
-      calls.push(this.habitsService.getHabitsById(familyMember.id))
+      calls.push(
+        this.activityService.getActivityByFamilyMemberId(familyMember.id),
+      )
     })
-    const habitsForFamily = await Promise.all(calls)
+    const activitiesForFamily = await Promise.all(calls)
+
     familyMembers.map((familyMember, index) => {
-      familyMember['habits'] = habitsForFamily?.find(
-        (habit, ind) => index === ind,
+      familyMember['activities'] = activitiesForFamily?.find(
+        (activity, ind) => index === ind,
       )
     })
     return familyMembers
@@ -179,42 +183,6 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
           'Work and sleep hours cannot overlap',
           familyMember,
           ApiErrorCode.E0012,
-        )
-      } else if (
-        workHoursStartTime > workHoursEndTime &&
-        ((workHoursTime.startTime?.indexOf('AM') > -1 &&
-          workHoursTime.endTime?.indexOf('AM') > -1) ||
-          (workHoursTime.startTime?.indexOf('PM') > -1 &&
-            workHoursTime.endTime?.indexOf('PM') > -1))
-      ) {
-        throw new ArgumentValidationError(
-          'The start time of work hours cannot be greater than the end time of work hours',
-          familyMember,
-          ApiErrorCode.E0024,
-        )
-      } else if (
-        lunchHoursStartTime > lunchHoursEndTime &&
-        ((lunchHours.startTime?.indexOf('AM') > -1 &&
-          lunchHours.endTime?.indexOf('AM') > -1) ||
-          (lunchHours.startTime?.indexOf('PM') > -1 &&
-            lunchHours.endTime?.indexOf('PM') > -1))
-      ) {
-        throw new ArgumentValidationError(
-          'The start time of lunch hours cannot be greater than the end time of lunch hours',
-          familyMember,
-          ApiErrorCode.E0026,
-        )
-      } else if (
-        sleepStartTime > sleepEndTime &&
-        ((sleepTime.startTime?.indexOf('AM') > -1 &&
-          sleepTime.endTime?.indexOf('AM') > -1) ||
-          (sleepTime.startTime?.indexOf('PM') > -1 &&
-            sleepTime.endTime?.indexOf('PM') > -1))
-      ) {
-        throw new ArgumentValidationError(
-          'The start time of sleep hours cannot be greater than the end time of sleep hours',
-          familyMember,
-          ApiErrorCode.E0025,
         )
       } else if (
         sleepStartTime > sleepEndTime &&
