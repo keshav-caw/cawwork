@@ -1,4 +1,5 @@
+import { nextFourteenDaysModel } from "../models/nextFourteenDays.model";
 
 export interface TimespanHelperInterface {
-    nextFourteenDays()
+    get nextFourteenDays():nextFourteenDaysModel
 }

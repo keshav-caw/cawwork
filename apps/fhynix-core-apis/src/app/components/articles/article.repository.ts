@@ -31,7 +31,7 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     return result ? result : []
   }
 
-  async getAllArticles():Promise<ArticleModel[]>{
+  async getMostRecent50Articles():Promise<ArticleModel[]>{
     const result = await this.client.articles?.findMany({
       take:50,
       where:{

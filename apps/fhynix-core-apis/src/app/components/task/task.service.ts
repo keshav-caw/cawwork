@@ -35,7 +35,7 @@ export class TaskService implements TaskServiceInterface {
 
   async getTasksInNextFourteenDays(userId){
     const taskActivityIdSet = new Set<string>();
-    const interval = this.timespanHelper.nextFourteenDays();
+    const interval = this.timespanHelper.nextFourteenDays;
     const tasks = await this.getTasksByStartAndEndDate(userId,interval.startDateInUtc,interval.endDateInUtc);
     for(const task of tasks){
       if(task.activityId){

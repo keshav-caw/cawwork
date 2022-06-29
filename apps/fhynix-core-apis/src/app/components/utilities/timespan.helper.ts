@@ -5,7 +5,7 @@ import { TimespanHelperInterface } from '../../common/interfaces/timespan-helper
 @injectable()
 export class TimespanHelper implements TimespanHelperInterface {
 
-  nextFourteenDays(){
+  get nextFourteenDays(){
     const startDate = new Date();
     const startDateInUtc = startDate.toISOString();
     const endDate = new Date(startDate.setDate(startDate.getDate() + 14));

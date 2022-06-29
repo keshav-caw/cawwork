@@ -37,11 +37,11 @@ export class ArticleService implements ArticleServiceInterface {
   }
 
   async getArticlesToSuggest(userId:string){
-    const unfilteredArticles = await this.articleRepository.getAllArticles()
+    const mostRecent50Articles = await this.articleRepository.getMostRecent50Articles()
     const articles = [];
     const articleIdSet = new Set<string>();
     const taskActivityIdSet = await this.taskService.getTasksInNextFourteenDays(userId);
-    this.getArticlesFromActivityIds(articles,articleIdSet,unfilteredArticles,taskActivityIdSet);
+    this.getArticlesFromActivityIds(articles,articleIdSet,mostRecent50Articles,taskActivityIdSet);
 
     return articles
   }
