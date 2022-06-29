@@ -1,4 +1,4 @@
-export class nextFourteenDaysModel{
+export class timespanModel{
     startDateInUtc:string
     endDateInUtc:string
 }
