@@ -376,7 +376,7 @@ export class TaskService implements TaskServiceInterface {
         })
         for (let i = 0; i <= days; i = i + 1) {
           const day = dayjs(task.startAtUtc).add(i, 'day').get('day')
-          if (weekDays.findIndex((weekDay) => weekDay === day) > 0) {
+          if (weekDays.findIndex((weekDay) => weekDay === day) > -1) {
             const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
             const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
             const notify = dayjs(task.notifyAtUtc).add(i, 'day').toISOString()
