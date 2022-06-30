@@ -34,6 +34,21 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     return result
   }
 
+  async getActivityByRelationshipAndName(
+    relationship: string,
+    name: string,
+  ): Promise<ActivitiesMasterModel[]> {
+    const result = await this.client.activitiesMaster?.findMany({
+      where: {
+        appliesForRelation: { hasSome: [relationship] },
+        name: name,
+        canBeHabit: true,
+        isDeleted: false,
+      },
+    })
+    return result
+  }
+
   async getActivityByFamilyMemberId(
     familyMemberId: string,
   ): Promise<ActivitiesMasterModel[]> {

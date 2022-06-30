@@ -9,6 +9,7 @@ import { ActivityRepository } from './activity.repository'
 
 @injectable()
 export class ActivityService implements ActivityServiceInterface {
+  taskService
   constructor(
     @inject('ActivityRepository')
     private activityRepository: ActivityRepository,
@@ -24,6 +25,16 @@ export class ActivityService implements ActivityServiceInterface {
     return await this.activityRepository.getAllActivities()
   }
 
+  async getActivityByRelationshipAndName(
+    relationship: string,
+    name: string,
+  ): Promise<ActivitiesMasterModel[]> {
+    return await this.activityRepository.getActivityByRelationshipAndName(
+      relationship,
+      name,
+    )
+  }
+
   async getActivityByFamilyMemberId(
     relationship: string,
   ): Promise<ActivitiesMasterModel[]> {
@@ -34,6 +45,7 @@ export class ActivityService implements ActivityServiceInterface {
 
   async createActivitiesForRelationship(
     relationshipActivities: FamilyMemberActivityModel[],
+    userId: string,
   ): Promise<FamilyMemberActivityModel[]> {
     if (relationshipActivities?.length < 2) {
       throw new ArgumentValidationError(
@@ -57,7 +69,7 @@ export class ActivityService implements ActivityServiceInterface {
     await Promise.all(familyMemberCalls)
     const calls = []
     relationshipActivities.forEach((relationshipActivity) => {
-      calls.push(this.createRelationshipActivity(relationshipActivity))
+      calls.push(this.createRelationshipActivity(relationshipActivity, userId))
     })
 
     const response = await Promise.all(calls)
@@ -67,6 +79,7 @@ export class ActivityService implements ActivityServiceInterface {
 
   async createRelationshipActivity(
     relationshipActivity: FamilyMemberActivityModel,
+    userId: string,
   ) {
     let createdCustomActivity
     if (!relationshipActivity.activityId) {
@@ -81,10 +94,18 @@ export class ActivityService implements ActivityServiceInterface {
       )
       relationshipActivity.activityId = createdCustomActivity?.id
     }
+    const selectedRelationshipActivity = JSON.parse(
+      JSON.stringify(relationshipActivity),
+    )
     delete relationshipActivity['name']
     delete relationshipActivity['appliesForRelation']
-    return await this.activityRepository.createRelationshipActivity(
-      relationshipActivity,
-    )
+    const relationshipActivityCreated =
+      await this.activityRepository.createRelationshipActivity(
+        relationshipActivity,
+      )
+    relationshipActivityCreated['name'] = selectedRelationshipActivity['name']
+    relationshipActivityCreated['appliesForRelation'] =
+      selectedRelationshipActivity['appliesForRelation']
+    return relationshipActivityCreated
   }
 }

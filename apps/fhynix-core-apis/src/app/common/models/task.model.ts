@@ -1,28 +1,29 @@
 export class TaskModel {
-  id: string
-  createdAtUtc: Date
-  createdBy: string
-  updatedAtUtc: Date
-  updatedBy: string
-  isDeleted: boolean
+  id?: string
+  createdAtUtc?: Date
+  createdBy?: string
+  updatedAtUtc?: Date
+  updatedBy?: string
+  isDeleted?: boolean
   familyMemberId: string
   relationshipId: string
   userId: string
-  eventTemplateId: string
+  eventTemplateId?: string
   title: string
   startAtUtc: string
   endAtUtc: string
   recurringStartAtUtc: string
-  recurringEndAtUtc: string
+  recurringEndAtUtc?: string
   notifyAtUtc: string
-  notes: string
-  repeatMode: RepeatModeModal
-  invites: string[]
-  latitude: number
-  longitude: number
+  notes?: string
+  repeatMode?: RepeatModeModal
+  invites?: string[]
+  latitude?: number
+  longitude?: number
   status: string
-  recurringTaskId: string
-  checklist: ChecklistModel[]
+  recurringTaskId?: string
+  checklist?: ChecklistModel[]
+  actvityId?: string
 }
 
 export class RepeatModeModal {

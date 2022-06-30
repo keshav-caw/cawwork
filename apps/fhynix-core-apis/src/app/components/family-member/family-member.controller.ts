@@ -20,6 +20,8 @@ import { ActivityTypes } from '../activity/activity.types'
 import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
 import { fileStorage } from '../../middlewares/multer.middleware'
 import { Images } from '../../common/constants/folder-names.constants'
+import { TaskTypes } from '../task/task.types'
+import { TaskService } from '../task/task.service'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -32,6 +34,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private activityService: ActivityService,
     @inject(CommonTypes.storage)
     private storageProvider: StorageProvider,
+    @inject(TaskTypes.task)
+    private taskService: TaskService,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -54,6 +58,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
+    const userId = this.requestContext.getUserId()
     let profileImage
     if (req.file) {
       profileImage = await this.storageProvider.uploadFile(req.file, Images)
@@ -69,7 +74,10 @@ export class FamilyMemberController implements interfaces.Controller {
       (activity) => (activity.familyMemberId = familyMember[0].id),
     )
     if (activities?.length > 0) {
-      await this.activityService.createActivitiesForRelationship(activities)
+      await this.activityService.createActivitiesForRelationship(
+        activities,
+        userId,
+      )
     }
     let familyDetails
     if (profileImage) {
