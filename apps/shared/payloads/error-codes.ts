@@ -31,4 +31,8 @@ export enum ApiErrorCode {
   'E0102' = 'The start date of the template should be less than the end date',
   'E0103' = "The start and the end date of the template cannot be less than today's date",
   'E0104' = 'Unable to edit task. It is already been deleted',
+  'E0105' = "The start date cannot be less than today's date",
+  'E0106' = "The end date cannot be less than today's date",
+  'E0107' = "The start date of the template cannot be less than today's date",
+  'E0108' = "The end date of the template cannot be less than today's date",
 }
