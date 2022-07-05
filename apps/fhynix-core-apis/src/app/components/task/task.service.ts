@@ -33,13 +33,17 @@ export class TaskService implements TaskServiceInterface {
     @inject(UtilityTypes.timespanHelper) private timespanHelper: TimespanHelper,
   ) {}
 
-  async getTasksInNextFourteenDays(userId){
-    const taskActivityIdSet = new Set<string>();
-    const interval = this.timespanHelper.nextFourteenDays;
-    const tasks = await this.getTasksByStartAndEndDate(userId,interval.startDateInUtc,interval.endDateInUtc);
-    for(const task of tasks){
-      if(task.activityId){
-        taskActivityIdSet.add(task.activityId);
+  async getTasksInNextFourteenDays(userId) {
+    const taskActivityIdSet = new Set<string>()
+    const interval = this.timespanHelper.nextFourteenDays
+    const tasks = await this.getTasksByStartAndEndDate(
+      userId,
+      interval.startDateInUtc,
+      interval.endDateInUtc,
+    )
+    for (const task of tasks) {
+      if (task.activityId) {
+        taskActivityIdSet.add(task.activityId)
       }
     }
     return taskActivityIdSet
@@ -358,7 +362,6 @@ export class TaskService implements TaskServiceInterface {
           tasksToBeCreated.push(taskToBeAdded)
         }
       } else if (
-        task.repeatMode?.repeatDuration === RepeatDurationEnum.WEEKLY ||
         task.repeatMode?.repeatDuration === RepeatDurationEnum.BI_WEEKLY
       ) {
         const days = dayjs(recurringEndDate).diff(
