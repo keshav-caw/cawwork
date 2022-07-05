@@ -373,15 +373,13 @@ export class TaskService implements TaskServiceInterface {
           tasksToBeCreated.push(taskToBeAdded)
         }
       } else if (
-        task.repeatMode?.repeatDuration === RepeatDurationEnum.WEEKLY ||
         task.repeatMode?.repeatDuration === RepeatDurationEnum.BI_WEEKLY
       ) {
         const days = dayjs(recurringEndDate).diff(
           dayjs(task.startAtUtc),
           'days',
         )
-        const limit =
-          task.repeatMode.repeatDuration === RepeatDurationEnum.WEEKLY ? 7 : 14
+        const limit = 14
         for (let i = 0; i <= days; i = i + limit) {
           const start = dayjs(task.startAtUtc).add(i, 'day').toISOString()
           const end = dayjs(task.endAtUtc).add(i, 'day').toISOString()
