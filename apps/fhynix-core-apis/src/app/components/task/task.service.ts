@@ -314,6 +314,20 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.deleteTasksByTemplateId(templateId, userId)
   }
 
+  async deleteTemplateByFamilyMemberId(
+    familyMemberId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    await this.taskRepository.deleteTemplateByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+    return await this.taskRepository.deleteTasksByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+  }
+
   createTasksInfo(tasks) {
     let tasksToBeCreated = []
     let recurringEndDate = null

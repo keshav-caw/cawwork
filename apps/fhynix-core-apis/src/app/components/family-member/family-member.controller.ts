@@ -105,6 +105,9 @@ export class FamilyMemberController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    res.send(await this.familyMemberService.deleteFamilyMember(familyMemberId))
+    const userId = this.requestContext.getUserId()
+    res.send(
+      await this.familyMemberService.deleteFamilyMember(familyMemberId, userId),
+    )
   }
 }

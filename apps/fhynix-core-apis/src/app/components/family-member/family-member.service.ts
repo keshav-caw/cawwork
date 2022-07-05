@@ -2,18 +2,16 @@ import { RelationshipsMaster } from '@prisma/client'
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes'
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { CommonTypes } from '../../common/common.types'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { FamilyMemberServiceInterface } from '../../common/interfaces/family-member-service.interface'
-import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import { FamilyMemberModel } from '../../common/models/family-members-model'
 import { ActivityService } from '../activity/activity.service'
 import { ActivityTypes } from '../activity/activity.types'
-import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
-import { RelationshipService } from '../relationship/relationship.service'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
+import { TaskService } from '../task/task.service'
+import { TaskTypes } from '../task/task.types'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -24,10 +22,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private relationshipRepository: RelationshipRepository,
     @inject(ActivityTypes.activity)
     private activityService: ActivityService,
-    @inject(RelationshipTypes.relationship)
-    private relationshipService: RelationshipService,
-    @inject(CommonTypes.requestContext)
-    private requestContext: RequestContext,
+    @inject(TaskTypes.task)
+    private taskService: TaskService,
   ) {}
 
   async getFamilyMembersByRelationshipId(
@@ -116,8 +112,17 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
   }
 
-  async deleteFamilyMember(familyMemberId: string) {
-    return await this.familyMemberRepository.deleteFamilyMember(familyMemberId)
+  async deleteFamilyMember(
+    familyMemberId: string,
+    userId: string,
+  ): Promise<FamilyMemberModel> {
+    const familyMemberDetails =
+      await this.familyMemberRepository.deleteFamilyMember(familyMemberId)
+    await this.taskService.deleteTemplateByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+    return familyMemberDetails
   }
 
   async getRelationshipsMaster(

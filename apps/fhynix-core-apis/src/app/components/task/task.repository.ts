@@ -169,6 +169,20 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result
   }
 
+  async deleteTasksByFamilyMemberId(
+    familymemberid: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    const result = await this.client.tasks?.updateMany({
+      data: { isDeleted: true },
+      where: {
+        userId: userId,
+        activityId: familymemberid,
+      },
+    })
+    return result
+  }
+
   async deleteTaskByRecurringTaskId(
     recurringTaskId: string,
     currentDate: string,
@@ -190,6 +204,20 @@ export class TaskRepository implements TaskRepositoryInterface {
       data: { isDeleted: true },
       where: {
         id: templateId,
+      },
+    })
+    return result
+  }
+
+  async deleteTemplateByFamilyMemberId(
+    familyMemberId: string,
+    userId: string,
+  ): Promise<TemplateModel[]> {
+    const result = await this.client.eventTemplates?.updateMany({
+      data: { isDeleted: true },
+      where: {
+        familyMemberId: familyMemberId,
+        userId: userId,
       },
     })
     return result
