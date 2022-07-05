@@ -23,6 +23,7 @@ export class TaskModel {
   status: string
   recurringTaskId: string
   checklist: ChecklistModel[]
+  activityId: string
 }
 
 export class RepeatModeModal {

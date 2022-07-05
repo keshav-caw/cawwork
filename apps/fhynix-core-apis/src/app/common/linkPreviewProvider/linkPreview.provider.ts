@@ -5,7 +5,7 @@ import axios from 'axios';
 import { LinkPreviewProviderInterface } from './linkPreview-provider.interface';
 import { ThirdPartyAPIError } from '../errors/custom-errors/third-party.error';
 import { ApiErrorCode } from 'apps/shared/payloads/error-codes';
-import { ArticleModel } from '../models/article.model';
+import { LinkPreviewModel } from '../models/linkPreview.model';
 
 @injectable()
 export class LinkPreviewProvider implements LinkPreviewProviderInterface {
@@ -14,22 +14,22 @@ export class LinkPreviewProvider implements LinkPreviewProviderInterface {
     async getPreview(url: string) {
 
         const fetchUrl = `${this.linkPreviewUrl}&q=${url}`;
-        let articleData;
+        let responseData;
         try {
             const response = await axios.get(fetchUrl);
-            articleData = response.data;
+            responseData = response.data;
         } catch (error) {
             throw new ThirdPartyAPIError(ApiErrorCode.E0003);
         }
 
-        const article:ArticleModel = {
-            title:articleData.title,
-            url:articleData.url,
-            imageUrl:articleData.image,
-            description:articleData.description
+        const response:LinkPreviewModel = {
+            title:responseData.title,
+            url:responseData.url,
+            imageUrl:responseData.image,
+            description:responseData.description
         }
 
-        return article;
+        return response;
     }
     
 }

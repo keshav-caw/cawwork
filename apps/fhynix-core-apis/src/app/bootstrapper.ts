@@ -10,6 +10,7 @@ import ActivityBootstrapper from './components/activity/activity.bootstrapper'
 import ArticleBootstrapper from './components/articles/article.bootstrapper'
 import UtilityBootstrapper from './components/utilities/utility.bootstrapper'
 import TaskBootstrapper from './components/task/task.bootstrapper'
+import ProductBootstrapper from './components/products/product.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
@@ -17,6 +18,7 @@ export default class Bootstrapper {
     UserBootstrapper.initialize()
     AccountBootstrapper.initialize()
     ArticleBootstrapper.initialize()
+    ProductBootstrapper.initialize()
     UtilityBootstrapper.initialize()
     ActivityBootstrapper.initialize()
     FamilyMemberBootstrapper.initialize()
