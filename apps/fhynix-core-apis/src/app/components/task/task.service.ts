@@ -20,6 +20,7 @@ import { UtilityTypes } from '../utilities/utility.types'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
 import { defaultTimingsOfParentHabits } from '../../common/constants/parent-habits-schedule.constant'
 import { defaultTimingsOfChildHabits } from '../../common/constants/child-habits-schedule'
+import { TimespanHelper } from '../utilities/timespan.helper'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -32,7 +33,24 @@ export class TaskService implements TaskServiceInterface {
     private familyMemberService: FamilyMemberService,
     @inject(UserTypes.user) private userService: UserService,
     @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
+    @inject(UtilityTypes.timespanHelper) private timespanHelper: TimespanHelper,
   ) {}
+
+  async getTasksInNextFourteenDays(userId) {
+    const taskActivityIdSet = new Set<string>()
+    const interval = this.timespanHelper.nextFourteenDays
+    const tasks = await this.getTasksByStartAndEndDate(
+      userId,
+      interval.startDateInUtc,
+      interval.endDateInUtc,
+    )
+    for (const task of tasks) {
+      if (task.activityId) {
+        taskActivityIdSet.add(task.activityId)
+      }
+    }
+    return taskActivityIdSet
+  }
 
   async getTasksByStartAndEndDate(
     userId: string,
@@ -171,14 +189,23 @@ export class TaskService implements TaskServiceInterface {
       if (isDateUpdated) {
         if (
           taskInfo[0].startAtUtc &&
-          taskInfo[0].endAtUtc &&
           dayjs(taskInfo[0].startAtUtc).diff(dayjs(), 'minutes') > 0 &&
           dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
         ) {
           throw new ArgumentValidationError(
-            "The start and the end date cannot be less than today's date",
+            "The start date cannot be less than today's date",
             taskDetails,
-            ApiErrorCode.E0016,
+            ApiErrorCode.E0105,
+          )
+        } else if (
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].endAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.endAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0106,
           )
         }
 
@@ -234,9 +261,19 @@ export class TaskService implements TaskServiceInterface {
           dayjs(taskDetails.startAtUtc).diff(dayjs(), 'minutes') < 0
         ) {
           throw new ArgumentValidationError(
-            "The start and the end date cannot be less than today's date",
+            "The start date cannot be less than today's date",
             taskDetails,
-            ApiErrorCode.E0016,
+            ApiErrorCode.E0105,
+          )
+        } else if (
+          taskInfo[0].endAtUtc &&
+          dayjs(taskInfo[0].endAtUtc).diff(dayjs(), 'minutes') > 0 &&
+          dayjs(taskDetails.endAtUtc).diff(dayjs(), 'minutes') < 0
+        ) {
+          throw new ArgumentValidationError(
+            "The end date cannot be less than today's date",
+            taskDetails,
+            ApiErrorCode.E0106,
           )
         }
 
@@ -538,6 +575,28 @@ export class TaskService implements TaskServiceInterface {
         template,
         ApiErrorCode.E0103,
       )
+    } else if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      dayjs(template.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+      !isUpdateTemplate
+    ) {
+      throw new ArgumentValidationError(
+        "The start date of the template cannot be less than today's date",
+        template,
+        ApiErrorCode.E0107,
+      )
+    } else if (
+      template.startAtUtc &&
+      template.endAtUtc &&
+      dayjs(template.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+      !isUpdateTemplate
+    ) {
+      throw new ArgumentValidationError(
+        "The end date of the template cannot be less than today's date",
+        template,
+        ApiErrorCode.E0108,
+      )
     }
   }
 
@@ -556,17 +615,36 @@ export class TaskService implements TaskServiceInterface {
       } else if (
         task.startAtUtc &&
         task.endAtUtc &&
-        ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
-          dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
-          isUpdateTasks) ||
-          ((dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 ||
-            dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0) &&
-            !isUpdateTasks))
+        dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        isUpdateTasks
       ) {
         throw new ArgumentValidationError(
           "The start and the end date cannot be less than today's date",
           task,
           ApiErrorCode.E0016,
+        )
+      } else if (
+        task.startAtUtc &&
+        task.endAtUtc &&
+        dayjs(task.startAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        !isUpdateTasks
+      ) {
+        throw new ArgumentValidationError(
+          "The start date cannot be less than today's date",
+          task,
+          ApiErrorCode.E0105,
+        )
+      } else if (
+        task.startAtUtc &&
+        task.endAtUtc &&
+        dayjs(task.endAtUtc).diff(dayjs(), 'minutes') < 0 &&
+        !isUpdateTasks
+      ) {
+        throw new ArgumentValidationError(
+          "The end date cannot be less than today's date",
+          task,
+          ApiErrorCode.E0106,
         )
       } else if (
         task.notifyAtUtc &&

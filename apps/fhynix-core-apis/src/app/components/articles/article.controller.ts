@@ -52,6 +52,28 @@ export class ArticleController implements interfaces.Controller {
     res.send(details)
   }
 
+  @httpGet('/suggest', CommonTypes.jwtAuthMiddleware)
+  private async getArticlesToSuggest(
+    @request() req: express.Request,
+    @response() res: express.Response,
+    @next() next: express.NextFunction,
+  ) {
+    const userId = this.requestContext.getUserId();
+
+    const articles = await this.articleService.getArticlesToSuggest(userId);
+    const details = [];
+    for (const article of articles) {
+      const newArticle = new ArticleResponsePayload(
+        article.id,
+        article.title,
+        article.imageUrl,
+        article.url,
+      )
+      details.push(newArticle)
+    }
+    res.send(details)
+  }
+
   @httpPost(
     '/push',
     CommonTypes.jwtAuthMiddleware,
@@ -62,8 +84,8 @@ export class ArticleController implements interfaces.Controller {
     @response() res: express.Response,
     @next() next: express.NextFunction,
   ) {
-    const { url } = req.body
-    const articleData = await this.articleService.addArticle(url)
+    const { url,activityIds } = req.body
+    const articleData = await this.articleService.addArticle(url,activityIds)
     res.send(articleData)
   }
 

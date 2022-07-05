@@ -21,9 +21,9 @@ export class TaskModel {
   latitude?: number
   longitude?: number
   status: string
-  recurringTaskId?: string
-  checklist?: ChecklistModel[]
-  actvityId?: string
+  recurringTaskId: string
+  checklist: ChecklistModel[]
+  activityId: string
 }
 
 export class RepeatModeModal {

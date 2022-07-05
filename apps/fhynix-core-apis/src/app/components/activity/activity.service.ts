@@ -47,6 +47,9 @@ export class ActivityService implements ActivityServiceInterface {
     relationshipActivities: FamilyMemberActivityModel[],
     userId: string,
   ): Promise<FamilyMemberActivityModel[]> {
+    relationshipActivities = relationshipActivities.filter(
+      (activity) => activity?.name?.trim().length !== 0,
+    )
     if (relationshipActivities?.length < 2) {
       throw new ArgumentValidationError(
         'Atleast 2 activities must be added',
@@ -54,6 +57,7 @@ export class ActivityService implements ActivityServiceInterface {
         ApiErrorCode.E0021,
       )
     }
+
     let familyMemberIds = relationshipActivities.map(
       (relationshipActivity) => relationshipActivity.familyMemberId,
     )
