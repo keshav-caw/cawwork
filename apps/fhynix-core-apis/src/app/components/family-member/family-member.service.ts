@@ -62,6 +62,9 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
       familyMember['activities'] = activitiesForFamily?.find(
         (activity, ind) => index === ind,
       )
+      familyMember['activities'] = familyMember['activities']
+        ? familyMember['activities']
+        : []
     })
     return familyMembers
   }

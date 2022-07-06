@@ -73,7 +73,11 @@ export class FamilyMemberController implements interfaces.Controller {
       (activity) => (activity.familyMemberId = familyMember[0].id),
     )
     if (activities?.length > 0) {
-      await this.activityService.createActivitiesForRelationship(activities)
+      const selectedActivities =
+        await this.activityService.createActivitiesForRelationship(activities)
+      familyMember[0]['activities'] = selectedActivities
+    } else {
+      familyMember[0]['activities'] = []
     }
     let familyDetails
     if (profileImage) {
@@ -81,6 +85,10 @@ export class FamilyMemberController implements interfaces.Controller {
         profileImage,
         familyMember[0].id,
       )
+
+      familyDetails[0]['activities'] = familyDetails[0]['activities']
+        ? familyDetails[0]['activities']
+        : []
     }
     res.send(familyDetails ? familyDetails : familyMember)
   }
@@ -100,6 +108,9 @@ export class FamilyMemberController implements interfaces.Controller {
       profileImage,
       familyMemberId,
     )
+    const selectedActivities =
+      await this.activityService.getActivityByFamilyMemberId(familyMemberId)
+    uploadedResponse['activities'] = selectedActivities
     res.send(uploadedResponse)
   }
 
