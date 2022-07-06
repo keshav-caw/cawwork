@@ -24,6 +24,7 @@ model Tasks {
   recurringTaskId String? @unique @map("recurring_task_id")
   checklist Json[]
   type String?
+  activityId String? @map("activity_id")
 }
 
 model EventTemplates {
