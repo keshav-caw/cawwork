@@ -10,8 +10,6 @@ import { ActivityTypes } from '../activity/activity.types'
 import { RelationshipRepository } from '../relationship/relationship.repository'
 import { FamilyMemberRepository } from './family-members.repository'
 import dayjs from 'dayjs'
-import { TaskService } from '../task/task.service'
-import { TaskTypes } from '../task/task.types'
 
 @injectable()
 export class FamilyMemberService implements FamilyMemberServiceInterface {
@@ -22,8 +20,6 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     private relationshipRepository: RelationshipRepository,
     @inject(ActivityTypes.activity)
     private activityService: ActivityService,
-    @inject(TaskTypes.task)
-    private taskService: TaskService,
   ) {}
 
   async getFamilyMembersByRelationshipId(
@@ -112,17 +108,8 @@ export class FamilyMemberService implements FamilyMemberServiceInterface {
     )
   }
 
-  async deleteFamilyMember(
-    familyMemberId: string,
-    userId: string,
-  ): Promise<FamilyMemberModel> {
-    const familyMemberDetails =
-      await this.familyMemberRepository.deleteFamilyMember(familyMemberId)
-    await this.taskService.deleteTemplateByFamilyMemberId(
-      familyMemberId,
-      userId,
-    )
-    return familyMemberDetails
+  async deleteFamilyMember(familyMemberId: string): Promise<FamilyMemberModel> {
+    return await this.familyMemberRepository.deleteFamilyMember(familyMemberId)
   }
 
   async getRelationshipsMaster(

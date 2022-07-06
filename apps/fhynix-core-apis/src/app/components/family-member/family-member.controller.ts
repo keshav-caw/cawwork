@@ -20,6 +20,8 @@ import { ActivityTypes } from '../activity/activity.types'
 import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
 import { fileStorage } from '../../middlewares/multer.middleware'
 import { Images } from '../../common/constants/folder-names.constants'
+import { TaskService } from '../task/task.service'
+import { TaskTypes } from '../task/task.types'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -32,6 +34,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private activityService: ActivityService,
     @inject(CommonTypes.storage)
     private storageProvider: StorageProvider,
+    @inject(TaskTypes.task)
+    private taskService: TaskService,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -106,8 +110,13 @@ export class FamilyMemberController implements interfaces.Controller {
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
     const userId = this.requestContext.getUserId()
-    res.send(
-      await this.familyMemberService.deleteFamilyMember(familyMemberId, userId),
+    const familyDetails = await this.familyMemberService.deleteFamilyMember(
+      familyMemberId,
     )
+    await this.taskService.deleteTemplateByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+    res.send(familyDetails)
   }
 }
