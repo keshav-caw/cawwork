@@ -11,6 +11,7 @@ import ArticleBootstrapper from './components/articles/article.bootstrapper'
 import UtilityBootstrapper from './components/utilities/utility.bootstrapper'
 import TaskBootstrapper from './components/task/task.bootstrapper'
 import ProductBootstrapper from './components/products/product.bootstrapper'
+import InsightpBootstrapper from './components/insights/insight.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
@@ -24,6 +25,7 @@ export default class Bootstrapper {
     FamilyMemberBootstrapper.initialize()
     RelationshipBootstrapper.initialize()
     TaskBootstrapper.initialize()
+    InsightpBootstrapper.initialize()
     MiddlewaresBootstrapper.initialize()
     DataStore.initialize()
     HealthCheckBootstrapper.initialize()
