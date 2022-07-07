@@ -26,4 +26,9 @@ export class InsightController implements interfaces.Controller {
     const userId = this.requestContext.getUserId()
     res.send(await this.insightService.getInsights(userId))
   }
+
+  @httpGet('/my-cohort', CommonTypes.jwtAuthMiddleware)
+  private async getInsightCohortsOfUser(@response() res: express.Response) {
+    res.send(await this.insightService.getInsightsOfOthers())
+  }
 }

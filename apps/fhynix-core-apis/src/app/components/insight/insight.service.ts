@@ -9,6 +9,7 @@ import { UserTypes } from '../users/user.types'
 import { RelationshipTypes } from '../relationship/realtionship.types'
 import { RelationshipService } from '../relationship/relationship.service'
 import { InsightModel } from '../../common/models/insight.model'
+import { InsightRepository } from './insight.repository'
 
 @injectable()
 export class InsightService implements InsightServiceInterface {
@@ -21,6 +22,8 @@ export class InsightService implements InsightServiceInterface {
     private userService: UserService,
     @inject(RelationshipTypes.relationship)
     private relationshipService: RelationshipService,
+    @inject('InsightRepository')
+    private insightRepository: InsightRepository,
   ) {}
 
   async getInsights(userId: string): Promise<InsightModel[]> {
@@ -44,14 +47,13 @@ export class InsightService implements InsightServiceInterface {
     const sleepHours = timingsOfUser?.sleepHours
 
     const calculationOfInsights = {
-      workHours: 0,
-      sleepHours: 0,
+      work: 0,
+      sleep: 0,
       self: 0,
       kid: 0,
       partner: 0,
       family: 0,
       home: 0,
-      work: 0,
       others: 0,
     }
     if (workHours) {
@@ -64,15 +66,14 @@ export class InsightService implements InsightServiceInterface {
         workHours.startTime.indexOf('PM') > -1 &&
         workHours.endTime.indexOf('AM') > -1
       ) {
-        calculationOfInsights.workHours =
+        calculationOfInsights.work =
           (workHoursEndTime + 24 * 60 - workHoursStartTime) / 60
       } else {
-        calculationOfInsights.workHours =
+        calculationOfInsights.work =
           (workHoursEndTime - workHoursStartTime) / 60
       }
     }
-    calculationOfInsights.workHours =
-      calculationOfInsights.workHours * this.daysPerWeek
+    calculationOfInsights.work = calculationOfInsights.work * this.daysPerWeek
     if (sleepHours) {
       const sleepHoursStartTime = this.getMinutesFromTimestamp(
         sleepHours.startTime,
@@ -82,16 +83,15 @@ export class InsightService implements InsightServiceInterface {
         sleepHours.startTime.indexOf('PM') > -1 &&
         sleepHours.endTime.indexOf('AM') > -1
       ) {
-        calculationOfInsights.sleepHours =
+        calculationOfInsights.sleep =
           0 + (sleepHoursEndTime + 24 * 60 - sleepHoursStartTime) / 60
       } else {
-        calculationOfInsights.sleepHours =
+        calculationOfInsights.sleep =
           0 + (sleepHoursEndTime - sleepHoursStartTime) / 60
       }
     }
 
-    calculationOfInsights.sleepHours =
-      calculationOfInsights.sleepHours * this.daysPerWeek
+    calculationOfInsights.sleep = calculationOfInsights.sleep * this.daysPerWeek
     const relationships = await this.relationshipService.getRelationships()
 
     tasks.forEach((task) => {
@@ -120,15 +120,19 @@ export class InsightService implements InsightServiceInterface {
         (relationship) => relationship.relation === key,
       )
       insightsNeededTobeSent.push({
-        name: key,
+        tag: key,
         relationshipId: selectedRelationhip?.id,
-        percentage: calculationOfInsights[key],
+        hours: calculationOfInsights[key],
         startDate: startDate,
         endDate: endDate,
       })
     })
 
     return insightsNeededTobeSent
+  }
+
+  async getInsightsOfOthers(): Promise<InsightModel[]> {
+    return await this.insightRepository.getCohortInsights()
   }
 
   getMinutesFromTimestamp(timestamp): number {
