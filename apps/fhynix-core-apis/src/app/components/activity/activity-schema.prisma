@@ -16,6 +16,21 @@ model ActivitiesMaster {
   isCustom Boolean @map("is_custom")
 }
 
+model ActivitiesScheduleMaster {
+  id  String  @id @default(uuid())
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  name String
+  appliesForRelation String[]  @map("applies_for_relations")
+  timings String[]
+  days String[]
+  timeSlotInMinutes Int @map("time_slot_in_minutes")
+  numberOfTimesPerWeek Int @map("number_of_times_per_week")
+}
+
 model FamilyMemberActivity {
   id  String   @id @default(uuid())
   createdAtUtc DateTime? @default(now()) @map("created_at_utc")

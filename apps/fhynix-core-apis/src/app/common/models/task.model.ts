@@ -21,7 +21,7 @@ export class TaskModel {
   latitude?: number
   longitude?: number
   status: string
-  recurringTaskId: string
+  recurringTaskId?: string
   checklist: ChecklistModel[]
   activityId: string
 }

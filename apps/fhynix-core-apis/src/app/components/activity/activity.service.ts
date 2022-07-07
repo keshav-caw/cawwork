@@ -6,6 +6,7 @@ import { ActivityServiceInterface } from '../../common/interfaces/activity-servi
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
 import { ActivitiesMasterModel } from '../../common/models/activity-model'
 import { ActivityRepository } from './activity.repository'
+import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
 
 @injectable()
 export class ActivityService implements ActivityServiceInterface {
@@ -32,6 +33,14 @@ export class ActivityService implements ActivityServiceInterface {
     return await this.activityRepository.getActivityByRelationshipAndName(
       relationship,
       name,
+    )
+  }
+
+  async getActivityScheduleByByRelationshipAndName(
+    relationship: string,
+  ): Promise<ActivitiesScheduleMasterModel[]> {
+    return await this.activityRepository.getActivityScheduleByByRelationshipAndName(
+      relationship,
     )
   }
 

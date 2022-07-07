@@ -90,7 +90,8 @@ export class ActivityController implements interfaces.Controller {
       }
       calls.push(this.taskService.createTasksForActvity(activity, task, userId))
     })
-    const selectedTasks = await Promise.all(calls)
+
+    await Promise.all(calls)
 
     res.send(activities)
   }

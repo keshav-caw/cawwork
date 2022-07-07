@@ -18,9 +18,9 @@ import { UserTypes } from '../users/user.types'
 import { EmailProvider } from '../utilities/email.provider'
 import { UtilityTypes } from '../utilities/utility.types'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
-import { defaultTimingsOfParentHabits } from '../../common/constants/parent-habits-schedule.constant'
-import { defaultTimingsOfChildHabits } from '../../common/constants/child-habits-schedule'
 import { TimespanHelper } from '../utilities/timespan.helper'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -34,6 +34,7 @@ export class TaskService implements TaskServiceInterface {
     @inject(UserTypes.user) private userService: UserService,
     @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
     @inject(UtilityTypes.timespanHelper) private timespanHelper: TimespanHelper,
+    @inject(ActivityTypes.activity) private activityService: ActivityService,
   ) {}
 
   async getTasksInNextFourteenDays(userId) {
@@ -467,13 +468,20 @@ export class TaskService implements TaskServiceInterface {
       relationshipActivity.appliesForRelation.indexOf('self') > -1 ||
       relationshipActivity.appliesForRelation.indexOf('partner') > -1
     ) {
-      activityTimings = defaultTimingsOfParentHabits
+      activityTimings =
+        await this.activityService.getActivityScheduleByByRelationshipAndName(
+          'self',
+        )
     } else if (relationshipActivity.appliesForRelation.indexOf('kid') > -1) {
-      activityTimings = defaultTimingsOfChildHabits
+      activityTimings =
+        await this.activityService.getActivityScheduleByByRelationshipAndName(
+          'kid',
+        )
     }
 
-    const selectedActivity =
-      activityTimings[relationshipActivity.name?.toLowerCase()]
+    const selectedActivity = activityTimings.find(
+      (actvityTiming) => actvityTiming.name === relationshipActivity.name,
+    )
 
     const calls = []
     const selectedTasksAsPerDay = []
