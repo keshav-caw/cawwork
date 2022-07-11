@@ -54,7 +54,7 @@ export class InsightService implements InsightServiceInterface {
       partner: 0,
       family: 0,
       home: 0,
-      others: 0,
+      other: 0,
     }
     if (workHours) {
       const workHoursStartTime = this.getMinutesFromTimestamp(
@@ -111,7 +111,7 @@ export class InsightService implements InsightServiceInterface {
     Object.keys(calculationOfInsights).forEach((key) => {
       otherHours -= Number(calculationOfInsights[key])
     })
-    calculationOfInsights.others = otherHours
+    calculationOfInsights.other = otherHours
     const insightsNeededTobeSent = []
     Object.keys(calculationOfInsights).forEach((key) => {
       calculationOfInsights[key] =
