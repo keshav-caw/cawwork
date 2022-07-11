@@ -17,7 +17,10 @@ import { UserService } from '../users/user.service'
 import { UserTypes } from '../users/user.types'
 import { EmailProvider } from '../utilities/email.provider'
 import { UtilityTypes } from '../utilities/utility.types'
+import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
 import { TimespanHelper } from '../utilities/timespan.helper'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 
 @injectable()
 export class TaskService implements TaskServiceInterface {
@@ -31,6 +34,7 @@ export class TaskService implements TaskServiceInterface {
     @inject(UserTypes.user) private userService: UserService,
     @inject(UtilityTypes.emailProvider) private emailProvider: EmailProvider,
     @inject(UtilityTypes.timespanHelper) private timespanHelper: TimespanHelper,
+    @inject(ActivityTypes.activity) private activityService: ActivityService,
   ) {}
 
   async getTasksInNextFourteenDays(userId) {
@@ -128,6 +132,7 @@ export class TaskService implements TaskServiceInterface {
     const createTasksInfo = this.createTasksInfo(tasks)
     const recurringTaskId = uuidv4()
     const calls = []
+
     createTasksInfo.forEach((task) => {
       task.recurringTaskId = !(
         _.isEmpty(task.repeatMode) ||
@@ -314,6 +319,27 @@ export class TaskService implements TaskServiceInterface {
     return await this.taskRepository.deleteTasksByTemplateId(templateId, userId)
   }
 
+  async deleteTaskByActivityId(
+    activityId: string,
+    userId: string,
+  ): Promise<TaskModel> {
+    return await this.taskRepository.deleteTaskByActivityId(activityId, userId)
+  }
+
+  async deleteTemplateByFamilyMemberId(
+    familyMemberId: string,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    await this.taskRepository.deleteTemplateByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+    return await this.taskRepository.deleteTasksByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+  }
+
   createTasksInfo(tasks) {
     let tasksToBeCreated = []
     let recurringEndDate = null
@@ -430,6 +456,117 @@ export class TaskService implements TaskServiceInterface {
       }
     })
     return tasksToBeCreated
+  }
+
+  async createTasksForActvity(
+    relationshipActivity: FamilyMemberActivityModel,
+    task: TaskModel,
+    userId: string,
+  ): Promise<TaskModel[]> {
+    let activityTimings
+    if (
+      relationshipActivity.appliesForRelation.indexOf('self') > -1 ||
+      relationshipActivity.appliesForRelation.indexOf('partner') > -1
+    ) {
+      activityTimings =
+        await this.activityService.getActivityScheduleByByRelationshipAndName(
+          'self',
+        )
+    } else if (relationshipActivity.appliesForRelation.indexOf('kid') > -1) {
+      activityTimings =
+        await this.activityService.getActivityScheduleByByRelationshipAndName(
+          'kid',
+        )
+    }
+
+    const selectedActivity = activityTimings.find(
+      (actvityTiming) => actvityTiming.name === relationshipActivity.name,
+    )
+
+    const calls = []
+    const selectedTasksAsPerDay = []
+    selectedActivity?.days?.forEach((day) => {
+      const nextDay = this.getNextWeekDay(this.days.indexOf(day))
+      const startDateAtUtc = dayjs(nextDay).startOf('day').toISOString()
+      const endDateAtUtc = dayjs(nextDay).endOf('day').toISOString()
+      calls.push(
+        this.taskRepository.getTasksByStartAndEndDate(
+          userId,
+          startDateAtUtc,
+          endDateAtUtc,
+        ),
+      )
+      selectedTasksAsPerDay.push({
+        day: day,
+        selectedTasks: [],
+        startDateAtUtc,
+        endDateAtUtc,
+      })
+    })
+    const selectedTasks = await Promise.all(calls)
+    selectedTasks.forEach((tasks, index) => {
+      selectedTasksAsPerDay[index].selectedTasks = tasks
+    })
+    const selectedDays = []
+    let isTaskCreated = false
+    const tasksNeedToBeAdded = []
+    for (let i = 0; i < selectedActivity?.numberOfTimesPerWeek; i++) {
+      isTaskCreated = false
+      selectedTasksAsPerDay.forEach((day) => {
+        if (selectedDays.indexOf(day.day) < 0 && !isTaskCreated) {
+          task.startAtUtc = day.startDateAtUtc
+          task.endAtUtc = day.endDateAtUtc
+          task['selectedTasks'] = selectedTasks
+          const selectedTimeSlabs = []
+          selectedActivity.timings.forEach((timeSlab) => {
+            const slab = timeSlab.split(' - ')
+            const startTime = this.getMinutesFromTimestamp(slab[0])
+            const endTime = this.getMinutesFromTimestamp(slab[1])
+            selectedTimeSlabs.push({ timeSlab, startTime, endTime })
+          })
+          const selectedSlabs = this.validateTemplateTasksBySelectedTasks(
+            task,
+            selectedTimeSlabs,
+          )
+          if (selectedSlabs?.length > 0) {
+            selectedDays.push(day.day)
+            const selectedTimeSlab = selectedSlabs[0]
+            task['startAtUtc'] = dayjs(task['startDate'])
+              .add(selectedTimeSlab.startTime, 'minutes')
+              .toISOString()
+            task.endAtUtc = dayjs(task['startDate'])
+              .add(selectedTimeSlab.endTime, 'minutes')
+              .toISOString()
+            task.notifyAtUtc = dayjs(task['startDate'])
+              .add(selectedTimeSlab.startTime - 10, 'minutes')
+              .toISOString()
+            delete task['startDate']
+            delete task['endDate']
+            delete task['selectedTasks']
+            isTaskCreated = true
+            task.repeatMode = {
+              repeatOnDays: [],
+            }
+            task.repeatMode.repeatOnDays.push(day.day)
+            tasksNeedToBeAdded.push(JSON.parse(JSON.stringify(task)))
+          }
+        }
+      })
+    }
+
+    const tasks = await this.createTasks(tasksNeedToBeAdded, userId, false)
+
+    return tasks
+  }
+
+  getNextWeekDay(dayINeed) {
+    const today = dayjs().day()
+
+    if (today <= dayINeed) {
+      return dayjs().add(dayINeed - today, 'day')
+    } else {
+      return dayjs().add(7 - today + dayINeed, 'day')
+    }
   }
 
   validateTemplateInfo(template: TemplateModel, isUpdateTemplate = false) {

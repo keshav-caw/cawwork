@@ -20,6 +20,8 @@ import { ActivityTypes } from '../activity/activity.types'
 import { StorageProvider } from '../../common/storage-provider/storage-provider.service'
 import { fileStorage } from '../../middlewares/multer.middleware'
 import { Images } from '../../common/constants/folder-names.constants'
+import { TaskService } from '../task/task.service'
+import { TaskTypes } from '../task/task.types'
 
 @controller('/family-members')
 export class FamilyMemberController implements interfaces.Controller {
@@ -32,6 +34,8 @@ export class FamilyMemberController implements interfaces.Controller {
     private activityService: ActivityService,
     @inject(CommonTypes.storage)
     private storageProvider: StorageProvider,
+    @inject(TaskTypes.task)
+    private taskService: TaskService,
   ) {}
 
   @httpGet('/', CommonTypes.jwtAuthMiddleware)
@@ -54,6 +58,7 @@ export class FamilyMemberController implements interfaces.Controller {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
+    const userId = this.requestContext.getUserId()
     let profileImage
     if (req.file) {
       profileImage = await this.storageProvider.uploadFile(req.file, Images)
@@ -69,7 +74,14 @@ export class FamilyMemberController implements interfaces.Controller {
       (activity) => (activity.familyMemberId = familyMember[0].id),
     )
     if (activities?.length > 0) {
-      await this.activityService.createActivitiesForRelationship(activities)
+      const selectedActivities =
+        await this.activityService.createActivitiesForRelationship(
+          activities,
+          userId,
+        )
+      familyMember[0]['activities'] = selectedActivities
+    } else {
+      familyMember[0]['activities'] = []
     }
     let familyDetails
     if (profileImage) {
@@ -77,6 +89,10 @@ export class FamilyMemberController implements interfaces.Controller {
         profileImage,
         familyMember[0].id,
       )
+
+      familyDetails[0]['activities'] = familyDetails[0]['activities']
+        ? familyDetails[0]['activities']
+        : []
     }
     res.send(familyDetails ? familyDetails : familyMember)
   }
@@ -96,6 +112,9 @@ export class FamilyMemberController implements interfaces.Controller {
       profileImage,
       familyMemberId,
     )
+    const selectedActivities =
+      await this.activityService.getActivityByFamilyMemberId(familyMemberId)
+    uploadedResponse['activities'] = selectedActivities
     res.send(uploadedResponse)
   }
 
@@ -105,6 +124,14 @@ export class FamilyMemberController implements interfaces.Controller {
     @response() res: express.Response,
   ) {
     const familyMemberId = req.query.familyMemberId.toString()
-    res.send(await this.familyMemberService.deleteFamilyMember(familyMemberId))
+    const userId = this.requestContext.getUserId()
+    const familyDetails = await this.familyMemberService.deleteFamilyMember(
+      familyMemberId,
+    )
+    await this.taskService.deleteTemplateByFamilyMemberId(
+      familyMemberId,
+      userId,
+    )
+    res.send(familyDetails)
   }
 }

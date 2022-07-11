@@ -4,6 +4,7 @@ import { DataStore } from '../../common/data/datastore'
 import { ActivityRepositoryInterface } from '../../common/interfaces/activity-repository.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
 import { ActivitiesMasterModel } from '../../common/models/activity-model'
+import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
 @injectable()
 export class ActivityRepository implements ActivityRepositoryInterface {
   protected client
@@ -28,6 +29,33 @@ export class ActivityRepository implements ActivityRepositoryInterface {
   async getAllActivities(): Promise<ActivitiesMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
+        isDeleted: false,
+      },
+    })
+    return result
+  }
+
+  async getActivityByRelationshipAndName(
+    relationship: string,
+    name: string,
+  ): Promise<ActivitiesMasterModel[]> {
+    const result = await this.client.activitiesMaster?.findMany({
+      where: {
+        appliesForRelation: { hasSome: [relationship] },
+        name: name,
+        canBeHabit: true,
+        isDeleted: false,
+      },
+    })
+    return result
+  }
+
+  async getActivityScheduleByByRelationshipAndName(
+    relationship: string,
+  ): Promise<ActivitiesScheduleMasterModel[]> {
+    const result = await this.client.activitiesScheduleMaster?.findMany({
+      where: {
+        appliesForRelation: { hasSome: [relationship] },
         isDeleted: false,
       },
     })

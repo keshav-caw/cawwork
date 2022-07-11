@@ -16,6 +16,8 @@ import { CommonTypes } from '../../common/common.types'
 import { RequestContext } from '../../common/jwtservice/requests-context.service'
 import { AccountTypes } from '../accounts/account.types'
 import { AuthService } from '../accounts/auth.service'
+import { ActivityService } from '../activity/activity.service'
+import { ActivityTypes } from '../activity/activity.types'
 
 @controller('/users')
 export class UserController implements interfaces.Controller {
@@ -24,6 +26,8 @@ export class UserController implements interfaces.Controller {
     @inject(AccountTypes.auth) private authService: AuthService,
     @inject(CommonTypes.requestContext)
     private requestContext: RequestContext,
+    @inject(ActivityTypes.activity)
+    private activityService: ActivityService,
   ) {}
 
   @httpGet('/me', CommonTypes.jwtAuthMiddleware)
@@ -80,6 +84,9 @@ export class UserController implements interfaces.Controller {
         userId,
       )
     }
+    const selectedActivities =
+      await this.activityService.getActivityByFamilyMemberId(details.id)
+    details['activities'] = selectedActivities
     res.send(details)
   }
 }
