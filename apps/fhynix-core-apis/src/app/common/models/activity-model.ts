@@ -1,3 +1,5 @@
+import { ActivityTypeEnum } from "../enums/activity-type.enum"
+
 export class ActivitiesMasterModel {
   id?: string
   createdAtUtc?: Date
@@ -9,4 +11,6 @@ export class ActivitiesMasterModel {
   appliesForRelation: string
   canBeHabit?: boolean
   isCustom?: boolean
+  category?:string
+  type?:ActivityTypeEnum
 }

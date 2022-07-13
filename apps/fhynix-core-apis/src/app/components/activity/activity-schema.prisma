@@ -14,6 +14,8 @@ model ActivitiesMaster {
   appliesForRelation String[]  @map("applies_for_relations")
   canBeHabit Boolean @map("can_be_habit")
   isCustom Boolean @map("is_custom")
+  category String? @map("category")
+  type ActivityTypeEnum @default(Mental) @map("type")
 }
 
 model FamilyMemberActivity {
@@ -25,4 +27,9 @@ model FamilyMemberActivity {
   isDeleted Boolean @default(false) @map("is_deleted")
   familyMemberId String @unique @map("family_member_id")
   activityId String @map("activity_id")
+}
+
+enum ActivityTypeEnum {
+    Mental
+    Physical
 }
