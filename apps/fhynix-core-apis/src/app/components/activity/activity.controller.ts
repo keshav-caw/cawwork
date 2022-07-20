@@ -17,6 +17,7 @@ import { RequestContext } from '../../common/jwtservice/requests-context.service
 import { TaskService } from '../task/task.service'
 import { TaskTypes } from '../task/task.types'
 import dayjs from 'dayjs'
+import { SuggestionResponsePayload } from 'apps/shared/payloads/suggestion-response.payload'
 
 @controller('/activities')
 export class ActivityController implements interfaces.Controller {
@@ -94,5 +95,15 @@ export class ActivityController implements interfaces.Controller {
     await Promise.all(calls)
 
     res.send(activities)
+  }
+  @httpGet('/:id/suggestions', CommonTypes.jwtAuthMiddleware)
+  public async getSuggestionsForActivity(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ){
+    
+    const activityId = req.params.id
+    const response:SuggestionResponsePayload = await this.activityService.getSuggestionsForActivity(activityId);
+    res.send(response);
   }
 }

@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import { ArticleServiceInterface } from '../../common/interfaces/article-service.interface'
 import { ArticleRepository } from './article.repository'
 import { ArticleModel } from '../../common/models/article.model'
-import { ArticlePaginationModel } from '../../common/models/article-pagination.model'
+import { PaginationModel } from '../../common/models/pagination.model'
 import { AuthRepository } from '../accounts/auth.repository'
 import { CommonTypes } from '../../common/common.types'
 import { LinkPreviewProvider } from '../../common/linkPreviewProvider/linkPreview.provider'
@@ -32,7 +32,7 @@ export class ArticleService implements ArticleServiceInterface {
     @inject(TaskTypes.task) private taskService: TaskService,
   ) {}
 
-  async getArticles(details: ArticlePaginationModel) {
+  async getArticles(details: PaginationModel) {
     return await this.articleRepository.getArticles(details)
   }
 

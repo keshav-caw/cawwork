@@ -3,8 +3,9 @@ import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { ActivityRepositoryInterface } from '../../common/interfaces/activity-repository.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
-import { ActivitiesMasterModel } from '../../common/models/activity-model'
+import { ActivitiesMasterModel, VendorModel, RestaurantModel, MovieModel } from '../../common/models/activity-model'
 import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
+import { PaginationModel } from '../../common/models/pagination.model'
 @injectable()
 export class ActivityRepository implements ActivityRepositoryInterface {
   protected client
@@ -110,4 +111,72 @@ export class ActivityRepository implements ActivityRepositoryInterface {
 
     return []
   }
+
+  async getActivityByActivityId(id:string):Promise<ActivitiesMasterModel> {
+    const result = await this.client.activitiesMaster?.findUnique({
+      where:{
+        id:id
+      }
+    })
+    return result;
+  }
+
+  
+  async getVendors(details:PaginationModel): Promise<VendorModel[]> {
+    const result = await this.client.vendors?.findMany({
+        skip:(details.pageNumber-1)*(details.pageSize),
+        take:details.pageSize
+    },
+    {
+      select: {
+        id:true,
+        name: true,
+        activityIds:true,
+        phoneNumbers:true,
+        address:true
+      }
+    })
+    
+    return result ? result : []
+  }
+
+  async getRestaurants(details:PaginationModel): Promise<RestaurantModel[]> {
+    const result = await this.client.restaurants?.findMany({
+        skip:(details.pageNumber-1)*(details.pageSize),
+        take:details.pageSize
+    },
+    {
+      select: {
+        id:true,
+        name: true,
+        activityIds:true,
+        phoneNumbers:true,
+        address:true,
+        imageUrl:true
+      }
+    })
+    
+    return result ? result : []
+  }
+
+  async getMovies(details:PaginationModel): Promise<MovieModel[]> {
+    const result = await this.client.movies?.findMany({
+        skip:(details.pageNumber-1)*(details.pageSize),
+        take:details.pageSize
+    },
+    {
+      select: {
+        id:true,
+        title: true,
+        activityIds:true,
+        description:true,
+        language:true,
+        runningTime:true,
+        imageUrl:true
+      }
+    })
+    
+    return result ? result : []
+  }
+
 }

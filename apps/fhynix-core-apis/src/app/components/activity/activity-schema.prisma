@@ -15,7 +15,8 @@ model ActivitiesMaster {
   canBeHabit Boolean @map("can_be_habit")
   isCustom Boolean @map("is_custom")
   category String? @map("category")
-  type ActivityTypeEnum @default(Mental) @map("type")
+  type ActivityTypeEnum? @default(Mental) @map("type")
+  associatedSuggestionTypes SuggestionTypeEnum[] @map("associated_suggestion_types")
 }
 
 model ActivitiesScheduleMaster {
@@ -44,7 +45,54 @@ model FamilyMemberActivity {
   activityId String @map("activity_id")
 }
 
+model Vendors {
+  id  String  @id @default(uuid())
+  name String
+  address String? @map("address")
+  phoneNumbers String[] @map("phone_numbers")
+  activityIds String[] @map("activity_ids")
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+}
+
+model Movies {
+  id  String  @id @default(uuid())
+  title String
+  description String? @map("description")
+  language String? @map("language")
+  runningTime String? @map("running_time")
+  activityIds String[] @map("activity_ids")
+  imageUrl String @map("image_url")
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+}
+
+model Restaurants {
+  id  String  @id @default(uuid())
+  name String
+  address String @map("address")
+  phoneNumbers String[] @map("phone_numbers")
+  activityIds String[] @map("activity_ids")
+  imageUrl String @map("image_url")
+  createdAtUtc DateTime? @default(now()) @map("created_at_utc")
+  createdBy String? @map("created_by")
+  updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
+  updatedBy String? @map("updated_by")
+}
+
 enum ActivityTypeEnum {
     Mental
     Physical
+}
+
+enum SuggestionTypeEnum {
+  Articles
+  Products
+  Vendors
+  Restaurants
+  Movies
 }

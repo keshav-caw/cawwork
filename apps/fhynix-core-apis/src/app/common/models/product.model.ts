@@ -5,10 +5,10 @@ export class ProductModel {
     url: string
     price?: string
     activityIds?:string[]
-    description?:String
+    description?:string
     createdAtUtc?:Date
-    createdBy?: String
+    createdBy?: string
     updatedAtUtc?: Date
-    updatedBy?: String
-    isDeleted?: Boolean
+    updatedBy?: string
+    isDeleted?: boolean
 }

@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { ArticleRepositoryInterface } from '../../common/interfaces/article-repository.interface'
 import { ArticleModel } from '../../common/models/article.model'
-import { ArticlePaginationModel } from '../../common/models/article-pagination.model'
+import { PaginationModel } from '../../common/models/pagination.model'
 
 @injectable()
 export class ArticleRepository implements ArticleRepositoryInterface {
@@ -13,7 +13,7 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getArticles(details:ArticlePaginationModel): Promise<ArticleModel[]> {
+  async getArticles(details:PaginationModel): Promise<ArticleModel[]> {
       
     const result = await this.client.articles?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),

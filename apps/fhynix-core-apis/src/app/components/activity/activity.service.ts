@@ -7,6 +7,11 @@ import { FamilyMemberActivityModel } from '../../common/models/family-member-act
 import { ActivitiesMasterModel } from '../../common/models/activity-model'
 import { ActivityRepository } from './activity.repository'
 import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
+import { SuggestionTypeEnum } from '../../common/enums/suggestion-type.enum'
+import { PaginationModel } from '../../common/models/pagination.model'
+import { ArticleRepository } from '../articles/article.repository'
+import { ProductRepository } from '../products/product.repository'
+import {SuggestionResponsePayload} from '../../../../../shared/payloads/suggestion-response.payload'
 
 @injectable()
 export class ActivityService implements ActivityServiceInterface {
@@ -14,6 +19,8 @@ export class ActivityService implements ActivityServiceInterface {
   constructor(
     @inject('ActivityRepository')
     private activityRepository: ActivityRepository,
+    @inject('ArticleRepository') private articleRepository: ArticleRepository,
+    @inject('ProductRepository') private productRepository: ProductRepository,
   ) {}
 
   async getActivityByRelationship(
@@ -120,5 +127,87 @@ export class ActivityService implements ActivityServiceInterface {
     relationshipActivityCreated['appliesForRelation'] =
       selectedRelationshipActivity['appliesForRelation']
     return relationshipActivityCreated
+  }
+
+  async filterSuggestions(filteredSuggestions,unfilteredSuggestions,activityId){
+    for(const suggestion of unfilteredSuggestions){
+      if(suggestion?.activityIds?.includes(activityId)){
+        filteredSuggestions.push(suggestion);
+        if(filteredSuggestions.length==3)return;
+      }
+    }
+  }
+
+  async getSuggestionsForActivity(id:string): Promise<SuggestionResponsePayload>{
+    const activityDetails = await this.activityRepository.getActivityByActivityId(id);
+    const suggestions = activityDetails.associatedSuggestionTypes;
+    const paginationDetails:PaginationModel = {
+      pageNumber:1,
+      pageSize:50
+    }
+    const response = {
+      articles:[],
+      products:[],
+      vendors:[],
+      restaurants:[],
+      movies:[]
+    };
+
+    //articles
+    if(suggestions.includes(SuggestionTypeEnum.Articles)){
+      while(response.articles.length<3){
+        const articles = await this.articleRepository.getArticles(paginationDetails);
+        if(articles.length==0)break;
+        this.filterSuggestions(response.articles,articles,id);
+        paginationDetails.pageNumber++;
+      }
+    }
+    paginationDetails.pageNumber = 1;
+
+    //products
+    if(suggestions.includes(SuggestionTypeEnum.Products)){
+      while(response.products.length<3){
+        const products = await this.productRepository.getProducts(paginationDetails);
+        if(products.length==0)break;
+        this.filterSuggestions(response.products,products,id);
+        paginationDetails.pageNumber++;
+      }
+    }
+    paginationDetails.pageNumber = 1;
+
+    //vendors
+    if(suggestions.includes(SuggestionTypeEnum.Vendors)){
+      while(response.vendors.length<3){
+        const vendors = await this.activityRepository.getVendors(paginationDetails);
+        if(vendors.length==0)break;
+        this.filterSuggestions(response.vendors,vendors,id);
+        paginationDetails.pageNumber++;
+      }
+    }
+    paginationDetails.pageNumber = 1;
+
+    // restaurants
+    if(suggestions.includes(SuggestionTypeEnum.Restaurants)){
+      while(response.restaurants.length<3){
+        const restaurants = await this.activityRepository.getRestaurants(paginationDetails);
+        if(restaurants.length==0)break;
+        this.filterSuggestions(response.restaurants,restaurants,id);
+        paginationDetails.pageNumber++;
+      }
+    }
+    paginationDetails.pageNumber = 1;
+
+    // movies
+    if(suggestions.includes(SuggestionTypeEnum.Movies)){
+      while(response.movies.length<3){
+        const movies = await this.activityRepository.getMovies(paginationDetails);
+        if(movies.length==0)break;
+        this.filterSuggestions(response.movies,movies,id);
+        paginationDetails.pageNumber++;
+      }
+    }
+
+    const responsePayload: SuggestionResponsePayload = new SuggestionResponsePayload(response.articles,response.products,response.vendors,response.restaurants,response.movies);
+    return responsePayload;
   }
 }
