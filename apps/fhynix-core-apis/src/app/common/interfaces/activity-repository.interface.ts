@@ -1,4 +1,4 @@
-import { ActivitiesMasterModel } from '../models/activity-model'
+import { ActivitiesMasterModel } from '../models/activity.model'
 
 export interface ActivityRepositoryInterface {
   getActivityByRelationship(

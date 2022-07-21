@@ -29,7 +29,7 @@ export class UtilityController implements interfaces.Controller {
   ) { 
     const {fromLatitude,fromLongitude,locationQuery} = req.body;
     const addresses = await this.locationProvider.getNearbyPlaces({fromLatitude,fromLongitude,locationQuery});
-    const nearbyPlaceNames = new PaginatedResponsePayload<SearchLocationPayload>();
+    const nearbyPlaceNames = new PaginatedResponsePayload<SearchLocationPayload>([]);
 
     for(const address of addresses){
       const searchLocation = new SearchLocationPayload(address);

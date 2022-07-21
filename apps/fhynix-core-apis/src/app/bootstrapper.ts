@@ -7,19 +7,17 @@ import HealthCheckBootstrapper from './common/controllers/health-check.bootstrap
 import FamilyMemberBootstrapper from './components/family-member/family-member.bootstrapper'
 import RelationshipBootstrapper from './components/relationship/relationship.bootstrapper'
 import ActivityBootstrapper from './components/activity/activity.bootstrapper'
-import ArticleBootstrapper from './components/articles/article.bootstrapper'
 import UtilityBootstrapper from './components/utilities/utility.bootstrapper'
 import TaskBootstrapper from './components/task/task.bootstrapper'
-import ProductBootstrapper from './components/products/product.bootstrapper'
 import InsightpBootstrapper from './components/insight/insight.bootstrapper'
+import SuggestionBootstrapper from './components/suggestions/suggestion.bootstrapper'
 
 export default class Bootstrapper {
   public static initialize() {
     CommonBootstrapper.initialize()
     UserBootstrapper.initialize()
     AccountBootstrapper.initialize()
-    ArticleBootstrapper.initialize()
-    ProductBootstrapper.initialize()
+    SuggestionBootstrapper.initialize()
     UtilityBootstrapper.initialize()
     ActivityBootstrapper.initialize()
     FamilyMemberBootstrapper.initialize()

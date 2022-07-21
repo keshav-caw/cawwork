@@ -96,14 +96,5 @@ export class ActivityController implements interfaces.Controller {
 
     res.send(activities)
   }
-  @httpGet('/:id/suggestions', CommonTypes.jwtAuthMiddleware)
-  public async getSuggestionsForActivity(
-    @request() req: express.Request,
-    @response() res: express.Response,
-  ){
-    
-    const activityId = req.params.id
-    const response:SuggestionResponsePayload = await this.activityService.getSuggestionsForActivity(activityId);
-    res.send(response);
-  }
+  
 }

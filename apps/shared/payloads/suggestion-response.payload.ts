@@ -1,14 +1,15 @@
 import { ResponsePayloadBase } from "./base-response.payload";
-import { ArticleModel } from '../../fhynix-core-apis/src/app/common/models/article.model'
-import { RestaurantModel,MovieModel,VendorModel } from '../../fhynix-core-apis/src/app/common/models/activity-model'
-import { ProductModel } from '../../fhynix-core-apis/src/app/common/models/product.model'
+import { PaginatedResponsePayload } from "./api-paginated-response.payload";
+import { ArticleModel } from "apps/fhynix-core-apis/src/app/common/models/article.model";
+import { ProductModel } from "apps/fhynix-core-apis/src/app/common/models/product.model";
+import { VendorModel,RestaurantModel,MovieModel } from "apps/fhynix-core-apis/src/app/common/models/activity.model";
 
 export class SuggestionResponsePayload extends ResponsePayloadBase {
-    articles:ArticleModel[]
-    products:ProductModel[]
-    vendors:VendorModel[]
-    restaurants:RestaurantModel[]
-    movies:MovieModel[]
+    articles:PaginatedResponsePayload<ArticleModel>
+    products:PaginatedResponsePayload<ProductModel>
+    vendors:PaginatedResponsePayload<VendorModel>
+    restaurants:PaginatedResponsePayload<RestaurantModel>
+    movies:PaginatedResponsePayload<MovieModel>
     constructor(articles,products,vendors,restaurants,movies){
         super()
         this.articles = articles;

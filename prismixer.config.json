@@ -5,9 +5,8 @@
     "./apps/fhynix-core-apis/src/app/components/relationship/relationship-schema.prisma",
     "./apps/fhynix-core-apis/src/app/components/activity/activity-schema.prisma",
     "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/db-schema.prisma",
-    "./apps/fhynix-core-apis/src/app/components/articles/article-schema.prisma",
+    "./apps/fhynix-core-apis/src/app/components/suggestions/suggestion-schema.prisma",
     "./apps/fhynix-core-apis/src/app/components/task/task-schema.prisma",
-    "./apps/fhynix-core-apis/src/app/components/products/product-schema.prisma",
     "./apps/fhynix-core-apis/src/app/components/insight/insight-schema.prisma"
   ],
   "output": "./apps/fhynix-core-apis/src/app/common/DataStore/prisma/schema.prisma"
