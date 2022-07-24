@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { DataStore } from '../../common/data/datastore'
-import { VendorRepositoryInterface } from '../../common/interfaces/vendor-repository.interface'
-import { VendorModel } from '../../common/models/activity.model'
-import { PaginationModel } from '../../common/models/pagination.model'
+import { DataStore } from '../../../common/data/datastore'
+import { VendorRepositoryInterface } from '../../../common/interfaces/vendor-repository.interface'
+import { VendorModel } from '../../../common/models/activity.model'
+import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()
 export class VendorRepository implements VendorRepositoryInterface {
@@ -13,10 +13,15 @@ export class VendorRepository implements VendorRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getVendors(details:PaginationModel): Promise<VendorModel[]> {
+  async getVendorsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<VendorModel[]> {
     const result = await this.client.vendors?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
-        take:details.pageSize
+        take:details.pageSize,
+        where:{
+            activityIds:{
+                hasSome:activityId
+            }
+        },
     },
     {
       select: {

@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { DataStore } from '../../common/data/datastore'
-import { MovieRepositoryInterface } from '../../common/interfaces/movie-repository.interface'
-import { MovieModel } from '../../common/models/activity.model'
-import { PaginationModel } from '../../common/models/pagination.model'
+import { DataStore } from '../../../common/data/datastore'
+import { MovieRepositoryInterface } from '../../../common/interfaces/movie-repository.interface'
+import { MovieModel } from '../../../common/models/activity.model'
+import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()
 export class MovieRepository implements MovieRepositoryInterface {
@@ -13,11 +13,16 @@ export class MovieRepository implements MovieRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getMovies(details: PaginationModel): Promise<MovieModel[]> {
+  async getMoviesAssociatedToActivityId(details: PaginationModel,activityId:string): Promise<MovieModel[]> {
     const result = await this.client.movies?.findMany(
       {
         skip: (details.pageNumber - 1) * details.pageSize,
         take: details.pageSize,
+        where:{
+            activityIds:{
+                hasSome:activityId
+            }
+        },
       },
       {
         select: {

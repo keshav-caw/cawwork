@@ -3,5 +3,5 @@ import { PaginationModel } from "../models/pagination.model";
 
 
 export interface VendorRepositoryInterface {
-  getVendors(details:PaginationModel): Promise<VendorModel[]>
+    getVendorsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<VendorModel[]>
 }

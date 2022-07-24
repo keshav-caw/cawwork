@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { DataStore } from '../../common/data/datastore'
-import { ArticleRepositoryInterface } from '../../common/interfaces/article-repository.interface'
-import { ArticleModel } from '../../common/models/article.model'
-import { PaginationModel } from '../../common/models/pagination.model'
+import { DataStore } from '../../../common/data/datastore'
+import { ArticleRepositoryInterface } from '../../../common/interfaces/article-repository.interface'
+import { ArticleModel } from '../../../common/models/article.model'
+import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()
 export class ArticleRepository implements ArticleRepositoryInterface {
@@ -18,6 +18,29 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     const result = await this.client.articles?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
         take:details.pageSize
+    },
+    {
+      select: {
+        id:true,
+        title: true,
+        imageUrl:true,
+        url:true
+      }
+    })
+    
+    return result ? result : []
+  }
+
+  async getArticlesAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<ArticleModel[]> {
+      
+    const result = await this.client.articles?.findMany({
+        skip:(details.pageNumber-1)*(details.pageSize),
+        take:details.pageSize,
+        where:{
+            activityIds:{
+              hasSome:activityId
+            }
+        },
     },
     {
       select: {

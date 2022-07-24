@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { DataStore } from '../../common/data/datastore'
-import { RestaurantRepositoryInterface } from '../../common/interfaces/restaurant-repository.interface'
-import { RestaurantModel } from '../../common/models/activity.model'
-import { PaginationModel } from '../../common/models/pagination.model'
+import { DataStore } from '../../../common/data/datastore'
+import { RestaurantRepositoryInterface } from '../../../common/interfaces/restaurant-repository.interface'
+import { RestaurantModel } from '../../../common/models/activity.model'
+import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()
 export class RestaurantRepository implements RestaurantRepositoryInterface {
@@ -13,10 +13,15 @@ export class RestaurantRepository implements RestaurantRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getRestaurants(details:PaginationModel): Promise<RestaurantModel[]> {
+  async getRestaurantsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<RestaurantModel[]> {
     const result = await this.client.restaurants?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
-        take:details.pageSize
+        take:details.pageSize,
+        where:{
+            activityIds:{
+                hasSome:activityId
+            }
+        },
     },
     {
       select: {

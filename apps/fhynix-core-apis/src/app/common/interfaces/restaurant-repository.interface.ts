@@ -3,5 +3,5 @@ import { PaginationModel } from "../models/pagination.model";
 
 
 export interface RestaurantRepositoryInterface {
-  getRestaurants(details:PaginationModel): Promise<RestaurantModel[]>
+    getRestaurantsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<RestaurantModel[]>
 }

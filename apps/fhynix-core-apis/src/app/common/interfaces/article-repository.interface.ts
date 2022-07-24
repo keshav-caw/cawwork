@@ -3,7 +3,8 @@ import { PaginationModel } from "../models/pagination.model";
 import { ArticleBookmarkModel } from "../models/articleBookmark.model";
 
 export interface ArticleRepositoryInterface {
-  getArticles(details:PaginationModel): Promise<ArticleModel[]>
+  getArticles(details:PaginationModel,activityId:string): Promise<ArticleModel[]>
+  getArticlesAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<ArticleModel[]>
   getMostRecent50Articles():Promise<ArticleModel[]>
   addArticle(newArticle):Promise<ArticleModel>
   getArticlesBookmarkedByUser(userId:string):Promise<ArticleModel[]>
