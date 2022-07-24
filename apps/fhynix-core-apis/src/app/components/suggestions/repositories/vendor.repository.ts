@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../../common/data/datastore'
 import { VendorRepositoryInterface } from '../../../common/interfaces/vendor-repository.interface'
-import { VendorModel } from '../../../common/models/activity.model'
+import { VendorModel } from '../../../common/models/vendor.model'
 import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()

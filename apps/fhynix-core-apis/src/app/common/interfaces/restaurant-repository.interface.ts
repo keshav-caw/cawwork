@@ -1,4 +1,4 @@
-import { RestaurantModel } from "../models/activity.model";
+import { RestaurantModel } from "../models/restaurant.model";
 import { PaginationModel } from "../models/pagination.model";
 
 

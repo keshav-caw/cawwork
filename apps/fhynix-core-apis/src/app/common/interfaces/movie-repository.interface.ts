@@ -1,4 +1,4 @@
-import { MovieModel } from "../models/activity.model";
+import { MovieModel } from "../models/movie.model";
 import { PaginationModel } from "../models/pagination.model";
 
 

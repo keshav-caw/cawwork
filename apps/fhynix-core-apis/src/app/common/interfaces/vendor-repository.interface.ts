@@ -1,4 +1,4 @@
-import { VendorModel } from "../models/activity.model";
+import { VendorModel } from "../models/vendor.model";
 import { PaginationModel } from "../models/pagination.model";
 
 

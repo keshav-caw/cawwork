@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../../common/data/datastore'
 import { RestaurantRepositoryInterface } from '../../../common/interfaces/restaurant-repository.interface'
-import { RestaurantModel } from '../../../common/models/activity.model'
+import { RestaurantModel } from '../../../common/models/restaurant.model'
 import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()

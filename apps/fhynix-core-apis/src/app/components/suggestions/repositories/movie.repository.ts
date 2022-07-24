@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../../common/data/datastore'
 import { MovieRepositoryInterface } from '../../../common/interfaces/movie-repository.interface'
-import { MovieModel } from '../../../common/models/activity.model'
+import { MovieModel } from '../../../common/models/movie.model'
 import { PaginationModel } from '../../../common/models/pagination.model'
 
 @injectable()

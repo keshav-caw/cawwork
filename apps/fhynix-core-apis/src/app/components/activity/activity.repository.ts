@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { ActivityRepositoryInterface } from '../../common/interfaces/activity-repository.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
-import { ActivitiesMasterModel } from '../../common/models/activity.model'
+import { ActivityMasterModel } from '../../common/models/activity.model'
 import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
 
 @injectable()
@@ -16,7 +16,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
 
   async getActivityByRelationship(
     relationship: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
@@ -27,7 +27,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     return result
   }
 
-  async getAllActivities(): Promise<ActivitiesMasterModel[]> {
+  async getAllActivities(): Promise<ActivityMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
         isDeleted: false,
@@ -39,7 +39,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
   async getActivityByRelationshipAndName(
     relationship: string,
     name: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     const result = await this.client.activitiesMaster?.findMany({
       where: {
         appliesForRelation: { hasSome: [relationship] },
@@ -65,7 +65,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
 
   async getActivityByFamilyMemberId(
     familyMemberId: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     const result = await this.client.familyMemberActivity?.findMany({
       where: {
         familyMemberId: familyMemberId,
@@ -76,8 +76,8 @@ export class ActivityRepository implements ActivityRepositoryInterface {
   }
 
   async createActivity(
-    activity: ActivitiesMasterModel,
-  ): Promise<ActivitiesMasterModel[]> {
+    activity: ActivityMasterModel,
+  ): Promise<ActivityMasterModel[]> {
     const result = await this.client.activitiesMaster?.create({
       data: activity,
     })
@@ -112,7 +112,7 @@ export class ActivityRepository implements ActivityRepositoryInterface {
     return []
   }
 
-  async getActivityByActivityId(id:string):Promise<ActivitiesMasterModel> {
+  async getActivityByActivityId(id:string):Promise<ActivityMasterModel> {
     const result = await this.client.activitiesMaster?.findUnique({
       where:{
         id:id

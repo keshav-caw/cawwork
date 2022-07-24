@@ -4,7 +4,7 @@ import 'reflect-metadata'
 import { ArgumentValidationError } from '../../common/errors/custom-errors/argument-validation.error'
 import { ActivityServiceInterface } from '../../common/interfaces/activity-service.interface'
 import { FamilyMemberActivityModel } from '../../common/models/family-member-activity-model'
-import { ActivitiesMasterModel } from '../../common/models/activity.model'
+import { ActivityMasterModel } from '../../common/models/activity.model'
 import { ActivityRepository } from './activity.repository'
 import { ActivitiesScheduleMasterModel } from '../../common/models/activities-schedule-master.model'
 
@@ -18,18 +18,18 @@ export class ActivityService implements ActivityServiceInterface {
 
   async getActivityByRelationship(
     relationship: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     return await this.activityRepository.getActivityByRelationship(relationship)
   }
 
-  async getAllActivities(): Promise<ActivitiesMasterModel[]> {
+  async getAllActivities(): Promise<ActivityMasterModel[]> {
     return await this.activityRepository.getAllActivities()
   }
 
   async getActivityByRelationshipAndName(
     relationship: string,
     name: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     return await this.activityRepository.getActivityByRelationshipAndName(
       relationship,
       name,
@@ -46,7 +46,7 @@ export class ActivityService implements ActivityServiceInterface {
 
   async getActivityByFamilyMemberId(
     relationship: string,
-  ): Promise<ActivitiesMasterModel[]> {
+  ): Promise<ActivityMasterModel[]> {
     return await this.activityRepository.getActivityByFamilyMemberId(
       relationship,
     )
