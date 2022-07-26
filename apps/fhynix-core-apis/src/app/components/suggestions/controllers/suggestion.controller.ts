@@ -12,21 +12,18 @@ import { inject } from 'inversify'
 import { SuggestionTypes } from '../suggestion.types'
 import { SuggestionService } from '../services/suggestion.service'
 import { CommonTypes } from '../../../common/common.types'
-import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
-import { SuggestionResponsePayload } from 'apps/shared/payloads/suggestion-response.payload'
-import { ArticleModel } from '../../../common/models/article.model'
-import { ProductModel } from '../../../common/models/product.model'
-import {MovieModel} from '../../../common/models/movie.model'
-import {VendorModel} from '../../../common/models/vendor.model'
-import {RestaurantModel} from '../../../common/models/restaurant.model'
+import { RepeatModeResponsePayload } from 'apps/shared/payloads/repeat-mode-response.payload'
+
 import { CommonContainer } from '../../../common/container'
 import { RequestContext } from '../../../common/jwtservice/requests-context.service'
 import { ArticleService } from '../services/articles.service'
 import { ArticleResponsePayload } from 'apps/shared/payloads/article-response.payload'
-import { ProductResponsePayload } from 'apps/shared/payloads/product-response.payload'
-import { VendorResponsePayload } from 'apps/shared/payloads/vendor-response.payload'
-import { RestaurantResponsePayload } from 'apps/shared/payloads/restaurant-response.payload'
-import { MovieResponsePayload } from 'apps/shared/payloads/movie-response.payload'
+import { TaskModel } from '../../../common/models/task.model'
+import { PaginatedResponsePayload } from 'apps/shared/payloads/api-paginated-response.payload'
+import { TaskResponsePayload } from 'apps/shared/payloads/task-response.payload'
+import { UtilityTypes } from '../../utilities/utility.types'
+import { ModelPayloadHelper } from '../../utilities/model-payload.helper'
+
 
 @controller('/suggestions')
 export class SuggestionController implements interfaces.Controller {
@@ -36,6 +33,7 @@ export class SuggestionController implements interfaces.Controller {
   constructor(
     @inject(SuggestionTypes.suggestions) private suggestionService: SuggestionService,
     @inject(SuggestionTypes.articles) private articleService: ArticleService,
+    @inject(UtilityTypes.modelPayloadHelper) private modelPayloadHelper: ModelPayloadHelper,
   ) {}
 
   @httpGet('/articles', CommonTypes.jwtAuthMiddleware)
@@ -60,45 +58,22 @@ export class SuggestionController implements interfaces.Controller {
     res.send(details)
   }
 
-  @httpGet('/activities/:id', CommonTypes.jwtAuthMiddleware)
-  public async getSuggestionsForActivity(
+  @httpGet('/',CommonTypes.jwtAuthMiddleware)
+  public async getSuggestions(
     @request() req: express.Request,
     @response() res: express.Response,
   ){
-    const activityId = req.params.id
-    const response = await this.suggestionService.getSuggestionsForActivity(activityId);
-
-    const articlePayloads:ArticleResponsePayload[] = [];
-    for(const article of response.articles){
-      const articlePayload = new ArticleResponsePayload(article.id,article.title,article.imageUrl,article.url,article.description,article.activityIds);
-      articlePayloads.push(articlePayload);
+    const userId = this.requestContext.getUserId();
+    const tasks:TaskModel[] = await this.suggestionService.getSuggestions(userId);
+    const taskResponsePayloads = new PaginatedResponsePayload<TaskResponsePayload> ([]);
+    for(const task of tasks){
+      const suggestionPayload = this.modelPayloadHelper.suggestionResponsePayloadFromModel(task.suggestions);
+      const repeatMode = task.repeatMode;
+      const repeatModePayload = new RepeatModeResponsePayload(repeatMode?.repeatDuration,repeatMode?.repeatOnWeekDays,repeatMode?.repeatOnDays);
+      const taskResponsePayload = new TaskResponsePayload(task.id,task.relationshipId,task.title,repeatModePayload,suggestionPayload);
+      taskResponsePayloads.add(taskResponsePayload);
     }
-
-    const productPayloads:ProductResponsePayload[] = [];
-    for(const product of response.products){
-      const productPayload = new ProductResponsePayload(product.id,product.title,product.imageUrl,product.url,product.price,product.description,product.activityIds);
-      productPayloads.push(productPayload);
-    }
-
-    const vendorPayloads:VendorResponsePayload[] = [];
-    for(const vendor of response.vendors){
-      const vendorPayload = new VendorResponsePayload(vendor.id,vendor.name,vendor.phoneNumbers,vendor.activityIds,vendor.address);
-      vendorPayloads.push(vendorPayload);
-    }
-
-    const restaurantPayloads:RestaurantResponsePayload[] = [];
-    for(const restaurant of response.restaurants){
-      const restaurantPayload = new RestaurantResponsePayload(restaurant.id,restaurant.name,restaurant.address,restaurant.phoneNumbers,restaurant.imageUrl,restaurant.activityIds);
-      restaurantPayloads.push(restaurantPayload);
-    }
-
-    const moviePayloads:MovieResponsePayload[] = [];
-    for(const movie of response.movies){
-      const moviePayload = new MovieResponsePayload(movie.id,movie.title,movie.activityIds,movie.imageUrl,movie.description,movie.language,movie.runningTime);
-      moviePayloads.push(moviePayload);
-    }
-    
-    const responsePayload = new SuggestionResponsePayload (articlePayloads,productPayloads,vendorPayloads,restaurantPayloads,moviePayloads);
-    res.send(responsePayload);
+    res.send(taskResponsePayloads);
   }
+  
 }

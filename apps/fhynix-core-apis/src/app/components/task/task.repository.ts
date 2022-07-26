@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
+import { TaskSourceEnum } from '../../common/enums/task-source.enum'
 import { TaskRepositoryInterface } from '../../common/interfaces/task-repository.interface'
 import { TaskModel } from '../../common/models/task.model'
 import { TemplateModel } from '../../common/models/template-model'
@@ -249,5 +250,52 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
     return result
+  }
+
+  async getTasksForSuggestions(
+    userId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<TaskModel[]> {
+    const result = await this.client.tasks?.findMany({
+      take:5,
+      where: {
+        userId: userId,
+        isDeleted: false,
+        taskSource: TaskSourceEnum.Recommendation,
+        isFirstTaskOfRecurringMeeting:true,
+        AND: [
+          {
+            AND: [
+              {
+                startAtUtc: {
+                  gt: startDate,
+                },
+              },
+              {
+                startAtUtc: {
+                  lt: endDate,
+                },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                endAtUtc: {
+                  gt: startDate,
+                },
+              },
+              {
+                endAtUtc: {
+                  lt: endDate,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    })
+    return result ? result : []
   }
 }

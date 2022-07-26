@@ -25,6 +25,8 @@ model Tasks {
   checklist Json[]
   type String?
   activityId String? @map("activity_id")
+  taskSource TaskSourceEnum? @map("task_source")
+  isFirstTaskOfRecurringMeeting Boolean? @map("is_first_task_of_recurring_meeting")
 }
 
 model EventTemplates {
@@ -45,4 +47,10 @@ model EventTemplates {
   status String?
   isMaster Boolean? @unique @map("is_master")
   otherInfo Json[] @map("other_info")
+}
+
+enum TaskSourceEnum {
+    Adhoc
+    Onboarding
+    Recommendation
 }

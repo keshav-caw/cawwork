@@ -1,4 +1,4 @@
-const ical = require('ical-generator');
+import ical from 'ical-generator'
 
 export function icalGenerator(title,description,location,startTime,endTime){
 

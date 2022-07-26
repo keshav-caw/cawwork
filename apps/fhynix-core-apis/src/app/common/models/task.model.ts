@@ -1,3 +1,6 @@
+import { TaskSourceEnum } from "../enums/task-source.enum"
+import { SuggestionResponseModel } from "./suggestion-response.model"
+
 export class TaskModel {
   id?: string
   createdAtUtc?: Date
@@ -23,7 +26,10 @@ export class TaskModel {
   status: string
   recurringTaskId?: string
   checklist: ChecklistModel[]
-  activityId: string
+  activityId?: string
+  taskSource?: TaskSourceEnum
+  isFirstTaskOfRecurringMeeting?: boolean
+  suggestions?: SuggestionResponseModel
 }
 
 export class RepeatModeModal {
