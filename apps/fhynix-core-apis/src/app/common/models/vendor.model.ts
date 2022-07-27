@@ -4,4 +4,7 @@ export class VendorModel {
     address?: string 
     phoneNumbers:string[] 
     activityIds:string[]
+    distance?:number
+    latitude:number
+    longitude: number
   }

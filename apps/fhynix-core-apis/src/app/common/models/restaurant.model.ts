@@ -5,4 +5,7 @@ export class RestaurantModel {
     phoneNumbers:string[] 
     activityIds?:string[]
     imageUrl: string
-  }
+    latitude:number
+    longitude:number
+    distance?:number
+}

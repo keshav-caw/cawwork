@@ -64,7 +64,10 @@ export class SuggestionController implements interfaces.Controller {
     @response() res: express.Response,
   ){
     const userId = this.requestContext.getUserId();
-    const tasks:TaskModel[] = await this.suggestionService.getSuggestions(userId);
+    const latitude = +req.params.latitude;
+    const longitude = +req.params.longitude;
+
+    const tasks:TaskModel[] = await this.suggestionService.getSuggestions(userId,latitude,longitude);
     const taskResponsePayloads = new PaginatedResponsePayload<TaskResponsePayload> ([]);
     for(const task of tasks){
       const suggestionPayload = this.modelPayloadHelper.suggestionResponsePayloadFromModel(task.suggestions);
@@ -75,5 +78,5 @@ export class SuggestionController implements interfaces.Controller {
     }
     res.send(taskResponsePayloads);
   }
-  
+
 }

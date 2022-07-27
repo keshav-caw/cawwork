@@ -28,7 +28,7 @@ export class SuggestionService implements SuggestionServiceInterface {
     @inject('TaskRepository') private taskRepository: TaskRepository,
   ) {}
 
-  async getSuggestions(userId:string): Promise<TaskModel[]>{
+  async getSuggestions(userId:string,latitude:number,longitude:number): Promise<TaskModel[]>{
     const interval = this.timespanHelper.nextFourteenDays
     const tasks = await this.taskRepository.getTasksForSuggestions(
       userId,
@@ -46,7 +46,7 @@ export class SuggestionService implements SuggestionServiceInterface {
 
     const calls = [];
     for (const activityId of taskActivity.keys()) {
-      calls.push(this.getSuggestionsForActivity(activityId));
+      calls.push(this.getSuggestionsForActivity(activityId,latitude,longitude));
     }
 
     const suggestionsArray:SuggestionResponseModel[] = await Promise.all(calls)
@@ -60,7 +60,7 @@ export class SuggestionService implements SuggestionServiceInterface {
     return response;
   }
 
-  async getSuggestionsForActivity(id:string): Promise<SuggestionResponseModel>{
+  async getSuggestionsForActivity(id:string,latitude:number,longitude:number): Promise<SuggestionResponseModel>{
     const activityDetails = await this.activityRepository.getActivityByActivityId(id);
 
     const suggestions = activityDetails?.associatedSuggestionTypes;
@@ -85,11 +85,11 @@ export class SuggestionService implements SuggestionServiceInterface {
     }
 
     if(suggestions?.includes(SuggestionTypeEnum.Vendors)){
-        response.vendors = await this.vendorRepository?.getVendorsAssociatedToActivityId(paginationDetails,id);
+        response.vendors = await this.vendorRepository?.getVendorsAssociatedToActivityId(paginationDetails,id,latitude,longitude);
     }
 
     if(suggestions?.includes(SuggestionTypeEnum.Restaurants)){
-        response.restaurants = await this.restaurantRepository?.getRestaurantsAssociatedToActivityId(paginationDetails,id);
+        response.restaurants = await this.restaurantRepository?.getRestaurantsAssociatedToActivityId(paginationDetails,id,latitude,longitude);
     }
 
     if(suggestions?.includes(SuggestionTypeEnum.Movies)){

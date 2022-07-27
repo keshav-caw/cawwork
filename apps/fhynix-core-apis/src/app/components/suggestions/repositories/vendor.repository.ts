@@ -13,25 +13,15 @@ export class VendorRepository implements VendorRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getVendorsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<VendorModel[]> {
-    const result = await this.client.vendors?.findMany({
-        skip:(details.pageNumber-1)*(details.pageSize),
-        take:details.pageSize,
-        where:{
-            activityIds:{
-                hasSome:activityId
-            }
-        },
-    },
-    {
-      select: {
-        id:true,
-        name: true,
-        activityIds:true,
-        phoneNumbers:true,
-        address:true
-      }
-    })
+  async getVendorsAssociatedToActivityId(details:PaginationModel,activityId:string,latitude:number,longitude:number): Promise<VendorModel[]> {
+    const result = await this.client.$queryRaw`select id,name, earth_distance(
+      ll_to_earth(a.latitude, a.longitude),
+      ll_to_earth(${latitude},${longitude})
+    ) as distance,latitude,longitude,activity_ids,phone_numbers,address
+    from public."Vendors" a
+    where ${activityId}=ANY(activity_ids)
+    order by distance
+    LIMIT ${details.pageSize}`
     
     return result ? result : []
   }
