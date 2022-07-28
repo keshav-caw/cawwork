@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import { DataStore } from '../../common/data/datastore'
 import { TaskSourceEnum } from '../../common/enums/task-source.enum'
 import { TaskRepositoryInterface } from '../../common/interfaces/task-repository.interface'
+import { PaginationModel } from '../../common/models/pagination.model'
 import { TaskModel } from '../../common/models/task.model'
 import { TemplateModel } from '../../common/models/template-model'
 
@@ -256,9 +257,10 @@ export class TaskRepository implements TaskRepositoryInterface {
     userId: string,
     startDate: string,
     endDate: string,
+    details:PaginationModel
   ): Promise<TaskModel[]> {
     const result = await this.client.tasks?.findMany({
-      take:5,
+      take:details.pageSize,
       where: {
         userId: userId,
         isDeleted: false,
@@ -295,6 +297,9 @@ export class TaskRepository implements TaskRepositoryInterface {
           },
         ],
       },
+      orderBy:{
+        startAtUtc:'asc'
+      }
     })
     return result ? result : []
   }

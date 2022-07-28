@@ -8,5 +8,5 @@ export interface ArticleServiceInterface {
   getBookmarks(userId:string):Promise<ArticleModel[]>
   addBookmark(userId:string,articleId:string):Promise<ArticleBookmarkModel>
   removeBookmark(userId:string,articleId:string):Promise<ArticleBookmarkModel>
-  getArticlesToSuggest(userId:string):Promise<ArticleModel[]>
+  getArticlesToSuggest(userId:string):Promise<Map<string,ArticleModel[]>>
 }

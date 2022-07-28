@@ -35,13 +35,45 @@ export class ArticleService implements ArticleServiceInterface {
   }
 
   async getArticlesToSuggest(userId:string){
-    const mostRecent50Articles = await this.articleRepository.getMostRecent50Articles()
-    const articles = [];
-    const articleIdSet = new Set<string>();
     const taskActivityIdSet = await this.taskService.getTasksInNextFourteenDays(userId);
-    this.getArticlesFromActivityIds(articles,articleIdSet,mostRecent50Articles,taskActivityIdSet);
+    const calls = [];
+    const numberOfArticles = 3;
+    
+    for(const activityId of taskActivityIdSet){
+      calls.push(this.articleRepository.getArticle7DaysFromNow(userId,activityId,numberOfArticles));
+    }
+    const articles7DaysFromNow = await Promise.all(calls);
+    let counter = 0;
+    const newCalls = [];
 
-    return articles
+    for(const activityId of taskActivityIdSet){
+      const currentNumberOfArticles = articles7DaysFromNow[counter].length
+      if(currentNumberOfArticles<3){
+        newCalls.push(this.articleRepository.getNewArticlesForSuggestion(userId,activityId,3-currentNumberOfArticles));
+      }else{
+        newCalls.push([]);
+      }
+      counter++;
+    }
+
+    const newArticles:ArticleModel[][] = await Promise.all(newCalls);
+
+    const activityToArticles = new Map<string,ArticleModel[]> ();
+    counter = 0;
+    const callers = [];
+    for(const activityId of taskActivityIdSet){
+      const articles = articles7DaysFromNow[counter];
+      for(const article of newArticles[counter]){
+        articles.push(article);
+        callers.push(this.articleRepository.addShownArticles(userId,article.id,activityId))
+      }
+      activityToArticles[activityId]=articles;
+      counter++;
+    }
+
+    await Promise.all(callers);
+
+    return activityToArticles
   }
 
   async addArticle(url,activityIds) {

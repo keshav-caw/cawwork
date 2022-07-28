@@ -21,7 +21,7 @@ export class ProductRepository implements ProductRepositoryInterface {
     return product;
   }
 
-  async getProductsAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<ProductModel[]> {
+  async getProductsAssociatedToActivityId(activityId:string,details:PaginationModel): Promise<ProductModel[]> {
     const result = await this.client.products?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
         take:details.pageSize,

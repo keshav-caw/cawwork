@@ -9,8 +9,6 @@ import { EmailProviderInterface } from '../../common/interfaces/email-provider.i
 import { EmailProvider } from './email.provider'
 import { TimespanHelperInterface } from '../../common/interfaces/timespan-helper.interface'
 import { TimespanHelper } from './timespan.helper'
-import { ModelPayloadHelperInterface } from '../../common/interfaces/model-payload-helper.interface'
-import { ModelPayloadHelper } from './model-payload.helper'
 
 @injectable()
 export default class UtilityBootstrapper {
@@ -19,6 +17,5 @@ export default class UtilityBootstrapper {
       CommonContainer.bind<UtilityController>('UtilityController').to(UtilityController)
       CommonContainer.bind<EmailProviderInterface>(UtilityTypes.emailProvider).to(EmailProvider)
       CommonContainer.bind<TimespanHelperInterface>(UtilityTypes.timespanHelper).to(TimespanHelper)
-      CommonContainer.bind<ModelPayloadHelperInterface>(UtilityTypes.modelPayloadHelper).to(ModelPayloadHelper)
   }
 }

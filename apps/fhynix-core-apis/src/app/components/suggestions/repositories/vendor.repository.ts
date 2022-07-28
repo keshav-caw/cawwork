@@ -13,11 +13,11 @@ export class VendorRepository implements VendorRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getVendorsAssociatedToActivityId(details:PaginationModel,activityId:string,latitude:number,longitude:number): Promise<VendorModel[]> {
+  async getVendorsAssociatedToActivityId(activityId:string,latitude:number,longitude:number,details:PaginationModel): Promise<VendorModel[]> {
     const result = await this.client.$queryRaw`select id,name, earth_distance(
       ll_to_earth(a.latitude, a.longitude),
       ll_to_earth(${latitude},${longitude})
-    ) as distance,latitude,longitude,activity_ids,phone_numbers,address
+    ) as distance,latitude,longitude,activity_ids as "activityIds",phone_numbers as "phoneNumbers",address
     from public."Vendors" a
     where ${activityId}=ANY(activity_ids)
     order by distance

@@ -13,11 +13,11 @@ export class RestaurantRepository implements RestaurantRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getRestaurantsAssociatedToActivityId(details:PaginationModel,activityId:string,latitude:number,longitude:number): Promise<RestaurantModel[]> {
+  async getRestaurantsAssociatedToActivityId(activityId:string,latitude:number,longitude:number,details:PaginationModel): Promise<RestaurantModel[]> {
     const result = await this.client.$queryRaw`select id,name, earth_distance(
       ll_to_earth(a.latitude, a.longitude),
       ll_to_earth(${latitude},${longitude})
-    ) as distance,latitude,longitude,activity_ids,phone_numbers,address,image_url
+    ) as distance,latitude,longitude,activity_ids as "activityIds",phone_numbers as "phoneNumbers",address,image_url as "imageUrl"
     from public."Restaurants" a
     where ${activityId}=ANY(activity_ids)
     order by distance

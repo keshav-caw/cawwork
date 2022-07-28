@@ -13,7 +13,7 @@ export class MovieRepository implements MovieRepositoryInterface {
     this.client = this.store.getClient()
   }
 
-  async getMoviesAssociatedToActivityId(details: PaginationModel,activityId:string): Promise<MovieModel[]> {
+  async getMoviesAssociatedToActivityId(activityId:string,details:PaginationModel): Promise<MovieModel[]> {
     const result = await this.client.movies?.findMany(
       {
         skip: (details.pageNumber - 1) * details.pageSize,

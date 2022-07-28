@@ -3,5 +3,5 @@ import { PaginationModel } from "../models/pagination.model";
 
 
 export interface MovieRepositoryInterface {
-    getMoviesAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<MovieModel[]>
+    getMoviesAssociatedToActivityId(activityId:string,details:PaginationModel): Promise<MovieModel[]>
 }

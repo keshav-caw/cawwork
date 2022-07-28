@@ -80,3 +80,13 @@ model Restaurants {
   updatedAtUtc DateTime @updatedAt @map("updated_at_utc")
   updatedBy String? @map("updated_by")
 }
+
+model UserArticlesShown {
+  id  String  @id @default(uuid())
+  userId String @map("user_id")
+  articleId String @map("article_id")
+  activityId String @map("activity_id")
+  shownAt DateTime @default(now()) @map("shown_at")
+  createdBy String? @map("created_by")
+  updatedBy String? @map("updated_by")
+}

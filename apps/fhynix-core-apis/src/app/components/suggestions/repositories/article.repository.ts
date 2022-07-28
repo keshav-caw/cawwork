@@ -31,7 +31,7 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     return result ? result : []
   }
 
-  async getArticlesAssociatedToActivityId(details:PaginationModel,activityId:string): Promise<ArticleModel[]> {
+  async getArticlesAssociatedToActivityId(activityId:string,details:PaginationModel): Promise<ArticleModel[]> {
       
     const result = await this.client.articles?.findMany({
         skip:(details.pageNumber-1)*(details.pageSize),
@@ -52,6 +52,33 @@ export class ArticleRepository implements ArticleRepositoryInterface {
     })
     
     return result ? result : []
+  }
+
+  async getArticle7DaysFromNow(userId:string,activityId:string,numberOfArticles:number){
+    const result = await this.client.$queryRaw`SELECT id,title,url,description,image_url AS "imageUrl",activity_ids as "activityIds" FROM public."Articles"
+    WHERE id IN (SELECT article_id
+    FROM public."UserArticlesShown"
+    WHERE user_id=${userId} AND activity_id=${activityId} AND shown_at + INTERVAL '7 DAYS' >= NOW()
+    ORDER BY shown_at  DESC)
+    Limit ${numberOfArticles}`;
+    return result;
+  }
+
+  async getNewArticlesForSuggestion(userId:string,activityId:string,numberOfArticles:number){
+    const result = await this.client.$queryRaw`SELECT id,title,url,description,image_url AS "imageUrl",activity_ids as "activityIds"
+    from public."Articles" 
+    WHERE ${activityId}=ANY(activity_ids) AND 
+    id NOT IN (SELECT article_id FROM public."UserArticlesShown" WHERE user_id=${userId} AND activity_id=${activityId})
+    Limit ${numberOfArticles}`;
+    return result;
+  }
+
+  async addShownArticles(userId:string,articleId:string,activityId:string){
+    await this.client.userArticlesShown.create({
+      data:{
+        userId,articleId,activityId
+      }
+    })
   }
 
   async getMostRecent50Articles():Promise<ArticleModel[]>{

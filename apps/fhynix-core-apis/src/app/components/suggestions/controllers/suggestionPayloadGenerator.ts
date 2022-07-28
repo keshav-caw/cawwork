@@ -4,14 +4,13 @@ import { ProductResponsePayload } from 'apps/shared/payloads/product-response.pa
 import { RestaurantResponsePayload } from 'apps/shared/payloads/restaurant-response.payload';
 import { SuggestionResponsePayload } from 'apps/shared/payloads/suggestion-response.payload';
 import { VendorResponsePayload } from 'apps/shared/payloads/vendor-response.payload';
-import { injectable } from 'inversify'
+import { inject, injectable } from 'inversify'
 import 'reflect-metadata'
-import { ModelPayloadHelperInterface } from '../../common/interfaces/model-payload-helper.interface';
-import { SuggestionResponseModel } from '../../common/models/suggestion-response.model';
+import { SuggestionResponseModel } from '../../../common/models/suggestion-response.model';
 
 @injectable()
-export class ModelPayloadHelper implements ModelPayloadHelperInterface {
-    suggestionResponsePayloadFromModel(response:SuggestionResponseModel){
+export class SuggestionPayloadGenerator{
+    generateFromModel(response:SuggestionResponseModel){
         const articlePayloads:ArticleResponsePayload[] = [];
         for(const article of response.articles){
             const articlePayload = new ArticleResponsePayload(article.id,article.title,article.imageUrl,article.url,article.description,article.activityIds);

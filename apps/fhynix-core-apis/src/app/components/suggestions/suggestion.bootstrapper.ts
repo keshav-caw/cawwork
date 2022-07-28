@@ -21,6 +21,7 @@ import { ProductServiceInterface } from '../../common/interfaces/product-service
 import { ProductService } from './services/product.service'
 import { ArticleController } from './controllers/article.controller'
 import { ProductController } from './controllers/product.controller'
+import { SuggestionPayloadGenerator } from './controllers/suggestionPayloadGenerator'
 
 @injectable()
 export default class SuggestionBootstrapper {
@@ -38,5 +39,6 @@ export default class SuggestionBootstrapper {
       CommonContainer.bind<ArticleController>('ArticleController').to(ArticleController)
       CommonContainer.bind<ProductController>('ProductController').to(ProductController)
       CommonContainer.bind<SuggestionController>('SuggestionController').to(SuggestionController)
+      CommonContainer.bind<SuggestionPayloadGenerator>('SuggestionPayloadGenerator').to(SuggestionPayloadGenerator)
   }
 }
